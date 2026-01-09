@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TBC Command Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Top Header / Company Profile Bar -->
+  <header class="topbar">
+    <div class="brand">
+    <div class="logo-wrapper small" aria-label="Company Logo">
+  <img src="logo.png" alt="TBC Business Club Logo">
+</div>
+
+      <div class="brand-meta">
+        <div class="company-name" id="companyName">TBC Business Club Co.</div>
+        <div class="tier">
+          <span class="pill gold" id="companyLevel">Level: Platinum</span>
+          <span class="pill pink">VIP Lounge Access</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="changeLogoBtn" title="Change Logo">🖼️</button>
+
+      <div class="dropdown">
+        <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+          ⚙️ Company Menu
+          <span class="chev">▾</span>
+        </button>
+
+        <div class="menu" id="menu" role="menu" aria-hidden="true">
+          <button class="menu-item" data-action="profile">Profile Settings</button>
+          <button class="menu-item" data-action="privacy">Privacy & Security</button>
+          <button class="menu-item" data-action="partnerships">Partnerships</button>
+          <div class="sep"></div>
+          <button class="menu-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container">
+
+    <!-- Hero Strip (theme feeling like your screenshot) -->
+    <section class="hero">
+      <div>
+        <div class="badge">TBC COMMAND HUB</div>
+      <h1>اهلا بك في لوحة التحكم الخاصة بشركتك</h1>
+        <p class="muted">إدارة المبيعات، الفعاليات، التقارير، والتواصل مع إدارة نادي TBC.</p>
+      </div>
+      <a
+  class="cta"
+  href="https://tbusinessclub.com/members/"
+  target="_blank"
+  rel="noopener"
+>
+  JOIN THE CLUB
+</a>
+
+    </section>
+
+    <!-- Info Grid -->
+    <section class="grid">
+      <!-- Sales & Distribution -->
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Sales & Distribution</h2>
+          <span class="chip">Live</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Current Sales Points</div>
+            <div class="v" id="salesPoints">24</div>
+            <div class="s muted">عدد نقاط البيع الحالية</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Agents</div>
+            <div class="v" id="agentsCount">8</div>
+            <div class="s muted">الوكلاء</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Developers</div>
+            <div class="v" id="devsCount">5</div>
+            <div class="s muted">المطورون</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Influencers</div>
+            <div class="v" id="influencersCount">11</div>
+            <div class="s muted">المؤثرون</div>
+          </div>
+        </div>
+
+        <div class="subgrid">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Active Promotion Campaigns</h3>
+      
+            </div>
+
+            <ul class="list" id="campaignList">
+              <!-- JS will render -->
+            </ul>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Annual Sales Target</h3>
+              <span class="pill gold" id="annualTargetText">€ 1,250,000</span>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span class="muted">Achieved</span>
+                <span class="strong" id="annualAchievedText">€ 640,000</span>
+              </div>
+
+              <div class="progress">
+                <div class="bar" id="annualBar" style="width: 0%"></div>
+              </div>
+
+              <div class="progress-meta">
+                <span class="muted">Progress</span>
+                <span class="strong" id="annualPercent">0%</span>
+              </div>
+            </div>
+
+            <div class="row">
+       
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Events -->
+      <article class="card">
+        <div class="card-head">
+          <h2>Events</h2>
+          <span class="chip violet">Calendar</span>
+        </div>
+
+        <div class="event-block">
+          <h3>Private Events</h3>
+          <ul class="list" id="privateEvents"></ul>
+        </div>
+
+        <div class="event-block">
+          <h3>TBC Public Club Events</h3>
+          <ul class="list" id="publicEvents"></ul>
+        </div>
+      </article>
+
+      <!-- Overall Progress -->
+      <article class="card">
+        <div class="card-head">
+          <h2>Overall Progress Level</h2>
+          <span class="chip gold">Score</span>
+        </div>
+
+        <div class="big">
+          <div class="big-num" id="overallPercent">0%</div>
+          <div class="muted">مرتبط بتحقيق الأهداف (مبيعات – نشاط – التزام)</div>
+        </div>
+
+        <div class="progress">
+          <div class="bar glow" id="overallBar" style="width:0%"></div>
+        </div>
+
+        <div class="split">
+          <div class="mini">
+            <div class="k muted">Sales</div>
+            <div class="v" id="scoreSales">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Activity</div>
+            <div class="v" id="scoreActivity">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Commitment</div>
+            <div class="v" id="scoreCommitment">0%</div>
+          </div>
+        </div>
+
+        
+      </article>
+
+      <!-- Reports -->
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Reports Dashboard</h2>
+          <span class="chip pink">Export</span>
+        </div>
+
+        <div class="reports">
+          <div class="report">
+            <div class="r-title">Performance Report</div>
+            <div class="muted">تقارير الأداء</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="performance" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="performance" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Sales Report</div>
+            <div class="muted">تقارير المبيعات</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="sales" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="sales" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Campaigns Report</div>
+            <div class="muted">تقارير الحملات</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="campaigns" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="campaigns" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">General Activity Report</div>
+            <div class="muted">تقارير النشاط العام</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="activity" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="activity" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note muted" id="reportNote">اختر View/Download وسيظهر إشعار بسيط (محاكاة).</div>
+      </article>
+
+      <!-- Admin Communication -->
+      <article class="card span-3">
+        <div class="card-head">
+          <h2>Admin Communication</h2>
+          <span class="chip">Read / Comment / Acknowledge</span>
+        </div>
+
+        <div class="admin-grid">
+          <section class="posts">
+            <div class="panel-head">
+              <h3>Admin Posts</h3>
+              <span class="pill">الإدارة فقط تنشر</span>
+            </div>
+            <ul class="post-list" id="postList"></ul>
+          </section>
+
+          <section class="interaction">
+            <div class="panel-head">
+              <h3>Comments System</h3>
+              <span class="pill pink">الشركة تستطيع التعليق</span>
+            </div>
+
+            <div class="selected" id="selectedPostBox">
+              <div class="muted">اختر منشور من اليسار لعرض التفاصيل والتعليق.</div>
+            </div>
+
+            <form class="comment-form" id="commentForm">
+              <textarea id="commentInput" placeholder="اكتب تعليقك هنا..." rows="3" required></textarea>
+              <div class="row">
+                <button class="cta small" type="submit">Send Comment</button>
+                <button class="ghost small" type="button" id="ackBtn" disabled>✅ Acknowledge</button>
+              </div>
+              <div class="muted tiny">Permissions: posting للإدارة فقط، التعليق للشركات.</div>
+            </form>
+
+            <div class="comments">
+              <div class="panel-head">
+                <h3>Comments</h3>
+                <span class="pill gold" id="commentCount">0</span>
+              </div>
+              <ul class="comment-list" id="commentList"></ul>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="icon-btn" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+  if (localStorage.getItem("tbc_logged_in") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
+<script>
+  if (localStorage.getItem("tbc_logged_in") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
+
+
+</body>
+</html>
