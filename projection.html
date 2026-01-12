@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TBC Financial Projection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --panel:#0d0d0f;
+  --line:rgba(255,255,255,.1);
+  --gold:#d6b56b;
+  --pink:#ff3d81;
+  --gray:#888;
+  --text:#fff;
+  --muted:#9aa0a6;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#000;
+  color:var(--text);
+  font-family:system-ui,Segoe UI,Roboto;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+
+h1{
+  margin:0 0 14px;
+  font-size:24px;
+}
+
+.chart-box{
+  position:relative;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  max-width:600px;
+  margin:0 auto;
+}
+
+.month-badge{
+  position:absolute;
+  top:12px;
+  right:16px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--gold);
+}
+
+.view-toggle{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
+.view-toggle button{
+  background:#111;
+  border:1px solid var(--line);
+  color:#aaa;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:11px;
+  cursor:pointer;
+}
+.view-toggle button.active{
+  background:#222;
+  color:#fff;
+}
+
+.chart{
+  display:grid;
+  grid-template-columns:70px 1fr;
+  gap:10px;
+}
+
+.y-axis{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.graph-area{
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+}
+
+.grid-lines{
+  position:absolute;
+  inset:0;
+  display:grid;
+  grid-template-rows:repeat(6,1fr);
+  pointer-events:none;
+}
+.grid-lines div{
+  border-top:1px dashed var(--line);
+}
+
+svg{
+  width:100%;
+  height:200px;
+  display:block;
+}
+
+svg polyline{
+  stroke-dasharray:2000;
+  stroke-dashoffset:2000;
+  animation:drawLine 7s ease forwards;
+}
+
+@keyframes drawLine{ to{stroke-dashoffset:0;} }
+
+.point{ cursor:pointer }
+.point.cost{ fill:var(--gray) }
+.point.income{ fill:var(--gold) }
+.point.profit{ fill:var(--pink) }
+
+.tooltip{
+  position:absolute;
+  background:#111;
+  border:1px solid var(--line);
+  padding:8px 10px;
+  font-size:11px;
+  border-radius:8px;
+  pointer-events:none;
+  opacity:0;
+  transition:.15s;
+}
+
+.x-labels{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  margin-top:6px;
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.legend{
+  display:flex;
+  gap:16px;
+  margin-top:10px;
+  font-size:12px;
+}
+.legend span{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+}
+.dot.cost{background:var(--gray)}
+.dot.income{background:var(--gold)}
+.dot.profit{background:var(--pink)}
+
+.data-table{
+  display:none;
+  width:100%;
+  margin-top:10px;
+  border-collapse:collapse;
+  font-size:12px;
+}
+.data-table th,
+.data-table td{
+  border-bottom:1px solid var(--line);
+  padding:6px;
+  text-align:right;
+}
+.data-table th:first-child,
+.data-table td:first-child{
+  text-align:left;
+}
+
+@media(max-width:520px){
+  svg{height:140px}
+  .chart{grid-template-columns:48px 1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Financial Projection Matrix</h1>
+
+<div class="chart-box">
+
+<div class="month-badge">March 2026</div>
+
+<div class="view-toggle">
+  <button class="active" data-view="chart">Chart</button>
+  <button data-view="table">Table</button>
+</div>
+
+<div class="chart">
+  <div class="y-axis" id="yAxis"></div>
+
+  <div class="graph-area">
+    <div class="grid-lines">
+      <div></div><div></div><div></div>
+      <div></div><div></div><div></div>
+    </div>
+
+    <svg viewBox="0 0 660 200">
+      <line x1="0" y1="200" x2="660" y2="200"
+            stroke="rgba(255,255,255,.25)" />
+      <line id="breakEvenLine"
+            stroke="rgba(255,255,255,.35)"
+            stroke-dasharray="4 4"/>
+      <polyline id="costLine" fill="none" stroke="var(--gray)" stroke-width="3"/>
+      <polyline id="incomeLine" fill="none" stroke="var(--gold)" stroke-width="4"/>
+      <polyline id="profitLine" fill="none" stroke="var(--pink)" stroke-width="4"/>
+      <g id="pointsLayer"></g>
+    </svg>
+
+    <div class="tooltip" id="tooltip"></div>
+    <div class="x-labels" id="xLabels"></div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><i class="dot cost"></i>Cost</span>
+  <span><i class="dot income"></i>Income</span>
+  <span><i class="dot profit"></i>Net Profit</span>
+</div>
+
+<table class="data-table" id="dataTable"></table>
+
+</div>
+</div>
+
+<script>
+const data = [
+ {time:"Week 1", cost:0, income:0},
+ {time:"Week 2", cost:0, income:1800},
+ {time:"Week 3", cost:1600, income:4200},
+ {time:"Week 4", cost:2600, income:7500}
+];
+data.forEach(d=>d.net=d.income-d.cost);
+
+const svg=document.querySelector("svg");
+const w=660,h=200;
+const step=w/(data.length-1);
+const max=Math.max(...data.map(d=>Math.max(d.cost,d.income,d.net)));
+const padT=6,padB=8;
+
+const mapY=v=>h-padB-(v/max)*(h-padT-padB);
+const pts=k=>data.map((d,i)=>`${i*step},${mapY(d[k])}`).join(" ");
+
+costLine.setAttribute("points",pts("cost"));
+incomeLine.setAttribute("points",pts("income"));
+profitLine.setAttribute("points",pts("net"));
+
+const pl=document.getElementById("pointsLayer");
+const tip=document.getElementById("tooltip");
+
+["cost","income","net"].forEach(k=>{
+ data.forEach((d,i)=>{
+  const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("cx",i*step);
+  c.setAttribute("cy",mapY(d[k]));
+  c.setAttribute("r",4);
+  c.classList.add("point",k==="net"?"profit":k);
+  c.onmousemove=e=>{
+    tip.innerHTML=`<b>${d.time}</b><br>
+    Cost: $${d.cost.toLocaleString()}<br>
+    Income: $${d.income.toLocaleString()}<br>
+    Net Profit: <b style="color:var(--pink)">$${d.net.toLocaleString()}</b>`;
+    tip.style.left=e.offsetX+10+"px";
+    tip.style.top=e.offsetY+10+"px";
+    tip.style.opacity=1;
+  };
+  c.onmouseleave=()=>tip.style.opacity=0;
+  pl.appendChild(c);
+ });
+});
+
+// Break-even
+for(let i=1;i<data.length;i++){
+ if(data[i].income>=data[i].cost){
+  const y=mapY(data[i].income);
+  breakEvenLine.setAttribute("x1",0);
+  breakEvenLine.setAttribute("x2",w);
+  breakEvenLine.setAttribute("y1",y);
+  breakEvenLine.setAttribute("y2",y);
+  break;
+ }
+}
+
+// X-axis
+document.getElementById("xLabels").innerHTML =
+  data.map(d=>`<div>${d.time}</div>`).join("");
+
+// Y-axis
+const y=document.getElementById("yAxis");
+for(let i=6;i>=0;i--){
+ y.innerHTML+=`<div>${Math.round(max/6*i/1000)}k</div>`;
+}
+
+// TABLE
+const table=document.getElementById("dataTable");
+table.innerHTML=`
+<tr>
+  <th>Week</th>
+  <th>Cost ($)</th>
+  <th>Income ($)</th>
+  <th>Net Profit ($)</th>
+</tr>
+${data.map(d=>`
+<tr>
+  <td>${d.time}</td>
+  <td>${d.cost.toLocaleString()}</td>
+  <td>${d.income.toLocaleString()}</td>
+  <td style="color:${d.net>=0?'var(--pink)':'#f55'}">
+    ${d.net.toLocaleString()}
+  </td>
+</tr>`).join("")}
+`;
+
+// TOGGLE
+document.querySelectorAll(".view-toggle button").forEach(btn=>{
+ btn.onclick=()=>{
+  document.querySelectorAll(".view-toggle button")
+    .forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const isTable=btn.dataset.view==="table";
+  document.querySelector(".chart").style.display=isTable?"none":"grid";
+  document.querySelector(".legend").style.display=isTable?"none":"flex";
+  table.style.display=isTable?"table":"none";
+ };
+});
+</script>
+</body>
+</html>
