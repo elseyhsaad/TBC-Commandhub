@@ -60,7 +60,7 @@ function applyManualAnnualPercent(){
   const p = Math.max(0, Math.min(100, MANUAL_ANNUAL_PERCENT));
   state.annualAchieved = (state.annualTarget * p) / 100;
 }
-const MANUAL_ANNUAL_PERCENT = 20;
+const MANUAL_ANNUAL_PERCENT = 70;
 
 
 // ---------- Helpers ----------
@@ -127,17 +127,19 @@ menu.querySelectorAll(".menu-item").forEach(btn => {
     menu.classList.remove("open");
 
     if (act === "profile") {
-      openModal(
-        "Profile Settings",
-        `
-        <div class="muted">تعديل معلومات الشركة (Mock).</div>
-        <div style="margin-top:10px" class="row">
-          <button class="mini-btn" id="renameBtn">Rename Company</button>
-          <button class="mini-btn" id="levelBtn">Change Level</button>
-        </div>
-        `,
-        [{ label: "Close", className: "ghost", onClick: closeModal }]
-      );
+  openModal(
+    "White Ocean Strategy – TBC",
+    `
+    <iframe 
+      src="white-ocean.html"
+      style="width:100%;height:70vh;border:0;"
+      loading="lazy"
+    ></iframe>
+    `,
+    [
+      { label: "Close", className: "ghost", onClick: closeModal }
+    ]
+  );
 
       setTimeout(() => {
         document.getElementById("renameBtn")?.addEventListener("click", () => {
@@ -162,14 +164,13 @@ menu.querySelectorAll(".menu-item").forEach(btn => {
 
     } else if (act === "privacy") {
       openModal(
-        "Privacy & Security",
+        "About Us",
         `
-        <div class="muted">إعدادات الخصوصية والصلاحيات (Mock).</div>
-        <ul style="margin:10px 0 0; padding:0 18px;">
-          <li>Two-factor authentication</li>
-          <li>Access roles</li>
-          <li>Data visibility</li>
-        </ul>
+       <iframe 
+      src="aboutus.html"
+      style="width:100%;height:70vh;border:0;"
+      loading="lazy"
+    ></iframe>
         `,
         [{ label: "Close", className: "ghost", onClick: closeModal }]
       );
@@ -510,6 +511,19 @@ const joinBtn = $("joinBtn");
 if (joinBtn) {
   joinBtn.addEventListener("click", () => toast("Join action (mock)"));
 }
+
+
+document.getElementById("commentForm")?.addEventListener("submit", (e) => {
+  e.preventDefault(); // formun sayfayı yenilemesini engeller
+
+  const phone = "905528828825"; // + yok, boşluk yok
+  const defaultMsg = "سلام، هذا تعليق من لوحة TBC Command Hub:";
+  const userMsg = document.getElementById("commentInput")?.value?.trim() || "";
+  const text = encodeURIComponent(defaultMsg + "\n\n" + userMsg);
+
+  // mobil/desktop uyumlu:
+  window.open(`https://wa.me/${phone}?text=${text}`, "_blank", "noopener");
+});
 
 
 // ---------- Init ----------
