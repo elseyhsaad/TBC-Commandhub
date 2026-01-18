@@ -761,4 +761,290 @@ textarea:focus{border-color: rgba(255,61,129,.35)}
   background: transparent;
 }
 
+/* =========================
+   FORM INPUT – PREMIUM UI
+========================= */
 
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: all .25s ease;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.02),
+    0 8px 20px rgba(0,0,0,.35);
+}
+
+/* Placeholder */
+form input::placeholder,
+form textarea::placeholder {
+  color: rgba(255,255,255,.45);
+  font-weight: 500;
+}
+
+/* Hover */
+form input:hover,
+form select:hover,
+form textarea:hover {
+  border-color: rgba(214,181,107,.45);
+}
+
+/* Focus */
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: rgba(255,61,129,.65);
+  box-shadow:
+    0 0 0 2px rgba(255,61,129,.18),
+    0 14px 30px rgba(255,61,129,.15);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.09),
+    rgba(255,255,255,.03)
+  );
+}
+
+/* Select arrow fix */
+form select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #fff 50%),
+    linear-gradient(135deg, #fff 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) calc(50% - 3px),
+    calc(100% - 16px) calc(50% - 3px);
+  background-size: 6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* Checkbox group */
+form label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  cursor: pointer;
+  transition: all .25s ease;
+  font-size: 14px;
+}
+
+form label:hover {
+  border-color: rgba(181,109,255,.4);
+  background: rgba(181,109,255,.08);
+}
+
+/* Checkbox style */
+form input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--pink);
+  cursor: pointer;
+}
+
+/* Section spacing */
+form .card input,
+form .card select,
+form .card textarea,
+form .card label {
+  margin-top: 10px;
+}
+
+/* Submit card center */
+form .cta.full {
+  width: 100%;
+  padding: 16px;
+  font-size: 15px;
+  letter-spacing: .6px;
+}
+/* =========================
+   PREMIUM SELECT (DROPDOWN)
+========================= */
+
+form select {
+  width: 100%;
+  padding: 14px 52px 14px 16px; /* sağda ok için alan */
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.08),
+      rgba(255,255,255,.02)
+    );
+
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .2px;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  cursor: pointer;
+
+  transition: all .28s ease;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.02),
+    0 10px 24px rgba(0,0,0,.4);
+}
+
+/* Dropdown Arrow (Custom) */
+form select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #fff 50%),
+    linear-gradient(135deg, #fff 50%, transparent 50%),
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.12),
+      rgba(255,255,255,.03)
+    );
+  background-position:
+    calc(100% - 26px) 50%,
+    calc(100% - 20px) 50%,
+    0 0;
+  background-size:
+    6px 6px,
+    6px 6px,
+    100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Hover */
+form select:hover {
+  border-color: rgba(214,181,107,.55);
+  box-shadow:
+    0 0 0 1px rgba(214,181,107,.35),
+    0 14px 28px rgba(214,181,107,.18);
+}
+
+/* Focus */
+form select:focus {
+  border-color: rgba(255,61,129,.7);
+  box-shadow:
+    0 0 0 2px rgba(255,61,129,.22),
+    0 18px 34px rgba(255,61,129,.25);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.12),
+      rgba(255,255,255,.04)
+    );
+}
+
+/* Disabled (placeholder state) */
+form select:has(option[value=""]:checked) {
+  color: rgba(255,255,255,.55);
+}
+
+/* Dropdown options (limited support) */
+form select option {
+  background: #0d0d0f;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Firefox fix */
+@-moz-document url-prefix() {
+  form select {
+    background-image: none;
+    padding-right: 16px;
+  }
+}
+/* =========================
+   WELCOME MODAL
+========================= */
+
+.welcome-modal {
+  max-width: 520px;
+  text-align: center;
+}
+
+.welcome-body {
+  padding: 28px 26px 30px;
+}
+
+.welcome-logo {
+  width: 96px;
+  height: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 18px rgba(214,181,107,.55));
+}
+
+.welcome-ar {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.7;
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.welcome-en {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .welcome-ar {
+    font-size: 16px;
+  }
+
+  .welcome-en {
+    font-size: 13px;
+  }
+}
+.growth-wrapper {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.growth-label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #2ecc71;
+}
+
+.growth-bar {
+  width: 100%;
+  max-width: 360px;
+  height: 8px;
+  background: #e5e5e5;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.growth-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  border-radius: 20px;
+  animation: growToTen 2s ease-out forwards;
+}
+
+@keyframes growToTen {
+  from {
+    width: 0;
+  }
+  to {
+    width: 10%;
+  }
+}
