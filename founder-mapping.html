@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Founder Mapping – TBC Command Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<main class="container">
+
+  <section class="hero">
+    <div>
+      <div class="badge">FOUNDER MAPPING</div>
+      <h1>نموذج تحديد المسار للمطوّر</h1>
+      <p class="muted">
+        Founder Mapping – Developer Path Identification Form
+      </p>
+    </div>
+  </section>
+
+  <form
+    class="grid"
+    action="https://formspree.io/f/maqqqklb"
+    method="POST"
+  >
+<input type="hidden" name="_redirect" value="http://127.0.0.1:5500/thank-you.html">
+
+
+
+    <!-- SECTION 1 -->
+    <article class="card span-3">
+      <h2>المعلومات الشخصية<br><span class="muted">Personal Information</span></h2>
+
+      <input name="full_name" placeholder="الاسم الكامل | Full Name" required>
+      <input name="age" type="number" placeholder="العمر | Age" required>
+
+      <select name="education" required>
+        <option value="">المؤهل العلمي | Education Level</option>
+        <option>Primary / ابتدائي</option>
+        <option>Secondary / ثانوي</option>
+        <option>Institute / معهد</option>
+        <option>University / جامعة</option>
+        <option>Self-taught / تعليم ذاتي</option>
+      </select>
+
+      <input name="specialization" placeholder="التخصص (إن وجد) | Specialization">
+      <input name="location" placeholder="مكان السكن (الدولة – المدينة) | Location" required>
+
+      <select name="employment_status" required>
+        <option value="">هل تعمل حاليًا؟ | Employment Status</option>
+        <option>Full-time / دوام كامل</option>
+        <option>Freelance / عمل حر</option>
+        <option>Not working / لا أعمل حاليًا</option>
+      </select>
+    </article>
+
+    <!-- SECTION 2 -->
+    <article class="card span-3">
+      <h2>تحديد المجال الأساسي<br><span class="muted">Core Domain</span></h2>
+
+      <select name="core_domain" required>
+        <option value="">اختر المجال | Select Domain</option>
+        <option>Production / Industry</option>
+        <option>Public Relations & Business Development</option>
+        <option>Marketing / Content Creation</option>
+        <option>Sales / Closing</option>
+        <option>Contracting</option>
+        <option>Investment</option>
+        <option>E-Commerce</option>
+        <option>Technology / Digital Systems</option>
+        <option>Other</option>
+      </select>
+    </article>
+
+    <!-- SECTION 3 -->
+    <article class="card span-3">
+      <h2>تقييم الخبرة<br><span class="muted">Experience Level</span></h2>
+
+      <select name="experience_level" required>
+        <option value="">مستوى الخبرة | Experience</option>
+        <option>Beginner / مبتدئ</option>
+        <option>Intermediate / متوسط</option>
+        <option>Professional / محترف</option>
+      </select>
+
+      <select name="team_experience" required>
+        <option value="">هل عملت ضمن فريق؟ | Team Experience</option>
+        <option>Yes / نعم</option>
+        <option>No / لا</option>
+      </select>
+    </article>
+
+    <!-- SECTION 4 -->
+    <article class="card span-3">
+      <h2>فكرة المشروع<br><span class="muted">Project Idea</span></h2>
+
+      <input name="project_name" placeholder="اسم المشروع | Project Name" required>
+
+      <textarea
+        name="project_description"
+        rows="4"
+        placeholder="وصف مختصر للفكرة | Short Description"
+        required></textarea>
+
+      <select name="project_status" required>
+        <option value="">حالة الفكرة | Project Status</option>
+        <option>Existing</option>
+        <option>In Development</option>
+        <option>Initial Idea</option>
+      </select>
+    </article>
+
+    <!-- SECTION 5 -->
+    <article class="card span-3">
+      <h2>التخطيط المالي والزمني<br><span class="muted">Finance & Timeline</span></h2>
+
+      <input name="capital" placeholder="رأس المال التقديري | Target Capital">
+
+      <select name="capital_source" required>
+        <option value="">مصدر رأس المال | Capital Source</option>
+        <option>Personal</option>
+        <option>Partner</option>
+        <option>Investor</option>
+        <option>Not decided</option>
+      </select>
+
+      <select name="timeline" required>
+        <option value="">مدة التأسيس | Timeline</option>
+        <option>1–3 months</option>
+        <option>3–6 months</option>
+        <option>6–12 months</option>
+      </select>
+    </article>
+
+    <!-- SECTION 6 -->
+    <article class="card span-3">
+      <h2>الهدف من الاشتراك<br><span class="muted">Purpose of Joining</span></h2>
+
+      <label><input type="checkbox" name="goals[]" value="Career Path"> Career Path</label>
+      <label><input type="checkbox" name="goals[]" value="Build Company"> Build Company</label>
+      <label><input type="checkbox" name="goals[]" value="Skills"> Skills</label>
+      <label><input type="checkbox" name="goals[]" value="Networking"> Networking</label>
+      <label><input type="checkbox" name="goals[]" value="Partner"> Partner</label>
+      <label><input type="checkbox" name="goals[]" value="Investment"> Investment</label>
+      <label><input type="checkbox" name="goals[]" value="Income"> Income</label>
+      <label><input type="checkbox" name="goals[]" value="Representation"> Representation</label>
+    </article>
+
+    <!-- SECTION 7 -->
+    <article class="card span-3">
+      <h2>الجدية والالتزام<br><span class="muted">Commitment</span></h2>
+
+      <select name="weekly_hours" required>
+        <option value="">عدد الساعات أسبوعيًا | Weekly Hours</option>
+        <option>&lt; 5</option>
+        <option>5–10</option>
+        <option>10–20</option>
+        <option>&gt; 20</option>
+      </select>
+
+      <select name="roadmap_commitment" required>
+        <option value="">الالتزام بخارطة طريق | Roadmap Commitment</option>
+        <option>Yes</option>
+        <option>No</option>
+        <option>Depends</option>
+      </select>
+    </article>
+
+    <!-- SECTION 8 -->
+    <article class="card span-3">
+      <h2>التوقعات<br><span class="muted">Expectations</span></h2>
+      <textarea name="expectations" rows="4" placeholder="أين ترى نفسك بعد 12 شهرًا؟"></textarea>
+    </article>
+
+    <!-- SECTION 9 -->
+    <article class="card span-3">
+      <h2>ملاحظات إضافية<br><span class="muted">Additional Notes</span></h2>
+      <textarea name="notes" rows="4"></textarea>
+    </article>
+
+    <!-- SUBMIT -->
+    <article class="card span-3">
+      <button class="cta full" type="submit">
+        Submit Founder Mapping
+      </button>
+    </article>
+
+  </form>
+  <script>
+const form = document.querySelector("form");
+
+form.addEventListener("submit", async function (e) {
+  e.preventDefault(); // normal submit'i DURDUR
+
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    if (response.ok) {
+      // 👉 SADECE BURADA yönlendiriyoruz
+      window.location.href = "thank-you.html";
+    } else {
+      alert("Gönderim başarısız. Lütfen tekrar deneyin.");
+    }
+  } catch (error) {
+    alert("Bağlantı hatası oluştu.");
+  }
+});
+</script>
+
+
+</main>
+
+</body>
+</html>
