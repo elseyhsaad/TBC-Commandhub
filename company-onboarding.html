@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Company Membership – TBC Command Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<main class="container">
+
+  <section class="hero">
+    <div>
+      <div class="badge">COMPANY MEMBERSHIP</div>
+      <h1>تسجيل عضوية شركة</h1>
+      <p class="muted">
+        Company Membership Registration – TBC Command Hub
+      </p>
+    </div>
+  </section>
+
+  <form
+    class="grid"
+    action="https://formspree.io/f/xreepwyd"
+    method="POST"
+  >
+
+    <!-- 1️⃣ BASIC COMPANY INFO -->
+    <article class="card span-3">
+      <h2>المعلومات الأساسية<br><span class="muted">Basic Company Information</span></h2>
+
+      <input name="company_name" placeholder="اسم الشركة التجاري" required>
+      <input name="representative_name" placeholder="اسم الممثل المسؤول" required>
+
+      <select name="position" required>
+        <option value="">المنصب الوظيفي</option>
+        <option>Founder</option>
+        <option>Co-Founder</option>
+        <option>Partner</option>
+        <option>Manager</option>
+        <option>Authorized Representative</option>
+      </select>
+
+      <input name="company_email" type="email" placeholder="البريد الإلكتروني الرسمي" required>
+      <input name="company_phone" placeholder="رقم التواصل (اختياري)">
+      <input name="location" placeholder="الدولة / المدينة" required>
+    </article>
+
+    <!-- 2️⃣ COMPANY STAGE -->
+    <article class="card span-3">
+      <h2>مرحلة الشركة<br><span class="muted">Company Stage</span></h2>
+
+      <select name="company_stage" required>
+        <option value="">مرحلة الشركة الحالية</option>
+        <option>Idea / تأسيس</option>
+        <option>Startup (Less than 1 year)</option>
+        <option>Active Company</option>
+        <option>Scaling Phase</option>
+        <option>Established – Seeking Partnerships</option>
+      </select>
+
+      <select name="activity_duration" required>
+        <option value="">مدة النشاط</option>
+        <option>Not started yet</option>
+        <option>&lt; 6 months</option>
+        <option>6–12 months</option>
+        <option>&gt; 1 year</option>
+      </select>
+    </article>
+
+    <!-- 3️⃣ CORE ACTIVITY -->
+    <article class="card span-3">
+      <h2>مجال النشاط<br><span class="muted">Core Activity</span></h2>
+
+      <label><input type="checkbox" name="activity[]" value="PR"> العلاقات العامة</label>
+      <label><input type="checkbox" name="activity[]" value="Marketing"> التسويق</label>
+      <label><input type="checkbox" name="activity[]" value="Sales"> المبيعات</label>
+      <label><input type="checkbox" name="activity[]" value="Commerce"> التجارة والخدمات</label>
+      <label><input type="checkbox" name="activity[]" value="Technology"> التكنولوجيا / البرمجيات</label>
+      <label><input type="checkbox" name="activity[]" value="Industry"> الصناعة / الإنتاج</label>
+      <label><input type="checkbox" name="activity[]" value="Investment"> الاستثمار</label>
+      <label><input type="checkbox" name="activity[]" value="Education"> التدريب / التعليم</label>
+      <input name="activity_other" placeholder="أخرى (إن وجدت)">
+    </article>
+
+    <!-- 4️⃣ GOALS -->
+    <article class="card span-3">
+      <h2>أهداف الانضمام<br><span class="muted">Joining Goals</span></h2>
+
+      <label><input type="checkbox" name="goals[]" value="Increase Sales">(من 1 الى 3 في السنة) زيادة المبيعات</label>
+      <label><input type="checkbox" name="goals[]" value="Networking"> بناء شبكة علاقات</label>
+      <label><input type="checkbox" name="goals[]" value="Branding"> تطوير العلامة التجارية</label>
+      <label><input type="checkbox" name="goals[]" value="New Markets"> (سوق واحد على الاقل)دخول أسواق جديدة</label>
+      <label><input type="checkbox" name="goals[]" value="Operations"> تنظيم العمليات</label>
+      <label><input type="checkbox" name="goals[]" value="Exposure"> فرص ترويج وظهور</label>
+      <label><input type="checkbox" name="goals[]" value="Partners"> إيجاد شركاء</label>
+      <label><input type="checkbox" name="goals[]" value="Business Model"> اختبار نموذج عمل</label>
+    </article>
+
+    <!-- 5️⃣ GROWTH INDICATORS -->
+    <article class="card span-3">
+      <h2>مؤشرات النمو<br><span class="muted">Growth Indicators</span></h2>
+
+      <label><input type="checkbox" name="growth[]" value="Activity"> زيادة النشاط</label>
+      <label><input type="checkbox" name="growth[]" value="Clients"> توسيع قاعدة العملاء</label>
+      <label><input type="checkbox" name="growth[]" value="Deal Value"> رفع قيمة الصفقات</label>
+      <label><input type="checkbox" name="growth[]" value="Team"> بناء فريق</label>
+      <label><input type="checkbox" name="growth[]" value="International"> التواجد الدولي</label>
+
+      <input name="growth_target" placeholder="رقم إرشادي للنمو (اختياري)">
+    </article>
+
+    <!-- 6️⃣ STRENGTHS -->
+    <article class="card span-3">
+      <h2>نقاط القوة<br><span class="muted">Strengths</span></h2>
+
+      <label><input type="checkbox" name="strengths[]" value="Marketing"> التسويق</label>
+      <label><input type="checkbox" name="strengths[]" value="Sales"> المبيعات</label>
+      <label><input type="checkbox" name="strengths[]" value="Relations"> العلاقات</label>
+      <label><input type="checkbox" name="strengths[]" value="Product"> جودة المنتج</label>
+      <label><input type="checkbox" name="strengths[]" value="Speed"> سرعة التنفيذ</label>
+      <label><input type="checkbox" name="strengths[]" value="Pricing"> التسعير</label>
+      <label><input type="checkbox" name="strengths[]" value="Tech"> الخبرة التقنية</label>
+    </article>
+
+    <!-- 7️⃣ CHALLENGES -->
+    <article class="card span-3">
+      <h2>التحديات الحالية<br><span class="muted">Current Challenges</span></h2>
+
+      <label><input type="checkbox" name="challenges[]" value="Clients"> نقص العملاء</label>
+      <label><input type="checkbox" name="challenges[]" value="Sales"> ضعف المبيعات</label>
+      <label><input type="checkbox" name="challenges[]" value="Marketing"> ضعف الترويج</label>
+      <label><input type="checkbox" name="challenges[]" value="Partnerships"> غياب الشراكات</label>
+      <label><input type="checkbox" name="challenges[]" value="Operations"> ضعف التنظيم</label>
+      <label><input type="checkbox" name="challenges[]" value="Markets"> محدودية الوصول للأسواق</label>
+      <label><input type="checkbox" name="challenges[]" value="HR"> نقص الموارد البشرية</label>
+    </article>
+
+    <!-- 8️⃣ ACTIVATION PATH -->
+    <article class="card span-3">
+      <h2>مسار التفعيل<br><span class="muted">Activation Path</span></h2>
+
+      <label><input type="checkbox" name="activation[]" value="PR"> PR & Networking</label>
+      <label><input type="checkbox" name="activation[]" value="Marketing"> Marketing Activation</label>
+      <label><input type="checkbox" name="activation[]" value="Sales"> Sales Challenges</label>
+      <label><input type="checkbox" name="activation[]" value="Partnerships"> Partnership Programs</label>
+      <label><input type="checkbox" name="activation[]" value="Events"> Events & Exposure</label>
+    </article>
+
+    <!-- 9️⃣ COMMITMENT -->
+    <article class="card span-3">
+      <h2>الالتزام<br><span class="muted">Commitment</span></h2>
+
+      <label>
+        <input type="checkbox" name="commitment" required>
+        نقرّ بأننا ندرك طبيعة المنصة ونلتزم بالتفاعل الإيجابي
+      </label>
+    </article>
+    <!-- 🔗 COMPANY LINK -->
+<article class="card span-3">
+  <h2>رابط الشركة<br><span class="muted">Company Link</span></h2>
+
+  <input
+    type="url"
+    name="company_link"
+    placeholder="موقع الشركة / LinkedIn / أي رابط رسمي"
+  >
+</article>
+
+
+    <!-- SUBMIT -->
+    <article class="card span-3">
+      <button class="cta full" type="submit">
+        Submit Company Registration
+      </button>
+    </article>
+
+  </form>
+
+</main>
+
+<script>
+const form = document.querySelector("form");
+
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (response.ok) {
+      window.location.href = "thank-you.html";
+    } else {
+      alert("فشل الإرسال، حاول مرة أخرى.");
+    }
+  } catch (error) {
+    alert("حدث خطأ في الاتصال.");
+  }
+});
+</script>
+
+</body>
+</html>
