@@ -1,4 +1,4 @@
-:root{:root{
+:root{
   --bg:#000;
   --panel:#0d0d0f;
   --panel2:#121216;
@@ -2753,5 +2753,3 @@ form select option {
     max-width: none;
   }
 }
-
-
