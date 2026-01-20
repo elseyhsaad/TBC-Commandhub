@@ -2753,3 +2753,31 @@ form select option {
     max-width: none;
   }
 }
+/* =========================
+   FORCE TOPBAR VISIBILITY
+========================= */
+
+.topbar {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+
+  min-height: 72px !important; /* ⬅️ KRİTİK */
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    position: fixed !important;   /* ⬅️ sticky KAPAT */
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 100000 !important;   /* ⬅️ her şeyin üstünde */
+    background: rgba(5,5,6,.92);  /* blur bug fix */
+    backdrop-filter: blur(10px);
+  }
+
+  body {
+    padding-top: 80px; /* header yüksekliği kadar */
+  }
+}
