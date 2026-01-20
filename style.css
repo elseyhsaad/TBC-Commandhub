@@ -1,4 +1,4 @@
-:root{
+:root{:root{
   --bg:#000;
   --panel:#0d0d0f;
   --panel2:#121216;
@@ -2458,16 +2458,13 @@ form select option {
   justify-content: center;
 }
 @media (max-width: 768px) {
-  .topbar {
-    justify-content: center !important;
-    align-items: center !important;
-  }
-
-  .brand,
-  .top-actions {
-    display: none !important; /* varsa eski elementler */
+  .topbar:not(.topbar-center) .brand,
+  .topbar:not(.topbar-center) .top-actions {
+    display: flex !important;
   }
 }
+
+
 .pricing-intro {
   font-weight: 800;
   margin-bottom: 6px;
@@ -2756,3 +2753,5 @@ form select option {
     max-width: none;
   }
 }
+
+
