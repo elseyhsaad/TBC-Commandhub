@@ -2413,11 +2413,24 @@ form select option {
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 1.2px;
-  color: #fff;
   text-align: center;
 
-  opacity: .9;
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #ffd36a,
+    #ffffff
+  );
+
+  -webkit-background-clip: text;   /* ⬅️ KRİTİK */
+  background-clip: text;           /* ⬅️ KRİTİK */
+
+  -webkit-text-fill-color: transparent; /* ⬅️ KRİTİK */
+  color: transparent;                    /* ⬅️ KRİTİK */
+
+  opacity: .95;
 }
+
 
 /* Mobile */
 @media (max-width: 520px) {
@@ -2777,4 +2790,7 @@ form select option {
   body {
     padding-top: 80px; /* header yüksekliği kadar */
   }
+}
+.logo-title {
+  text-shadow: 0 0 10px rgba(255,211,106,.25);
 }
