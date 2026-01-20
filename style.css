@@ -2416,10 +2416,7 @@ form select option {
   text-align: center;
 
   background: linear-gradient(
-    90deg,
-    #ffffff,
-    #ffd36a,
-    #ffffff
+   
   );
 
   -webkit-background-clip: text;   /* ⬅️ KRİTİK */
@@ -2442,9 +2439,7 @@ form select option {
 .logo-title {
   background: linear-gradient(
     90deg,
-    #ffffff,
-    #ffd36a,
-    #ffffff
+   
   );
 
   -webkit-text-fill-color: transparent;
