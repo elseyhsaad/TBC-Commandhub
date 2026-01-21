@@ -2772,28 +2772,27 @@ form select option {
 
 @media (max-width: 768px) {
   .topbar {
-    position: fixed !important;   /* ⬅️ sticky KAPAT */
-    top: 0;
-    left: 0;
-    right: 0;
-
-    z-index: 100000 !important;   /* ⬅️ her şeyin üstünde */
-    background: rgba(5,5,6,.92);  /* blur bug fix */
-    
+    position: relative !important; /* fixed yok */
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: auto !important;
   }
 
   body {
-    padding-top: 80px; /* header yüksekliği kadar */
+    padding-top: 0; /* fixed yoksa boşluk da yok */
   }
 }
+
 .logo-title {
   text-shadow: 0 0 10px rgba(255,211,106,.25);
 }
 @media (max-width: 768px) {
   main.container {
-    padding-top: 120px;
+    padding-top: 18px; /* normal kalsın */
   }
 }
+
 .brand-gold {
   font-family: "Cairo", sans-serif;
   font-size: 18px;
@@ -2833,4 +2832,3 @@ form select option {
     background-position: 0% 50%;
   }
 }
-
