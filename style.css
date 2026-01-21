@@ -2789,3 +2789,36 @@ form select option {
 .logo-title {
   text-shadow: 0 0 10px rgba(255,211,106,.25);
 }
+@media (max-width: 768px) {
+  main.container {
+    padding-top: 120px;
+  }
+}
+.brand-gold {
+  font-family: "Cairo", sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #ffd36a,
+    #d6b56b,
+    #ffd36a,
+    #ffffff
+  );
+  background-size: 300% 100%;
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: brandGoldFlow 6s ease-in-out infinite;
+
+  cursor: pointer;
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+.brand-gold:hover {
+  transform: translateY(-1px) scale(1.03);
+  filter: drop-shadow(0 0 8px rgba(214,181,107,0.55));
+}
