@@ -2767,8 +2767,9 @@ form select option {
   visibility: visible !important;
   opacity: 1 !important;
 
-  min-height: 72px !important; /* ⬅️ KRİTİK */
+  min-height: auto; /* zorlamayı kaldır */
 }
+
 
 @media (max-width: 768px) {
   .topbar {
@@ -2832,4 +2833,3 @@ form select option {
     background-position: 0% 50%;
   }
 }
-
