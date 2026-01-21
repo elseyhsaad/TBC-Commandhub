@@ -177,13 +177,46 @@ menu.querySelectorAll(".menu-item").forEach(btn => {
 
     } else if (act === "partnerships") {
       openModal(
-        "Partnerships",
-        `
-        <div class="muted">قسم الشراكات والاتفاقيات (Mock).</div>
-        <p style="margin-top:10px">يمكن إضافة شركاء، تحميل عقود، وتتبع الحالة.</p>
+        "Privacy Policy",
+       `
+       <iframe 
+      src="Privacy-Policy.html"
+      style="width:100%;height:70vh;border:0;"
+      loading="lazy"
+    ></iframe>
         `,
         [{ label: "Close", className: "ghost", onClick: closeModal }]
       );
+      } else if (act === "terms") {
+  openModal(
+    "Terms & Conditions – TBC",
+    `
+    <iframe 
+      src="TermsConditions.html"
+      style="width:100%;height:70vh;border:0;"
+      loading="lazy"
+    ></iframe>
+    `,
+    [
+      { label: "Close", className: "ghost", onClick: closeModal }
+    ]
+  );
+
+} else if (act === "dpo") {
+  openModal(
+    "Data Protection Officer (DPO)",
+    `
+    <iframe 
+      src="dpo.html"
+      style="width:100%;height:70vh;border:0;"
+      loading="lazy"
+    ></iframe>
+    `,
+    [
+      { label: "Close", className: "ghost", onClick: closeModal }
+    ]
+  );
+
 
     } else if (act === "logout") {
       // ✅ LOGOUT CONFIRMATION
