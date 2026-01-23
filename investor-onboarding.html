@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Investor Onboarding – TBC Command Hub</title>
+  <link rel="stylesheet" href="style.css" />
+   <!-- خط عربي -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body class="tbc-ar">
+
+<main class="container">
+
+  <!-- HERO -->
+  <section class="hero hero-premium">
+    <div>
+      <div class="badge">INVESTOR ONBOARDING</div>
+      <h1>ابدأ كشريك، لا كممول</h1>
+      <p class="muted strong">
+        املأ النموذج واحصل على عرض استثماري مخصص لك
+      </p>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <form
+    class="grid"
+    action="https://formspree.io/f/xeealpgn"
+    method="POST"
+  >
+
+      <article class="card span-3">
+      <h2>المعلومات الشخصية<br><span class="muted">Personal Information</span></h2>
+
+      <input name="full_name" placeholder="الاسم الكامل | Full Name" required>
+       <input name="company_email" type="email" placeholder="البريد الإلكتروني الرسمي" required>
+</article>
+    <!-- STEP 1 -->
+    <article class="card span-3">
+      <div class="pill gold">الخطوة 1 من 4</div>
+      <h2>📝 بيانات الاستثمار</h2>
+
+      <p class="muted">قيمة الاستثمار المتوقعة</p>
+
+     <label>
+  <input type="checkbox" name="investment_value[]" value="lt_5000">
+  أقل من 5,000$
+</label>
+
+<label>
+  <input type="checkbox" name="investment_value[]" value="5_15">
+  5,000 – 15,000$
+</label>
+
+<label>
+  <input type="checkbox" name="investment_value[]" value="15_50">
+  15,000 – 50,000$
+</label>
+
+<label>
+  <input type="checkbox" name="investment_value[]" value="gt_50">
+  أكثر من ذلك
+</label>
+
+
+      <input
+        type="number"
+        name="investment_custom"
+        placeholder="في حال أكثر من ذلك – اكتب المبلغ"
+      >
+    </article>
+
+    <!-- STEP 2 -->
+    <article class="card span-3">
+      <div class="pill gold">الخطوة 2 من 4</div>
+      <h2>📍 نطاق المشاركة</h2>
+
+      <p class="muted">عدد نقاط البيع المرغوب المشاركة فيها</p>
+     <label>
+  <input type="checkbox" name="outlets[]" value="1_3">
+  1 – 3
+</label>
+
+<label>
+  <input type="checkbox" name="outlets[]" value="4_10">
+  4 – 10
+</label>
+
+<label>
+  <input type="checkbox" name="outlets[]" value="10_plus">
+  10+
+</label>
+
+
+      <p class="muted" style="margin-top:14px;">المنطقة / السوق المستهدف</p>
+      <label><input type="checkbox" name="region[]" value="Turkey"> تركيا</label>
+      <label><input type="checkbox" name="region[]" value="Gulf"> الخليج</label>
+      <label><input type="checkbox" name="region[]" value="North Africa"> شمال إفريقيا</label>
+      <label><input type="checkbox" name="region[]" value="Europe"> أوروبا</label>
+
+      <input name="region_other" placeholder="أخرى (حدد)">
+    </article>
+
+    <!-- STEP 3 -->
+    <article class="card span-3">
+      <div class="pill gold">الخطوة 3 من 4</div>
+      <h2>🎯 نوع الدعم الاستثماري</h2>
+      <p class="muted">يمكن اختيار أكثر من خيار</p>
+
+      <label><input type="checkbox" name="support[]" value="Hub"> دعم وتطوير Command Hub</label>
+      <label><input type="checkbox" name="support[]" value="POS"> الاستثمار في نقاط البيع</label>
+      <label><input type="checkbox" name="support[]" value="Expansion"> دعم توسّع وانتشار المنصة</label>
+      <label><input type="checkbox" name="support[]" value="Developers"> تمويل مشاريع مطورين مقابل مشاركة أرباح</label>
+      <label><input type="checkbox" name="support[]" value="Logistics"> دعم مزودي الخدمات اللوجستية والصناعية</label>
+
+      <p class="muted" style="margin-top:16px;">⏳ مدة الاستثمار</p>
+ <label>
+  <input type="checkbox" name="duration[]" value="6m">
+  6 أشهر
+</label>
+
+<label>
+  <input type="checkbox" name="duration[]" value="12m">
+  12 شهر
+</label>
+
+<label>
+  <input type="checkbox" name="duration[]" value="24m">
+  24 شهر
+</label>
+
+<label>
+  <input type="checkbox" name="duration[]" value="open">
+  مفتوح (حتى تحقيق الهدف)
+</label>
+
+    </article>
+
+    <!-- STEP 4 -->
+    <article class="card span-3">
+      <div class="pill gold">الخطوة 4 من 4</div>
+      <h2>💸 إدارة الأرباح</h2>
+
+      <p class="muted">آلية السحب المفضلة</p>
+    <label>
+  <input type="checkbox" name="withdraw[]" value="monthly">
+  أرباح شهرية
+</label>
+
+<label>
+  <input type="checkbox" name="withdraw[]" value="quarterly">
+  أرباح ربع سنوية
+</label>
+
+<label>
+  <input type="checkbox" name="withdraw[]" value="yearly">
+  أرباح سنوية
+</label>
+
+<label>
+  <input type="checkbox" name="withdraw[]" value="reinvest">
+  إعادة استثمار الأرباح تلقائيًا
+</label>
+
+
+      <div class="panel" style="margin-top:18px;">
+        <h4>🛠️ خدمات مرافقة</h4>
+        <ul class="list">
+          <li class="li">لوحة تحكم استثمارية كاملة</li>
+          <li class="li">دعم فني وتقارير دورية</li>
+          <li class="li">راحة كاملة بدون تدخل تشغيلي</li>
+          <li class="li">مشاركة في فعالية استثمارية تجارية خاصة</li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- FINAL CTA -->
+    <article class="card span-3">
+      <button type="submit" class="cta full">
+        احصل على عرض استثماري مخصص لك
+      </button>
+    </article>
+
+  </form>
+
+</main>
+
+<script>
+const form = document.querySelector("form");
+
+form.addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const data = new FormData(form);
+
+  try {
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: data,
+      headers: { "Accept": "application/json" }
+    });
+
+    if (res.ok) {
+      // ✅ تحويل مباشر لصفحة الشكر
+      window.location.replace("thank-you.html");
+    } else {
+      alert("حدث خطأ أثناء الإرسال، حاول لاحقًا.");
+    }
+
+  } catch (error) {
+    alert("تعذر الاتصال بالخادم.");
+  }
+});
+</script>
+
+</body>
+</html>
