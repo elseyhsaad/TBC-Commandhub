@@ -2918,6 +2918,20 @@ a.elite-cta[href="founder-mapping.html"] {
   align-items: center;
   justify-content: center;
 }
+.card.pricing-starter {
+  background: linear-gradient(
+    180deg,
+    #2b0b14 0%,
+    #1a070d 35%,
+    #0b0407 65%,
+    #000000 100%
+  );
+
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.75);
+}
+
 
 
 
