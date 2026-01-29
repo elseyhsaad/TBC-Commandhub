@@ -2913,5 +2913,11 @@ form select option {
   .value-list.two{ grid-template-columns: 1fr; }
 }
 
+a.elite-cta[href="founder-mapping.html"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 
 
