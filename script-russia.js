@@ -181,7 +181,7 @@ menu.querySelectorAll(".menu-item").forEach(btn => {
     } else if (act === "terms") {
       openModal(
         "Условия использования – TBC",
-        `<iframe src="Terms-russia.html" style="width:100%;height:70vh;border:0;" loading="lazy"></iframe>`,
+        `<iframe src="terms-russia.html" style="width:100%;height:70vh;border:0;" loading="lazy"></iframe>`,
         [{ label: "Закрыть", className: "ghost", onClick: closeModal }]
       );
 
@@ -513,3 +513,4 @@ renderEvents();
 renderPosts();
 renderSelectedPost();
 recalcOverall();
+
