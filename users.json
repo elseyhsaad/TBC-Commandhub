@@ -7,6 +7,10 @@
     {
       "email": "admin@tbc.com",
       "password": "admin123"
+    },
+    {
+      "email": "admin@tbcrussia.com",
+      "password": "Russia-tbc#123"
     }
   ]
 }
