@@ -174,7 +174,7 @@ menu.querySelectorAll(".menu-item").forEach(btn => {
     } else if (act === "partnerships") {
       openModal(
         "Политика конфиденциальности",
-        `<iframe src="Privacy-Policy-russia.html" style="width:100%;height:70vh;border:0;" loading="lazy"></iframe>`,
+        `<iframe src="privacy-policy-russia.html" style="width:100%;height:70vh;border:0;" loading="lazy"></iframe>`,
         [{ label: "Закрыть", className: "ghost", onClick: closeModal }]
       );
 
@@ -513,4 +513,3 @@ renderEvents();
 renderPosts();
 renderSelectedPost();
 recalcOverall();
-
