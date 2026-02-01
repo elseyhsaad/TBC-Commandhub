@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TBC Command Hub</title>
+  <link rel="stylesheet" href="style-russia.css" />
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+    <div class="logo-wrapper small" aria-label="Company Logo">
+  <img src="logo.png" alt="Логотип TBC Business Club">
+</div>
+
+      <div class="brand-meta">
+       <div class="company-name" id="companyName">
+  TBC Business Club Co
+  <img src="russia-map-drawing-black-and-white-clipart.png" alt="Турция" class="country-icon">
+</div>
+
+     <div class="tier">
+  <span class="pill pink">Доступ в VIP-зону</span>
+
+  <span class="pill point-pill">
+    <span class="point-value">1</span>
+    <img src="point.png" class="point-icon" alt="Баллы">
+  </span>
+</div>
+
+
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="changeLogoBtn" title="Сменить логотип">🖼️</button>
+
+      <div class="dropdown">
+        <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+          ⚙️ Меню компании
+          <span class="chev">▾</span>
+        </button>
+
+        <div class="menu" id="menu" role="menu" aria-hidden="true">
+          <button class="menu-item" data-action="profile">История Command Hub</button>
+          <button class="menu-item" data-action="privacy">О нас</button>
+          <button class="menu-item" data-action="partnerships">Политика конфиденциальности</button>
+           <button class="menu-item" data-action="terms">Условия и положения</button>
+            <button class="menu-item" data-action="dpo">Ответственный по защите данных (DPO)</button>
+          <div class="sep"></div>
+          <button class="menu-item danger" data-action="logout">Выйти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    
+    <section class="hero">
+      <div>
+        <div class="badge">TBC COMMAND HUB</div>
+      <h1>Добро пожаловать в панель управления вашей компании</h1>
+        <p class="muted">Управляйте продажами, мероприятиями, отчетами и общением с администрацией клуба TBC.</p>
+      </div>
+      <a
+  class="cta"
+  href="https://tbusinessclub.com/members/"
+  target="_blank"
+  rel="noopener"
+>
+  ВСТУПИТЬ
+</a>
+
+    </section>
+
+ 
+    <section class="grid">
+
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Продажи и дистрибуция</h2>
+          <span class="chip">В эфире</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Текущие точки продаж</div>
+            <div class="v" id="salesPoints">2000</div>
+            <div class="s muted">Количество текущих точек продаж</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть – Агенты</div>
+            <div class="v" id="agentsCount">500</div>
+            <div class="s muted">Агенты</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть – Разработчики</div>
+            <div class="v" id="devsCount">1500</div>
+            <div class="s muted">Разработчики</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть – Инфлюенсеры</div>
+            <div class="v" id="influencersCount">950</div>
+            <div class="s muted">Инфлюенсеры</div>
+          </div>
+        </div>
+
+        <div class="subgrid">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Активные промо-кампании</h3>
+      
+            </div>
+
+            <ul class="list" id="campaignList">
+         
+            </ul>
+          </div>
+
+          <div class="panel" id="openProjection">
+            <div class="panel-head">
+              <h3>Годовая цель продаж</h3>
+              <span class="pill gold" id="annualTargetText">€2,000,000</span>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span class="muted">Достигнуто</span>
+                <span class="strong" id="annualAchievedText">€ 1,750,000</span>
+              </div>
+
+              <div class="progress">
+                <div class="bar" id="annualBar" style="width: 0%"></div>
+              </div>
+
+              <div class="progress-meta">
+                <span class="muted">Прогресс</span>
+                <span class="strong" id="annualPercent">0%</span>
+              </div>
+            </div>
+
+         
+              <div class="mini-chart">
+  <div class="chart-title muted">Ежемесячный прогресс продаж</div>
+  <div class="bars" id="annualBars">
+  <div class="bar-item" data-height="60"><span>Маркет.</span></div>
+  <div class="bar-item" data-height="75"><span>PR</span></div>
+  <div class="bar-item" data-height="45"><span>Разраб.</span></div>
+  <div class="bar-item" data-height="65"><span>Партн.</span></div>
+  <div class="bar-item" data-height="40"><span>Инкуб.</span></div>
+  <div class="bar-item" data-height="100"><span>Капитал</span></div>
+</div>
+</div>
+
+</div>
+
+       
+           
+          </div>
+        </div>
+      </article>
+
+     
+      <article class="card">
+        <div class="card-head">
+          <h2>Мероприятия</h2>
+          <span class="chip violet">Календарь</span>
+        </div>
+
+        <div class="event-block">
+          <h3>Закрытые мероприятия</h3>
+          <ul class="list" id="privateEvents"></ul>
+        </div>
+
+        <div class="event-block">
+          <h3>Публичные мероприятия клуба TBC</h3>
+          <ul class="list" id="publicEvents"></ul>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2>Общий уровень прогресса</h2>
+          <span class="chip gold">Оценка</span>
+        </div>
+
+        <div class="big">
+          <div class="big-num" id="overallPercent">60%</div>
+          <div class="muted">Связано с достижением целей (продажи – активность – соблюдение)</div>
+        </div>
+
+        <div class="progress">
+          <div class="bar glow" id="overallBar" style="width:0%"></div>
+        </div>
+
+        <div class="split">
+          <div class="mini">
+            <div class="k muted">Продажи</div>
+            <div class="v" id="scoreSales">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Активность</div>
+            <div class="v" id="scoreActivity">55%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Соблюдение</div>
+            <div class="v" id="scoreCommitment">40%</div>
+          </div>
+        </div>
+
+        
+      </article>
+
+   
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Панель отчетов</h2>
+          <span class="chip pink">Экспорт</span>
+        </div>
+
+        <div class="reports">
+          <div class="report">
+            <div class="r-title">Отчет по эффективности</div>
+            <div class="muted">Отчеты эффективности</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="performance" data-format="pdf">Открыть PDF</button>
+              <button class="mini-btn" data-report="performance" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Отчет по продажам</div>
+            <div class="muted">Отчеты по продажам</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="sales" data-format="pdf">Открыть PDF</button>
+              <button class="mini-btn" data-report="sales" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Отчет по кампаниям</div>
+            <div class="muted">Отчеты по кампаниям</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="campaigns" data-format="pdf">Открыть PDF</button>
+              <button class="mini-btn" data-report="campaigns" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Общий отчет по активности</div>
+            <div class="muted">Отчеты общей активности</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="activity" data-format="pdf">Открыть PDF</button>
+              <button class="mini-btn" data-report="activity" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note muted" id="reportNote">Выберите Открыть/Скачать — появится простое уведомление (симуляция).</div>
+      </article>
+
+     
+      <article class="card span-3">
+        <div class="card-head">
+          <h2>Связь с администрацией</h2>
+          <span class="chip">Читать / Комментировать / Подтвердить</span>
+        </div>
+
+        <div class="admin-grid">
+          <section class="posts">
+            <div class="panel-head">
+              <h3>Публикации администрации</h3>
+              <span class="pill">Публикует только администрация</span>
+            </div>
+            <ul class="post-list" id="postList"></ul>
+          </section>
+
+          <section class="interaction">
+            <div class="panel-head">
+              <h3>Система комментариев</h3>
+              <span class="pill pink">Компания может комментировать</span>
+            </div>
+
+            <div class="selected" id="selectedPostBox">
+              <div class="muted">Выберите публикацию слева, чтобы увидеть детали и оставить комментарий.</div>
+            </div>
+
+            <form class="comment-form" id="commentForm">
+              <textarea id="commentInput" placeholder="Напишите ваш комментарий здесь..." rows="3" required></textarea>
+              <div class="row">
+                <button class="cta small" type="submit" id="sendWhatsappBtn">Отправить комментарий</button>
+                <button class="ghost small" type="button" id="ackBtn" disabled>✅ Подтвердить</button>
+              </div>
+              <div class="muted tiny">Права доступа: публикация — только администрация, комментарии — для компаний.</div>
+            </form>
+
+            <div class="comments">
+              <div class="panel-head">
+                <h3>Комментарии</h3>
+                <span class="pill gold" id="commentCount">0</span>
+              </div>
+              <ul class="comment-list" id="commentList"></ul>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+
+  <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Окно</h3>
+        <button class="icon-btn" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="script-russia.js"></script>
+
+<script>
+/* ===== LOGIN KONTROL ===== */
+
+
+/* ===== BAR ANİMASYONU (SCROLL İLE) ===== */
+const bars = document.querySelectorAll(".bar-item");
+
+bars.forEach(bar => {
+  bar.style.height = "0%"; // sıfırdan başlasın
+});
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        const bar = entry.target;
+        const target = bar.dataset.height;
+
+        setTimeout(() => {
+          bar.style.height = target + "%";
+        }, index * 250); // yavaş ve sırayla
+
+        observer.unobserve(bar); // bir kere çalışsın
+      }
+    });
+  },
+  {
+    threshold: 0.4 // %40 görünce tetiklensin
+  }
+);
+
+bars.forEach(bar => observer.observe(bar));
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const panel = document.getElementById("openProjection");
+  const popup = document.getElementById("projectionPopup");
+  const close = document.getElementById("closePopup");
+
+  if(!panel){
+    console.error("openProjection bulunamadı");
+    return;
+  }
+
+  panel.style.cursor = "pointer";
+
+  panel.addEventListener("click", () => {
+    popup.classList.add("active");
+  });
+
+  close.addEventListener("click", (e) => {
+    e.stopPropagation();
+    popup.classList.remove("active");
+  });
+
+  popup.addEventListener("click", (e) => {
+    if(e.target === popup){
+      popup.classList.remove("active");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("welcomeModal");
+  const closeBtn = document.getElementById("closeWelcome");
+
+  // HER SAYFA AÇILIŞINDA GÖSTER
+  modal.classList.remove("hidden");
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Arka plana tıklayınca kapansın
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+});
+</script>
+
+<!-- Projection Popup -->
+<div class="popup-overlay" id="projectionPopup">
+  <div class="popup-box">
+    <button class="popup-close" id="closePopup">✕</button>
+    <iframe src="projection-russia.html" frameborder="0"></iframe>
+  </div>
+</div>
+<!-- Welcome Modal -->
+<div class="modal-backdrop hidden" id="welcomeModal">
+  <div class="modal welcome-modal">
+    <div class="modal-body welcome-body">
+
+      <img src="logo.png" alt="Логотип TBC" class="welcome-logo">
+
+      <p class="welcome-ar">
+        Добро пожаловать в пространство, которое принадлежит вам в этом мире! <br>
+        Как основателю успешного проекта и будущего, которое видят все вокруг.
+      </p>
+
+      <p class="welcome-en">
+        Добро пожаловать в пространство, которое принадлежит вам в этом мире!<br>
+        Как основателю успешного проекта и будущего, которое видят все вокруг.
+      </p>
+
+      <button class="cta full" id="closeWelcome">Войти в панель</button>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
