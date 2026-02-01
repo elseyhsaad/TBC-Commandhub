@@ -332,6 +332,20 @@
 
   <script src="script-russia.js"></script>
 
+  <script>
+/* ===== LOGIN KONTROL ===== */
+(function () {
+  const isLoggedIn = localStorage.getItem("tbc_logged_in");
+  const userEmail  = localStorage.getItem("tbc_user_email");
+
+  if (isLoggedIn !== "true" || !userEmail) {
+    // Login yoksa geri gönder
+    window.location.replace("login.html");
+  }
+})();
+</script>
+
+
 <script>
 /* ===== LOGIN KONTROL ===== */
 
@@ -449,3 +463,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
