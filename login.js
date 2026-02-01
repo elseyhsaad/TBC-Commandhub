@@ -15,12 +15,11 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   this.querySelector(".btn-login").disabled = true;
 
   setTimeout(() => {
-   
-    // window.location.href = "../dashboard/index.html";
     this.querySelector(".btn-login").textContent = "LOGIN";
     this.querySelector(".btn-login").disabled = false;
   }, 1200);
 });
+
 const form = document.getElementById("loginForm");
 const errorBox = document.getElementById("loginError");
 
@@ -51,11 +50,16 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Başarılı giriş
+    // ✅ Başarılı giriş
     localStorage.setItem("tbc_logged_in", "true");
     localStorage.setItem("tbc_user_email", email);
 
-    window.location.href = "index.html";
+    // ✅ RUSSIA KONTROLÜ
+    if (email === "admin@tbcrussia.com") {
+      window.location.href = "index-russia.html";
+    } else {
+      window.location.href = "index.html";
+    }
 
   } catch {
     showError("Login system is temporarily unavailable.");
