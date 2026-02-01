@@ -55,7 +55,7 @@ form.addEventListener("submit", async (e) => {
     localStorage.setItem("tbc_user_email", email);
 
     // ✅ RUSSIA KONTROLÜ
-    if (email === "admin@tbcrussia.com") {
+    if (email === "admin@tbc.ru") {
       window.location.href = "index-russia.html";
     } else {
       window.location.href = "index.html";
@@ -70,3 +70,4 @@ function showError(message){
   errorBox.textContent = message;
   errorBox.style.display = "block";
 }
+
