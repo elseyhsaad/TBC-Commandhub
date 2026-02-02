@@ -9,9 +9,12 @@
       "password": "admin123"
     },
     {
-      "email": "admin@tbc.ru",
+      "email": "admin@tbcrussia.com",
       "password": "Russia-tbc#123"
+    },
+    {
+      "email": "tbc@goldconnect.com",
+      "password": "gold123"
     }
   ]
 }
-
