@@ -24,7 +24,7 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("users.json");
     const data = await res.json();
 
-    const user = data.users.find(
+    const user = data.user.find(
       u => u.email === email && u.password === password
     );
 
@@ -64,3 +64,4 @@ function resetButton() {
   loginBtn.textContent = "LOGIN";
   loginBtn.disabled = false;
 }
+
