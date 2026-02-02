@@ -1,27 +1,6 @@
-document.getElementById("loginForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  // Mock login
-  const email = this.querySelector("input[type=email]").value;
-  const pass = this.querySelector("input[type=password]").value;
-
-  if (!email || !pass) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  // Fake success
-  this.querySelector(".btn-login").textContent = "VERIFYING...";
-  this.querySelector(".btn-login").disabled = true;
-
-  setTimeout(() => {
-    this.querySelector(".btn-login").textContent = "LOGIN";
-    this.querySelector(".btn-login").disabled = false;
-  }, 1200);
-});
-
 const form = document.getElementById("loginForm");
 const errorBox = document.getElementById("loginError");
+const loginBtn = form.querySelector(".btn-login");
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -37,8 +16,12 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  // Button state
+  loginBtn.textContent = "VERIFYING...";
+  loginBtn.disabled = true;
+
   try {
-    const res = await fetch("users.json");
+    const res = await fetch("user.json");
     const data = await res.json();
 
     const user = data.users.find(
@@ -47,6 +30,7 @@ form.addEventListener("submit", async (e) => {
 
     if (!user) {
       showError("Invalid email or password.");
+      resetButton();
       return;
     }
 
@@ -54,20 +38,29 @@ form.addEventListener("submit", async (e) => {
     localStorage.setItem("tbc_logged_in", "true");
     localStorage.setItem("tbc_user_email", email);
 
-    // ✅ RUSSIA KONTROLÜ
-    if (email === "admin@tbc.ru") {
+    // ✅ YÖNLENDİRMELER
+    if (email === "admin@tbcrussia.com") {
       window.location.href = "index-russia.html";
-    } else {
+    }
+    else if (email === "tbc@goldconnect.com") {
+      window.location.href = "jewelery.html";
+    }
+    else {
       window.location.href = "index.html";
     }
 
-  } catch {
+  } catch (err) {
     showError("Login system is temporarily unavailable.");
+    resetButton();
   }
 });
 
-function showError(message){
+function showError(message) {
   errorBox.textContent = message;
   errorBox.style.display = "block";
 }
 
+function resetButton() {
+  loginBtn.textContent = "LOGIN";
+  loginBtn.disabled = false;
+}
