@@ -1,6 +1,6 @@
 // ---------- Mock Data ----------
 let state = {
-  annualTarget: 1250000,
+  annualTarget: 1000000,
   annualAchieved: 640000,
 
   campaigns: [
@@ -60,7 +60,7 @@ function applyManualAnnualPercent(){
   const p = Math.max(0, Math.min(100, MANUAL_ANNUAL_PERCENT));
   state.annualAchieved = (state.annualTarget * p) / 100;
 }
-const MANUAL_ANNUAL_PERCENT = 70;
+const MANUAL_ANNUAL_PERCENT = 7.4;
 
 
 // ---------- Helpers ----------
@@ -69,7 +69,7 @@ const $ = (id) => document.getElementById(id);
 function moneyEUR(n){
   // simple format (no i18n libs)
   const s = Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return "€ " + s;
+  return "$ " + s;
 }
 
 function toast(msg){
