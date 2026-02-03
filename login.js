@@ -45,6 +45,12 @@ form.addEventListener("submit", async (e) => {
     else if (email === "tbc@goldconnect.com") {
       window.location.href = "jewelery.html";
     }
+    else if (email === "tbcadmin@goldconnect.ru") {
+      window.location.href = "jewelery-russia.html";
+    }
+     else if (email === "tbcadmin@goldconnect.uk") {
+      window.location.href = "jewelery-uk.html";
+    }
     else {
       window.location.href = "index.html";
     }
