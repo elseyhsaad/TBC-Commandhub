@@ -3218,3 +3218,80 @@ html[dir="rtl"] #pendingOrdersModal .order-row {
     opacity: .6;
   }
 }
+/* =========================
+   🔧 MOBILE FINAL OVERRIDE
+========================= */
+
+@media (max-width: 768px) {
+
+  /* GRID – tek kolon */
+  .grid,
+  .reports,
+  .value-list.two {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats,
+  .stats-2x2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .span-2,
+  .span-3 {
+    grid-column: auto !important;
+  }
+
+  /* TOPBAR – sadeleştir */
+  .topbar {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .brand,
+  .top-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* HERO – taşmayı kes */
+  .hero,
+  .hero-premium,
+  .hero-final-cta {
+    padding: 20px 16px;
+    gap: 14px;
+  }
+
+  .hero h1,
+  .hero-final-cta h2 {
+    font-size: 24px;
+    line-height: 1.4;
+  }
+
+  /* BUTTONS – full width */
+  .cta,
+  .ghost,
+  .mini-btn,
+  .elite-cta {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* LOGO */
+  .logo-wrapper.big {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* CARD spacing */
+  .card {
+    padding: 14px;
+  }
+
+  /* MODAL */
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
