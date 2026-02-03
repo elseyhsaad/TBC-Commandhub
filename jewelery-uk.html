@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="eng" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TBC Command Hub</title>
+  <link rel="stylesheet" href="style-gold-uk.css" />
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+    <div class="logo-wrapper small" aria-label="Company Logo">
+  <img src="logo.png" alt="TBC Business Club Logo">
+</div>
+
+      <div class="brand-meta">
+       <div class="company-name" id="companyName">
+  TBC Business Club Co
+  <img src="uk1-removebg-preview.png" alt="Turkey" class="country-icon">
+</div>
+
+     <div class="tier">
+  <span class="pill pink">VIP Lounge Access</span>
+
+  <span class="pill point-pill">
+    <span class="point-value">1</span>
+    <img src="point.png" class="point-icon">
+  </span>
+</div>
+
+
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="changeLogoBtn" title="Change Logo">🖼️</button>
+
+      <div class="dropdown">
+        <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+          ⚙️ Company Menu
+          <span class="chev">▾</span>
+        </button>
+
+        <div class="menu" id="menu" role="menu" aria-hidden="true">
+          <button class="menu-item" data-action="profile">Command Hub Story</button>
+          <button class="menu-item" data-action="privacy">About Us</button>
+          <button class="menu-item" data-action="partnerships">Privacy Policy</button>
+           <button class="menu-item" data-action="terms">Terms & Conditions</button>
+            <button class="menu-item" data-action="dpo">Data Protection Officer (DPO)</button>
+          <div class="sep"></div>
+          <button class="menu-item danger" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    
+    <section class="hero">
+      <div>
+        <div class="badge">TBC COMMAND HUB</div>
+<h1>Welcome to your company dashboard</h1>
+<p class="muted">
+  Manage sales, events, reports, and communicate with TBC Club management.
+</p>
+      </div>
+      <a
+  class="cta"
+  href="https://tbusinessclub.com/members/"
+  target="_blank"
+  rel="noopener"
+>
+  JOIN THE CLUB
+</a>
+
+    </section>
+
+ 
+    <section class="grid">
+
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Sales & Distribution</h2>
+          <span class="chip">Live</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Current Sales Points-lobby</div>
+            <div class="v" id="salesPoints">2000</div>
+            <div class="s muted">   </div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Agents</div>
+            <div class="v" id="agentsCount">1800</div>
+            <div class="s muted"></div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Developers</div>
+            <div class="v" id="devsCount">1540</div>
+            <div class="s muted"></div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Network – Influencers</div>
+            <div class="v" id="influencersCount">500</div>
+            <div class="s muted"></div>
+          </div>
+        </div>
+        <div class="stats">
+
+  <div class="stat">
+    <div class="k">Monthly Sales</div>
+    <div class="v" id="monthlySales">250,000$</div>
+    <div class="s muted">  </div>
+  </div>
+
+  <div class="stat">
+    <div class="k">Gold (gr)</div>
+    <div class="v" id="activeCampaigns">1592G</div>
+    <div class="s muted">  </div>
+  </div>
+
+  <div class="stat">
+    <div class="k">New Partners</div>
+    <div class="v" id="newPartners">1200</div>
+    <div class="s muted"> </div>
+  </div>
+
+  <div class="stat">
+    <div class="k">Conversion Rate</div>
+    <div class="v" id="conversionRate">20%</div>
+    <div class="s muted"> </div>
+  </div>
+  <div class="stat">
+  <div class="k">Monthly Sales</div>
+  <div class="v" id="totalRevenue">10,000$</div>
+  <div class="s muted">   </div>
+</div>
+
+
+
+<div class="stat">
+  <div class="k">Silver (gr)</div>
+  <div class="v" id="avgDeal">3096G</div>
+  <div class="s muted">  </div>
+</div>
+<div class="stat">
+  <div class="k">Active Clients</div>
+  <div class="v" id="activeClients">5000</div>
+  <div class="s muted"> </div>
+</div>
+
+<div class="stat">
+  <div class="k">Growth Rate</div>
+  <div class="v" id="growthRate">63%</div>
+  <div class="s muted"> </div>
+</div>
+
+
+</div>
+
+
+
+        <div class="subgrid">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Active Challenge Campaigns</h3>
+      
+            </div>
+
+            <ul class="list" id="campaignList">
+         
+            </ul>
+          </div>
+
+          <div class="panel" id="openProjection">
+            <div class="panel-head">
+              <h3>Annual Sales Target</h3>
+              <span class="pill gold" id="annualTargetText">€ 1,250,000</span>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span class="muted">Achieved</span>
+                <span class="strong" id="annualAchievedText">€ 640,000</span>
+              </div>
+
+              <div class="progress">
+                <div class="bar" id="annualBar" style="width: 0%"></div>
+              </div>
+
+              <div class="progress-meta">
+                <span class="muted">Progress</span>
+                <span class="strong" id="annualPercent">0%</span>
+              </div>
+            </div>
+            
+
+         
+              <div class="mini-chart">
+  <div class="chart-title muted">Monthly Sales Progress</div>
+  <div class="bars" id="annualBars">
+  <div class="bar-item" data-height="60"><span>Mark</span></div>
+  <div class="bar-item" data-height="75"><span>PR</span></div>
+  <div class="bar-item" data-height="45"><span>Dev</span></div>
+  <div class="bar-item" data-height="65"><span>PRF</span></div>
+  <div class="bar-item" data-height="40"><span>İNC</span></div>
+  <div class="bar-item" data-height="100"><span>CAP</span></div>
+</div>
+</div>
+
+</div>
+
+       
+           
+          </div>
+        </div>
+      </article>
+
+     
+      <article class="card">
+        <div class="card-head">
+          <h2> Capital Protection Forum</h2>
+          <span class="chip violet">Calendar</span>
+        </div>
+
+        <div class="event-block">
+          <h3>Private Events</h3>
+          <ul class="list" id="privateEvents"></ul>
+        </div>
+
+        <div class="event-block">
+          <h3>TBC Public Club Events</h3>
+          <ul class="list" id="publicEvents"></ul>
+        </div>
+
+        <div class="stats stats-2x2">
+
+<div class="stat clickable" id="completedOrdersStat">
+  <div class="k">Completed Orders</div>
+  <div class="v">4</div>
+  <div class="s muted"> </div>
+</div>
+
+
+<div class="stat clickable" id="pendingOrdersStat">
+  <div class="k">Pending Orders</div>
+  <div class="v">2</div>
+  <div class="s muted">  </div>
+</div>
+
+
+<div class="stat clickable" id="yourGoldOrdersStat">
+  <div class="k">Your Orders (Gold)</div>
+  <div class="v">1G</div>
+  <div class="s muted">  </div>
+</div>
+
+
+<div class="stat clickable" id="yourSilverOrdersStat">
+  <div class="k">Your Orders (Silver)</div>
+  <div class="v">3G</div>
+  <div class="s muted">  </div>
+</div>
+
+<div class="stat clickable" id="branchGoldClientsStat">
+  <div class="k">Branch Clients (Gold)</div>
+  <div class="v">1</div>
+  <div class="s muted"> </div>
+</div>
+
+
+<div class="stat clickable" id="branchSilverClientsStat">
+  <div class="k">Branch Clients (Silver)</div>
+  <div class="v">3</div>
+  <div class="s muted"> </div>
+</div>
+
+
+</div>
+
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2>Overall Progress Level</h2>
+          <span class="chip gold">Score</span>
+        </div>
+
+        <div class="big">
+          <div class="big-num" id="overallPercent">0%</div>
+<div class="muted">Related to goal achievement (sales – activity – commitment)</div>
+        </div>
+
+        <div class="progress">
+          <div class="bar glow" id="overallBar" style="width:0%"></div>
+        </div>
+
+        <div class="split">
+          <div class="mini">
+            <div class="k muted">Sales</div>
+            <div class="v" id="scoreSales">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Activity</div>
+            <div class="v" id="scoreActivity">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Commitment</div>
+            <div class="v" id="scoreCommitment">0%</div>
+          </div>
+        </div>
+
+        
+      </article>
+
+   
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Reports Dashboard</h2>
+          <span class="chip pink">Export</span>
+        </div>
+
+        <div class="reports">
+          <div class="report">
+            <div class="r-title">Performance Report</div>
+            <div class="muted"> </div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="performance" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="performance" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Sales Report</div>
+            <div class="muted"> </div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="sales" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="sales" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Campaigns Report</div>
+            <div class="muted"> </div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="campaigns" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="campaigns" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">General Activity Report</div>
+            <div class="muted">  </div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="activity" data-format="pdf">View PDF</button>
+              <button class="mini-btn" data-report="activity" data-format="xlsx">Download Excel</button>
+            </div>
+          </div>
+        </div>
+
+<div class="note muted" id="reportNote">
+  Select View/Download and a simple notification will appear (simulation).
+</div>
+      </article>
+
+     
+      <article class="card span-3">
+        <div class="card-head">
+          <h2>Admin Communication</h2>
+          <span class="chip">Read / Comment / Acknowledge</span>
+        </div>
+
+        <div class="admin-grid">
+          <section class="posts">
+            <div class="panel-head">
+              <h3>Admin Posts</h3>
+<span class="pill">Posts by admin only</span>
+            </div>
+            <ul class="post-list" id="postList"></ul>
+          </section>
+
+          <section class="interaction">
+            <div class="panel-head">
+              <h3>Comments System</h3>
+              <span class="pill pink">  Comments by admin only</span>
+            </div>
+
+            <div class="selected" id="selectedPostBox">
+<div class="muted">Choose a post on the left to view details and comment.</div>
+            </div>
+
+            <form class="comment-form" id="commentForm">
+              <textarea id="commentInput" placeholder="Type Your Comment Here..." rows="3" required></textarea>
+              <div class="row">
+                <button class="cta small" type="submit" id="sendWhatsappBtn">Send Comment</button>
+                <button class="ghost small" type="button" id="ackBtn" disabled>✅ Acknowledge</button>
+              </div>
+<div class="muted tiny">Permissions: posts are restricted to admin, comments are allowed for companies.</div>
+            </form>
+
+            <div class="comments">
+              <div class="panel-head">
+                <h3>Comments</h3>
+                <span class="pill gold" id="commentCount">0</span>
+              </div>
+              <ul class="comment-list" id="commentList"></ul>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+
+  <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="icon-btn" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="script-uk.js"></script>
+<script>
+/* ===== LOGIN KONTROL ===== */
+if (localStorage.getItem("tbc_logged_in") !== "true") {
+  window.location.href = "login.html";
+}
+
+/* ===== BAR ANİMASYONU (SCROLL İLE) ===== */
+const bars = document.querySelectorAll(".bar-item");
+
+bars.forEach(bar => {
+  bar.style.height = "0%"; // sıfırdan başlasın
+});
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        const bar = entry.target;
+        const target = bar.dataset.height;
+
+        setTimeout(() => {
+          bar.style.height = target + "%";
+        }, index * 250); // yavaş ve sırayla
+
+        observer.unobserve(bar); // bir kere çalışsın
+      }
+    });
+  },
+  {
+    threshold: 0.4 // %40 görünce tetiklensin
+  }
+);
+
+bars.forEach(bar => observer.observe(bar));
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const panel = document.getElementById("openProjection");
+  const popup = document.getElementById("projectionPopup");
+  const close = document.getElementById("closePopup");
+
+  if(!panel){
+    console.error("openProjection bulunamadı");
+    return;
+  }
+
+  panel.style.cursor = "pointer";
+
+  panel.addEventListener("click", () => {
+    popup.classList.add("active");
+  });
+
+  close.addEventListener("click", (e) => {
+    e.stopPropagation();
+    popup.classList.remove("active");
+  });
+
+  popup.addEventListener("click", (e) => {
+    if(e.target === popup){
+      popup.classList.remove("active");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("welcomeModal");
+  const closeBtn = document.getElementById("closeWelcome");
+
+  // HER SAYFA AÇILIŞINDA GÖSTER
+  modal.classList.remove("hidden");
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Arka plana tıklayınca kapansın
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+});
+</script>
+
+<script>const stat = document.getElementById("completedOrdersStat");
+const modal = document.getElementById("completedOrdersModal");
+const closeBtn = document.getElementById("closeCompletedOrders");
+
+if (stat && modal && closeBtn) {
+
+  stat.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // arka plana tıklayınca kapansın
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
+
+}
+</script>
+
+<!-- Projection Popup -->
+<div class="popup-overlay" id="projectionPopup">
+  <div class="popup-box">
+    <button class="popup-close" id="closePopup">✕</button>
+    <iframe src="projection.html" frameborder="0"></iframe>
+  </div>
+</div>
+<!-- Welcome Modal -->
+<div class="modal-backdrop hidden" id="welcomeModal">
+  <div class="modal welcome-modal">
+    <div class="modal-body welcome-body">
+
+      <img src="logo.png" alt="TBC Logo" class="welcome-logo">
+
+    
+
+      <p class="welcome-en">
+        Welcome to the space you own in this world!<br>
+        As the founder of a successful project and a future that everyone around you can see.
+      </p>
+
+      <button class="cta full" id="closeWelcome">Enter Dashboard</button>
+
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("completedOrdersStat");
+  const modal = document.getElementById("completedOrdersModal");
+  const closeBtn = document.getElementById("closeCompletedOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  /* === AÇ === */
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation(); // diğer popup'lara bulaşmasın
+    modal.classList.remove("hidden");
+  });
+
+  /* === KAPAT (X) === */
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  /* === ARKA PLANA TIKLANIRSA KAPAT === */
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("pendingOrdersStat");
+  const modal = document.getElementById("pendingOrdersModal");
+  const closeBtn = document.getElementById("closePendingOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  /* فتح */
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  /* إغلاق بزر X */
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  /* إغلاق عند الضغط خارج الصندوق */
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("yourGoldOrdersStat");
+  const modal = document.getElementById("yourGoldOrdersModal");
+  const closeBtn = document.getElementById("closeYourGoldOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("yourSilverOrdersStat");
+  const modal = document.getElementById("yourSilverOrdersModal");
+  const closeBtn = document.getElementById("closeYourSilverOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("branchGoldClientsStat");
+  const modal = document.getElementById("branchGoldClientsModal");
+  const closeBtn = document.getElementById("closeBranchGoldClients");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("branchSilverClientsStat");
+  const modal = document.getElementById("branchSilverClientsModal");
+  const closeBtn = document.getElementById("closeBranchSilverClients");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+
+
+<div class="modal-backdrop hidden" id="completedOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Completed Orders</h3>
+      <button class="icon-btn" id="closeCompletedOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- HEADER -->
+  <div class="order-row header">
+    <span>Client</span>
+    <span>Quantity</span>
+    <span>Operation Type</span>
+    <span>Order Status</span>
+  </div>
+
+  <!-- ROWS -->
+  <div class="order-row">
+    <span>24RUX2340</span>
+    <span>12</span>
+    <span>Buy</span>
+    <span class="status done">Completed</span>
+  </div>
+
+  <div class="order-row">
+    <span>22TRX1299</span>
+    <span>5</span>
+    <span>Sell</span>
+    <span class="status pending">Pending</span>
+  </div>
+
+  <div class="order-row">
+    <span>21TRX1288</span>
+    <span>20</span>
+    <span>Buy</span>
+    <span class="status done">Completed</span>
+  </div>
+
+      <div class="order-row">
+        <span>21TRX1277</span>
+        <span>8</span>
+        <span>Sell</span>
+        <span class="status pending"> Pending</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop hidden" id="pendingOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+<h3>Pending Orders</h3>
+      <button class="icon-btn" id="closePendingOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+    <div class="order-row header">
+  <span class="status">Status</span>
+  <span class="client-name">Client Name</span>
+  <span class="branch">Branch</span>
+  <span class="qty">Quantity</span>
+  <span class="type">Operation Type</span>
+</div>
+
+<!-- ROW 1 -->
+<div class="order-row">
+  <span class="client-name">24TRX2002</span>
+  <span>Istanbul Branch</span>
+  <span>10</span>
+  <span>Buy</span>
+  <span class="status pending">Pending</span>
+</div>
+
+<!-- ROW 2 -->
+<div class="order-row">
+  <span class="client-name">21TRX2098</span>
+  <span>Istanbul Branch</span>
+  <span>10</span>
+  <span>Buy</span>
+  <span class="status pending">Pending</span>
+</div>
+
+
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="yourGoldOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>  Your Orders (Gold)</h3>
+      <button class="icon-btn" id="closeYourGoldOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+<div class="order-row header">
+  <span>Client</span>
+  <span>Operation Type</span>
+  <span>Quantity</span>
+  <span>Date</span>
+</div>
+
+<!-- ROW -->
+<div class="order-row">
+  <span class="client-name">24TRX12000</span>
+  <span>Buy</span>
+  <span>1G</span>
+  <span>2018-10-11</span>
+</div>
+
+
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop hidden" id="yourSilverOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+     <h3>  Your Orders (Silver)</h3>
+      <button class="icon-btn" id="closeYourSilverOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+    <div class="order-row header">
+  <span>Client</span>
+  <span>Operation Type</span>
+  <span>Quantity</span>
+  <span>Date</span>
+</div>
+
+<!-- ROW -->
+<div class="order-row">
+  <span class="client-name">999TRX1245</span>
+  <span>Sell</span>
+  <span>3G</span>
+  <span>2018-12-06</span>
+</div>
+
+
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop hidden" id="branchGoldClientsModal">
+  <div class="modal">
+    <div class="modal-head">
+   <h3>Your Branch Clients (Gold)</h3>
+
+      <button class="icon-btn" id="closeBranchGoldClients">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+<div class="order-row header">
+  <span>Client</span>
+  <span>Operation Type</span>
+  <span>Quantity</span>
+  <span>Date</span>
+  <span>Status</span>
+  <span>Invoice</span>
+</div>
+
+<!-- ROW -->
+<div class="order-row">
+  <span class="client-name">22TRX1293</span>
+  <span>Buy</span>
+  <span>5G</span>
+  <span>2018-11-13</span>
+  <span class="status done">Completed</span>
+
+  <!-- INVOICE -->
+  <span>
+    <a
+      href="invoices/invoice_1001.pdf"
+      download
+      class="invoice-btn"
+    >
+      Download
+    </a>
+  </span>
+</div>
+
+
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop hidden" id="branchSilverClientsModal">
+  <div class="modal">
+    <div class="modal-head">
+   <h3>Your Branch Clients (Silver)</h3>
+      <button class="icon-btn" id="closeBranchSilverClients">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+      <div class="order-row header">
+  <span>Client</span>
+  <span>Operation Type</span>
+  <span>Quantity</span>
+  <span>Date</span>
+  <span>Status</span>
+  <span>Invoice</span>
+      </div>
+
+      <!-- ROW -->
+      <div class="order-row">
+        <span class="client-name">999TRX4309</span>
+        <span>Sell</span>
+        <span>3G</span>
+        <span>2018-02-23</span>
+        <span class="status pending"> Waiting</span>
+
+        <!-- INVOICE -->
+        <span>
+          <a
+            href="invoices/invoice_2003.pdf"
+            download
+            class="invoice-btn silver"
+          >
+            Download
+          </a>
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

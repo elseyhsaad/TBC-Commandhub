@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TBC Command Hub</title>
+  <link rel="stylesheet" href="style-gold-russia.css" />
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+    <div class="logo-wrapper small" aria-label="Company Logo">
+  <img src="logo.png" alt="TBC Business Club Logo">
+</div>
+
+      <div class="brand-meta">
+       <div class="company-name" id="companyName">
+  TBC Business Club Co
+  <img src="russia-map-drawing-black-and-white-clipart.png" alt="Turkey" class="country-icon">
+</div>
+
+     <div class="tier">
+  <span class="pill pink">Доступ в VIP-зону</span>
+
+  <span class="pill point-pill">
+    <span class="point-value">1</span>
+    <img src="point.png" class="point-icon">
+  </span>
+</div>
+
+
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="changeLogoBtn" title="Change Logo">🖼️</button>
+
+      <div class="dropdown">
+        <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+          ⚙️ Меню компании
+          <span class="chev">▾</span>
+        </button>
+
+        <div class="menu" id="menu" role="menu" aria-hidden="true">
+          <button class="menu-item" data-action="profile">История Command Hub</button>
+          <button class="menu-item" data-action="privacy">О нас</button>
+          <button class="menu-item" data-action="partnerships">Политика конфиденциальности</button>
+           <button class="menu-item" data-action="terms">Условия и положения</button>
+            <button class="menu-item" data-action="dpo">Ответственный за защиту данных (DPO)</button>
+          <div class="sep"></div>
+          <button class="menu-item danger" data-action="logout">Выйти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    
+    <section class="hero">
+      <div>
+        <div class="badge">TBC COMMAND HUB</div>
+      <h1>Добро пожаловать в панель управления вашей компании</h1>
+        <p class="muted">Управление продажами, мероприятиями, отчетами и связь с администрацией клуба TBC.</p>
+      </div>
+      <a
+  class="cta"
+  href="https://tbusinessclub.com/members/"
+  target="_blank"
+  rel="noopener"
+>
+ВСТУПИТЬ
+</a>
+
+    </section>
+
+ 
+    <section class="grid">
+
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Продажи и дистрибуция</h2>
+          <span class="chip">Live</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="k">Текущие точки продаж — lobby</div>
+            <div class="v" id="salesPoints">2000</div>
+            <div class="s muted">Количество текущих точек продаж</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть — Агенты</div>
+            <div class="v" id="agentsCount">1800</div>
+            <div class="s muted">Агенты</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть — Разработчики</div>
+            <div class="v" id="devsCount">1540</div>
+            <div class="s muted">Разработчики</div>
+          </div>
+
+          <div class="stat">
+            <div class="k">Сеть — Инфлюенсеры</div>
+            <div class="v" id="influencersCount">500</div>
+            <div class="s muted">Инфлюенсеры</div>
+          </div>
+        </div>
+        <div class="stats">
+
+  <div class="stat">
+    <div class="k">Месячные продажи</div>
+    <div class="v" id="monthlySales">250,000$</div>
+    <div class="s muted">Продажи за этот месяц</div>
+  </div>
+
+  <div class="stat">
+    <div class="k">Золото (гр)</div>
+    <div class="v" id="activeCampaigns">1592G</div>
+    <div class="s muted">Золото g </div>
+  </div>
+
+  <div class="stat">
+    <div class="k">Новые партнеры</div>
+    <div class="v" id="newPartners">1200</div>
+    <div class="s muted">Новые партнеры</div>
+  </div>
+
+  <div class="stat">
+    <div class="k">Коэффициент конверсии</div>
+    <div class="v" id="conversionRate">20%</div>
+    <div class="s muted">Конверсия</div>
+  </div>
+  <div class="stat">
+  <div class="k">Месячные продажи</div>
+  <div class="v" id="totalRevenue">10,000$</div>
+  <div class="s muted"> Продажи за этот месяц</div>
+</div>
+
+
+
+<div class="stat">
+  <div class="k">Серебро (гр)</div>
+  <div class="v" id="avgDeal">3096G</div>
+  <div class="s muted">Серебро g </div>
+</div>
+<div class="stat">
+  <div class="k">Активные клиенты</div>
+  <div class="v" id="activeClients">5000</div>
+  <div class="s muted">Активные клиенты</div>
+</div>
+
+<div class="stat">
+  <div class="k">Темп роста</div>
+  <div class="v" id="growthRate">63%</div>
+  <div class="s muted">Темп роста</div>
+</div>
+
+
+</div>
+
+
+
+        <div class="subgrid">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Активные челлендж-кампании</h3>
+      
+            </div>
+
+            <ul class="list" id="campaignList">
+         
+            </ul>
+          </div>
+
+          <div class="panel" id="openProjection">
+            <div class="panel-head">
+              <h3>Годовая цель продаж</h3>
+              <span class="pill gold" id="annualTargetText">€ 1,250,000</span>
+            </div>
+
+            <div class="progress-wrap">
+              <div class="progress-meta">
+                <span class="muted">Достигнуто</span>
+                <span class="strong" id="annualAchievedText">€ 640,000</span>
+              </div>
+
+              <div class="progress">
+                <div class="bar" id="annualBar" style="width: 0%"></div>
+              </div>
+
+              <div class="progress-meta">
+                <span class="muted">Прогресс</span>
+                <span class="strong" id="annualPercent">0%</span>
+              </div>
+            </div>
+            
+
+         
+              <div class="mini-chart">
+  <div class="chart-title muted">Прогресс месячных продаж</div>
+  <div class="bars" id="annualBars">
+  <div class="bar-item" data-height="60"><span>Mark</span></div>
+  <div class="bar-item" data-height="75"><span>PR</span></div>
+  <div class="bar-item" data-height="45"><span>Dev</span></div>
+  <div class="bar-item" data-height="65"><span>PRF</span></div>
+  <div class="bar-item" data-height="40"><span>İNC</span></div>
+  <div class="bar-item" data-height="100"><span>CAP</span></div>
+</div>
+</div>
+
+</div>
+
+       
+           
+          </div>
+        </div>
+      </article>
+     
+      <article class="card">
+        <div class="card-head">
+          <h2>Форум защиты капитала</h2>
+          <span class="chip violet">Календарь</span>
+        </div>
+
+        <div class="event-block">
+          <h3>Закрытые мероприятия</h3>
+          <ul class="list" id="privateEvents"></ul>
+        </div>
+
+        <div class="event-block">
+          <h3>Публичные мероприятия клуба TBC</h3>
+          <ul class="list" id="publicEvents"></ul>
+        </div>
+
+        <div class="stats stats-2x2">
+
+<div class="stat clickable" id="completedOrdersStat">
+  <div class="k">Завершенные заказы</div>
+  <div class="v">4</div>
+  <div class="s muted">Завершенные заказы</div>
+</div>
+
+
+<div class="stat clickable" id="pendingOrdersStat">
+  <div class="k">Заказы в ожидании</div>
+  <div class="v">2</div>
+  <div class="s muted">Ожидающие заказы</div>
+</div>
+
+
+<div class="stat clickable" id="yourGoldOrdersStat">
+  <div class="k">Ваши заказы (Золото)</div>
+  <div class="v">1G</div>
+  <div class="s muted">Заказы вашего филиала (золото)</div>
+</div>
+
+
+<div class="stat clickable" id="yourSilverOrdersStat">
+  <div class="k">Ваши заказы (Серебро)</div>
+  <div class="v">3G</div>
+  <div class="s muted">Заказы вашего филиала (серебро)</div>
+</div>
+
+<div class="stat clickable" id="branchGoldClientsStat">
+  <div class="k">Клиенты филиала (Золото)</div>
+  <div class="v">1</div>
+  <div class="s muted">Клиенты вашего филиала (золото)</div>
+</div>
+
+
+<div class="stat clickable" id="branchSilverClientsStat">
+  <div class="k">Клиенты филиала (Серебро)</div>
+  <div class="v">3</div>
+  <div class="s muted">Клиенты вашего филиала (серебро)</div>
+</div>
+
+
+</div>
+
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2>Общий уровень прогресса</h2>
+          <span class="chip gold">Score</span>
+        </div>
+
+        <div class="big">
+          <div class="big-num" id="overallPercent">0%</div>
+          <div class="muted">Связано с достижением целей (продажи – активность – дисциплина)</div>
+        </div>
+
+        <div class="progress">
+          <div class="bar glow" id="overallBar" style="width:0%"></div>
+        </div>
+
+        <div class="split">
+          <div class="mini">
+            <div class="k muted">Продажи</div>
+            <div class="v" id="scoreSales">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Активность</div>
+            <div class="v" id="scoreActivity">0%</div>
+          </div>
+          <div class="mini">
+            <div class="k muted">Дисциплина</div>
+            <div class="v" id="scoreCommitment">0%</div>
+          </div>
+        </div>
+
+        
+      </article>
+
+   
+      <article class="card span-2">
+        <div class="card-head">
+          <h2>Панель отчетов</h2>
+          <span class="chip pink">Export</span>
+        </div>
+
+        <div class="reports">
+          <div class="report">
+            <div class="r-title">Отчет по эффективности</div>
+            <div class="muted">Отчеты по эффективности</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="performance" data-format="pdf">Смотреть PDF</button>
+              <button class="mini-btn" data-report="performance" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Отчет по продажам</div>
+            <div class="muted">Отчеты по продажам</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="sales" data-format="pdf">Смотреть PDF</button>
+              <button class="mini-btn" data-report="sales" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Отчет по кампаниям</div>
+            <div class="muted">Отчеты по кампаниям</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="campaigns" data-format="pdf">Смотреть PDF</button>
+              <button class="mini-btn" data-report="campaigns" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+
+          <div class="report">
+            <div class="r-title">Отчет по общей активности</div>
+            <div class="muted">Отчеты по общей активности</div>
+            <div class="r-actions">
+              <button class="mini-btn" data-report="activity" data-format="pdf">Смотреть PDF</button>
+              <button class="mini-btn" data-report="activity" data-format="xlsx">Скачать Excel</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note muted" id="reportNote">Выберите View/Download — появится простое уведомление (симуляция).</div>
+      </article>
+
+     
+      <article class="card span-3">
+        <div class="card-head">
+          <h2>Связь с администрацией</h2>
+          <span class="chip">Чтение / Комментарий / Подтверждение</span>
+        </div>
+
+        <div class="admin-grid">
+          <section class="posts">
+            <div class="panel-head">
+              <h3>Публикации администрации</h3>
+              <span class="pill">Публикует только администрация</span>
+            </div>
+            <ul class="post-list" id="postList"></ul>
+          </section>
+
+          <section class="interaction">
+            <div class="panel-head">
+              <h3>Система комментариев</h3>
+              <span class="pill pink">Компания может комментировать</span>
+            </div>
+
+            <div class="selected" id="selectedPostBox">
+              <div class="muted">Выберите пост слева, чтобы просмотреть детали и оставить комментарий.</div>
+            </div>
+
+            <form class="comment-form" id="commentForm">
+              <textarea id="commentInput" placeholder="Напишите ваш комментарий..." rows="3" required></textarea>
+              <div class="row">
+                <button class="cta small" type="submit" id="sendWhatsappBtn">Отправить комментарий</button>
+                <button class="ghost small" type="button" id="ackBtn" disabled>✅ Подтвердить</button>
+              </div>
+              <div class="muted tiny">Права: публикации — только администрация, комментарии — компании.</div>
+            </form>
+
+            <div class="comments">
+              <div class="panel-head">
+                <h3>Комментарии</h3>
+                <span class="pill gold" id="commentCount">0</span>
+              </div>
+              <ul class="comment-list" id="commentList"></ul>
+            </div>
+          </section>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+
+  <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="icon-btn" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="script-gold-russia.js"></script>
+<script>
+/* ===== LOGIN KONTROL ===== */
+if (localStorage.getItem("tbc_logged_in") !== "true") {
+  window.location.href = "login.html";
+}
+
+/* ===== BAR ANİMASYONU (SCROLL İLE) ===== */
+const bars = document.querySelectorAll(".bar-item");
+
+bars.forEach(bar => {
+  bar.style.height = "0%"; // sıfırdan başlasın
+});
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        const bar = entry.target;
+        const target = bar.dataset.height;
+
+        setTimeout(() => {
+          bar.style.height = target + "%";
+        }, index * 250); // yavaş ve sırayla
+
+        observer.unobserve(bar); // bir kere çalışsın
+      }
+    });
+  },
+  {
+    threshold: 0.4 // %40 görünce tetiklensin
+  }
+);
+
+bars.forEach(bar => observer.observe(bar));
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const panel = document.getElementById("openProjection");
+  const popup = document.getElementById("projectionPopup");
+  const close = document.getElementById("closePopup");
+
+  if(!panel){
+    console.error("openProjection bulunamadı");
+    return;
+  }
+
+  panel.style.cursor = "pointer";
+
+  panel.addEventListener("click", () => {
+    popup.classList.add("active");
+  });
+
+  close.addEventListener("click", (e) => {
+    e.stopPropagation();
+    popup.classList.remove("active");
+  });
+
+  popup.addEventListener("click", (e) => {
+    if(e.target === popup){
+      popup.classList.remove("active");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("welcomeModal");
+  const closeBtn = document.getElementById("closeWelcome");
+
+  // HER SAYFA AÇILIŞINDA GÖSTER
+  modal.classList.remove("hidden");
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // Arka plana tıklayınca kapansın
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+});
+</script>
+
+<script>const stat = document.getElementById("completedOrdersStat");
+const modal = document.getElementById("completedOrdersModal");
+const closeBtn = document.getElementById("closeCompletedOrders");
+
+if (stat && modal && closeBtn) {
+
+  stat.addEventListener("click", () => {
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  // arka plana tıklayınca kapansın
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
+
+}
+</script>
+
+<!-- Projection Popup -->
+<div class="popup-overlay" id="projectionPopup">
+  <div class="popup-box">
+    <button class="popup-close" id="closePopup">✕</button>
+    <iframe src="projection.html" frameborder="0"></iframe>
+  </div>
+</div>
+<!-- Welcome Modal -->
+<div class="modal-backdrop hidden" id="welcomeModal">
+  <div class="modal welcome-modal">
+    <div class="modal-body welcome-body">
+
+      <img src="logo.png" alt="TBC Logo" class="welcome-logo">
+
+      <p class="welcome-ar">
+        Добро пожаловать в пространство, которое принадлежит тебе в этом мире! <br>
+        Как основатель успешного проекта и будущего, которое видят все вокруг тебя.
+      </p>
+
+      <p class="welcome-en">
+        Welcome to the space you own in this world!<br>
+        As the founder of a successful project and a future that everyone around you can see.
+      </p>
+
+      <button class="cta full" id="closeWelcome">Войти в панель</button>
+
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("completedOrdersStat");
+  const modal = document.getElementById("completedOrdersModal");
+  const closeBtn = document.getElementById("closeCompletedOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  /* === AÇ === */
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation(); // diğer popup'lara bulaşmasın
+    modal.classList.remove("hidden");
+  });
+
+  /* === KAPAT (X) === */
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  /* === ARKA PLANA TIKLANIRSA KAPAT === */
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("pendingOrdersStat");
+  const modal = document.getElementById("pendingOrdersModal");
+  const closeBtn = document.getElementById("closePendingOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  /* فتح */
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  /* إغلاق بزر X */
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  /* إغلاق عند الضغط خارج الصندوق */
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("yourGoldOrdersStat");
+  const modal = document.getElementById("yourGoldOrdersModal");
+  const closeBtn = document.getElementById("closeYourGoldOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("yourSilverOrdersStat");
+  const modal = document.getElementById("yourSilverOrdersModal");
+  const closeBtn = document.getElementById("closeYourSilverOrders");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("branchGoldClientsStat");
+  const modal = document.getElementById("branchGoldClientsModal");
+  const closeBtn = document.getElementById("closeBranchGoldClients");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const stat = document.getElementById("branchSilverClientsStat");
+  const modal = document.getElementById("branchSilverClientsModal");
+  const closeBtn = document.getElementById("closeBranchSilverClients");
+
+  if (!stat || !modal || !closeBtn) return;
+
+  stat.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
+</script>
+<div class="modal-backdrop hidden" id="completedOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Завершенные заказы</h3>
+      <button class="icon-btn" id="closeCompletedOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- HEADER -->
+      <div class="order-row header">
+        <span>Клиент</span>
+        <span>Количество</span>
+        <span>Тип операции</span>
+        <span>Статус операции</span>
+      </div>
+
+      <!-- ROWS -->
+      <div class="order-row">
+        <span>24RUX2340</span>
+        <span>12</span>
+        <span>Покупка</span>
+        <span class="status done">Завершено</span>
+      </div>
+
+      <div class="order-row">
+        <span>22TRX1299</span>
+        <span>5</span>
+        <span>Продажа</span>
+        <span class="status pending">В ожидании</span>
+      </div>
+
+      <div class="order-row">
+        <span>21TRX1288</span>
+        <span>20</span>
+        <span>Покупка</span>
+        <span class="status done">Завершено</span>
+      </div>
+
+      <div class="order-row">
+        <span>21TRX1277</span>
+        <span>8</span>
+        <span>Продажа</span>
+        <span class="status pending">В процессе</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="pendingOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Заказы в ожидании</h3>
+      <button class="icon-btn" id="closePendingOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+     <div class="order-row header">
+  <span class="status">Статус</span>
+  <span class="client-name">Имя клиента</span>
+  <span class="branch">Филиал</span>
+  <span class="qty">Количество</span>
+  <span class="type">Тип операции</span>
+</div>
+
+      <!-- ROW 1 -->
+     <div class="order-row">
+  <span class="client-name">24TRX2002</span>
+  <span>Филиал Стамбул</span>
+  <span>10</span>
+  <span>Покупка</span>
+  <span class="status pending">В ожидании</span>
+</div>
+
+      <!-- ROW 2 -->
+      <div class="order-row">
+  <span class="client-name">21TRX2098</span>
+  <span>Филиал Стамбул</span>
+  <span>10</span>
+  <span>Покупка</span>
+  <span class="status pending">В ожидании</span>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="yourGoldOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Заказы вашего филиала (золото)</h3>
+      <button class="icon-btn" id="closeYourGoldOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+      <div class="order-row header">
+        <span>Клиент</span>
+        <span>Тип операции</span>
+        <span>Количество</span>
+        <span>Дата</span>
+      </div>
+
+      <!-- ROW -->
+      <div class="order-row">
+        <span class="client-name">24TRX12000</span>
+        <span>Покупка</span>
+        <span>1G</span>
+        <span>2020-01-11</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="yourSilverOrdersModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Заказы вашего филиала (серебро)</h3>
+      <button class="icon-btn" id="closeYourSilverOrders">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+      <div class="order-row header">
+        <span>Клиент</span>
+        <span>Тип операции</span>
+        <span>Количество</span>
+        <span>Дата</span>
+      </div>
+
+      <!-- ROW -->
+      <div class="order-row">
+        <span class="client-name">999TRX1245</span>
+        <span>Продажа</span>
+        <span>3G</span>
+        <span>2020-12-25</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="branchGoldClientsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Клиенты вашего филиала (золото)</h3>
+      <button class="icon-btn" id="closeBranchGoldClients">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+      <div class="order-row header">
+        <span>Клиент</span>
+        <span>Тип операции</span>
+        <span>Количество</span>
+        <span>Дата</span>
+        <span>Статус</span>
+        <span>Счет</span>
+      </div>
+
+      <!-- ROW -->
+      <div class="order-row">
+        <span class="client-name">22TRX1293</span>
+        <span>Покупка</span>
+        <span>5G</span>
+        <span>2020-07-03</span>
+        <span class="status done">Завершено</span>
+
+        <!-- INVOICE -->
+        <span>
+          <a
+            href="invoices/invoice_1001.pdf"
+            download
+            class="invoice-btn"
+          >
+            Скачать
+          </a>
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="branchSilverClientsModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Клиенты вашего филиала (серебро)</h3>
+      <button class="icon-btn" id="closeBranchSilverClients">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- HEADER -->
+      <div class="order-row header">
+        <span>Клиент</span>
+        <span>Тип операции</span>
+        <span>Количество</span>
+        <span>Дата</span>
+        <span>Статус</span>
+        <span>Счет</span>
+      </div>
+
+      <!-- ROW -->
+      <div class="order-row">
+        <span class="client-name">999TRX4309</span>
+        <span>Продажа</span>
+        <span>3G</span>
+        <span>2020-01-04</span>
+        <span class="status pending">В ожидании</span>
+
+        <!-- INVOICE -->
+        <span>
+          <a
+            href="invoices/invoice_2003.pdf"
+            download
+            class="invoice-btn silver"
+          >
+            Скачать
+          </a>
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>
