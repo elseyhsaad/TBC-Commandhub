@@ -1,0 +1,28 @@
+{
+  "user": [
+    {
+      "email": "company@domain.com",
+      "password": "12345678"
+    },
+    {
+      "email": "admin@tbc.com",
+      "password": "admin123"
+    },
+    {
+      "email": "admin@tbcrussia.com",
+      "password": "Russia-tbc#123"
+    },
+    {
+      "email": "tbc@goldconnect.com",
+      "password": "gold123"
+    },
+    {
+      "email": "tbcadmin@goldconnect.ru",
+      "password": "admin123Ru"
+    },
+    {
+      "email": "tbcadmin@goldconnect.uk",
+      "password": "admin123uk"
+    }
+  ]
+}
