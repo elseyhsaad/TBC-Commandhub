@@ -22,7 +22,11 @@
     },
     {
       "email": "tbcadmin@goldconnect.uk",
-      "password": "admin123uk"
+      "password": "admin123Uk"
+    },
+    {
+      "email": "tbcadmin@devconnect.com",
+      "password" : "admin123devC"
     }
   ]
 }
