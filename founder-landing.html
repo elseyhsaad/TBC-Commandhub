@@ -49,7 +49,7 @@
 
     <!-- Slide 1 -->
     <div class="card span-3 slide-hook">
-      <h2>Why Command Hub</h2>
+      <h2>Why Command Hub?</h2>
       <p class="question">لأن الطموح وحده لا يكفي.</p>
       <div class="divider"></div>
       <p class="insight">
@@ -198,6 +198,37 @@
     </div>
 
   </section>
+<div class="card span-3 slide-video">
+
+  <h2>شاهد كيف تعمل المنظومة</h2>
+
+  <p class="video-lead">
+    فيديو قصير يشرح فكرة Command Hub خلال دقيقة واحدة
+  </p>
+
+  <div class="video-divider"></div>
+
+  <!-- Play Button Only -->
+  <div class="video-center" onclick="openVideo()">
+    <div class="video-play">
+      <span class="triangle"></span>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Popup -->
+<div id="videoPopup" class="video-popup" onclick="closeVideo(event)">
+  <div class="video-box" onclick="event.stopPropagation()">
+    <span class="close-btn" onclick="closeVideo()">✕</span>
+
+    <video id="mainVideo" controls>
+      <source src="video.mp4" type="video/mp4">
+    </video>
+
+  </div>
+</div>
 
   <!-- FAQ -->
   <section class="card span-3 faq-section">
@@ -271,7 +302,19 @@
     © 2026 TBC Command Hub. All rights reserved.
   </div>
 </footer>
+<script>
+function openVideo(){
+  document.getElementById("videoPopup").classList.add("active");
+}
 
+function closeVideo(){
+  const popup = document.getElementById("videoPopup");
+  popup.classList.remove("active");
+
+  const video = document.getElementById("mainVideo");
+  video.pause();
+  video.currentTime = 0;
+}
+</script>
 </body>
 </html>
-
