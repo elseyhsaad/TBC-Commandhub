@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Hub Flashcards</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Kufi Arabic', sans-serif; }
+
+    .card-flip { perspective: 1200px; }
+    .card-inner {
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-front, .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      inset: 0;
+      border-radius: 1.25rem;
+    }
+    .card-back { transform: rotateY(180deg); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(60px) rotate(360deg); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    @keyframes score-pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    @keyframes streak-fire {
+      0%, 100% { text-shadow: 0 0 8px rgba(251, 146, 60, 0.5); }
+      50% { text-shadow: 0 0 20px rgba(251, 146, 60, 0.9), 0 0 40px rgba(239, 68, 68, 0.5); }
+    }
+    .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+    .animate-shake { animation: shake 0.5s ease-in-out; }
+    .animate-score-pop { animation: score-pop 0.4s ease-out; }
+    .animate-streak { animation: streak-fire 1s ease-in-out infinite; }
+    .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+    .progress-fill { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+    .option-btn {
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn:hover { transform: translateY(-2px); }
+    .option-btn:active { transform: translateY(0); }
+    .option-btn.correct-answer {
+      background: linear-gradient(135deg, #059669, #10b981) !important;
+      color: white !important;
+      border-color: #059669 !important;
+    }
+    .option-btn.wrong-answer {
+      background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+      color: white !important;
+      border-color: #dc2626 !important;
+    }
+
+    .hint-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .hint-reveal.show {
+      max-height: 120px;
+      opacity: 1;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    .toast-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 100;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+    }
+    .toast-notification.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app-wrapper" class="h-full w-full overflow-auto"style="
+  background:
+    radial-gradient(700px 500px at 20% 10%, rgba(181,109,255,.35), transparent 70%),
+    radial-gradient(700px 500px at 80% 20%, rgba(255,61,129,.35), transparent 70%),
+    radial-gradient(400px 300px at 50% 50%, rgba(255,255,255,.04), transparent 70%),
+    #0a0e1a;
+"><!-- Toast -->
+   <div id="toast" class="toast-notification" style="background: #1e293b; color: #e2e8f0; border: 1px solid #334155;"></div><!-- Screen: Welcome -->
+   <div id="screen-welcome" class="h-full flex flex-col items-center justify-center p-6">
+    <div class="text-center animate-slide-up max-w-lg w-full">
+     <div class="mb-6">
+<img src="logo.png"
+     alt="Logo"
+     style="
+       width:120px;
+       height:120px;
+       object-fit:contain;
+       display:block;
+       margin:auto;
+       filter: drop-shadow(0 10px 25px rgba(0,0,0,0.25));
+     ">
+     </div>
+     <h1 id="el-title" class="text-3xl font-extrabold mb-3" style="color: #e0e7ff;">كوماند هاب - إدارة الثروة</h1>
+     <p id="el-welcome" class="text-lg mb-8" style="color: #94a3b8;">اختبر معرفتك بنظام كوماند هاب</p>
+     <div id="stats-summary" class="grid grid-cols-3 gap-3 mb-8">
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-2xl font-bold" style="color: #818cf8;" id="stat-total">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        إجمالي المحاولات
+       </div>
+      </div>
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-2xl font-bold" style="color: #34d399;" id="stat-correct">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        إجابات صحيحة
+       </div>
+      </div>
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-2xl font-bold" style="color: #fb923c;" id="stat-streak">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        أفضل سلسلة
+       </div>
+      </div>
+     </div><button id="btn-start"
+  class="w-full py-4 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95"
+  style="
+    background: linear-gradient(90deg, #ff3d81, #b56dff);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 16px 30px rgba(255,61,129,.35);
+  ">
+  ابدأ التحدي
+  <i data-lucide="play" style="width:20px;height:20px;display:inline-block;vertical-align:middle;margin-right:6px;"></i>
+</button>
+    </div>
+   </div><!-- Screen: Game -->
+   <div id="screen-game" class="h-full flex flex-col p-4 sm:p-6" style="display:none;"><!-- Top bar -->
+    <div class="flex items-center justify-between mb-4"><button id="btn-home" class="p-2 rounded-lg transition-colors" style="background: #1e293b; color: #94a3b8;"> <i data-lucide="home" style="width:20px;height:20px;"></i> </button>
+     <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1.5"><i data-lucide="flame" style="width:18px;height:18px;color:#fb923c;"></i> <span id="game-streak" class="font-bold text-lg" style="color: #fb923c;">0</span>
+      </div>
+      <div class="flex items-center gap-1.5"><i data-lucide="star" style="width:18px;height:18px;color:#facc15;"></i> <span id="game-score" class="font-bold text-lg" style="color: #facc15;">0</span>
+      </div>
+     </div>
+    </div><!-- Progress -->
+    <div class="mb-4">
+     <div class="flex justify-between mb-1.5"><span class="text-sm font-semibold" style="color: #94a3b8;">التقدم</span> <span class="text-sm font-semibold" style="color: #818cf8;" id="progress-text">1 / 5</span>
+     </div>
+     <div class="w-full h-2.5 rounded-full" style="background: #1e293b;">
+      <div id="progress-bar" class="h-full rounded-full progress-fill" style="width:20%; background: linear-gradient(90deg, #4f46e5, #7c3aed);"></div>
+     </div>
+    </div><!-- Card area -->
+    <div class="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full">
+     <div class="card-flip w-full" style="height: 220px;">
+      <div id="card-inner" class="card-inner w-full h-full">
+       <div class="card-front flex flex-col items-center justify-center p-6 text-center" style="background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155;">
+        <div class="mb-3"><span id="card-category" class="text-xs font-semibold px-3 py-1 rounded-full" style="background: #312e81; color: #a5b4fc;">التحدي</span>
+        </div>
+        <h2 id="card-question" class="text-lg sm:text-xl font-bold leading-relaxed" style="color: #e2e8f0;">سؤال</h2>
+        <div id="card-number" class="mt-3 text-xs" style="color: #475569;">
+         البطاقة 1 من 5
+        </div>
+       </div>
+       <div class="card-back flex flex-col items-center justify-center p-6 text-center" style="background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid #334155;"><i data-lucide="lightbulb" style="width:28px;height:28px;color:#facc15;margin-bottom:8px;"></i>
+        <p id="card-explanation" class="text-base leading-relaxed" style="color: #cbd5e1;">الشرح</p>
+       </div>
+      </div>
+     </div><!-- Hint -->
+     <div class="mt-3 text-center"><button id="btn-hint" class="text-sm font-semibold px-4 py-1.5 rounded-lg transition-all" style="color: #818cf8; background: transparent;" onclick="toggleHint()"> <i data-lucide="help-circle" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-left:4px;"></i> تلميح </button>
+      <div id="hint-box" class="hint-reveal mt-2 rounded-xl p-3" style="background: #1e1b4b; border: 1px solid #312e81;">
+       <p id="hint-text" class="text-sm" style="color: #a5b4fc;"></p>
+      </div>
+     </div><!-- Options -->
+     <div id="options-area" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+   </div>
+
+<!-- Next button (hidden initially) -->
+<button id="btn-next"
+  class="mt-4 w-full py-3.5 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95"
+  style="
+    display:none;
+    background: linear-gradient(90deg, #ff3d81, #b56dff);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 16px 30px rgba(255,61,129,.35);
+  ">
+  التالي
+  <i data-lucide="arrow-left"
+     style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:4px;">
+  </i>
+</button>
+
+</div>
+   </div><!-- Screen: Results -->
+   <div id="screen-results" class="h-full flex flex-col items-center justify-center p-6" style="display:none;">
+    <div class="text-center max-w-lg w-full animate-slide-up">
+     <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4" id="result-icon-wrap" style="background: linear-gradient(135deg, #059669, #10b981);"><i data-lucide="trophy" style="width:40px;height:40px;color:#ecfdf5;" id="result-icon"></i>
+     </div>
+     <h2 id="result-title" class="text-3xl font-extrabold mb-2" style="color: #e0e7ff;">ممتاز!</h2>
+     <p id="result-subtitle" class="text-lg mb-6" style="color: #94a3b8;">لقد أنهيت التحدي</p>
+     <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-3xl font-bold" style="color: #34d399;" id="res-correct">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        صحيحة
+       </div>
+      </div>
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-3xl font-bold" style="color: #f87171;" id="res-wrong">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        خاطئة
+       </div>
+      </div>
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-3xl font-bold" style="color: #facc15;" id="res-score">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        النقاط
+       </div>
+      </div>
+      <div class="rounded-xl p-4" style="background: #1e293b; border: 1px solid #334155;">
+       <div class="text-3xl font-bold" style="color: #fb923c;" id="res-streak">
+        0
+       </div>
+       <div class="text-xs mt-1" style="color: #64748b;">
+        أفضل سلسلة
+       </div>
+      </div>
+     </div>
+    <div class="flex gap-3">
+
+  <button id="btn-retry"
+    class="flex-1 py-3.5 rounded-xl font-bold transition-all hover:scale-105 active:scale-95"
+    style="
+      background: linear-gradient(90deg, #ff3d81, #b56dff);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 16px 30px rgba(255,61,129,.35);
+    ">
+    أعد التحدي
+  </button>
+
+  <button id="btn-back-home"
+    class="py-3.5 px-5 rounded-xl font-bold transition-all hover:scale-105 active:scale-95"
+    style="
+      background: linear-gradient(90deg, #ff3d81, #b56dff);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 16px 30px rgba(255,61,129,.35);
+    ">
+    <i data-lucide="home" style="width:20px;height:20px;"></i>
+  </button>
+
+</div>
+    </div>
+   </div>
+  </div>
+  <script>
+// ── Reference Cards Data ──
+const CARDS = [
+  {
+    id: "wm_challenge_1",
+    category: "توزيع الأصول",
+    question: "ما هو التحدي الرئيسي في توزيع الأصول عبر كوماند هاب؟",
+    options: [
+      "موازنة المخاطر والعوائد عبر فئات الأصول المتعددة",
+      "تحويل العملات فقط",
+      "إدارة البريد الإلكتروني",
+      "تصميم الواجهات الرسومية"
+    ],
+    correct: 0,
+    hint: "فكّر في كيفية توزيع الاستثمارات بين الأسهم والسندات والعقارات",
+    explanation: "يساعد كوماند هاب في موازنة المخاطر والعوائد من خلال تحليل البيانات التاريخية وتقديم توصيات ذكية لتوزيع الأصول بناءً على ملف المخاطر الخاص بكل عميل."
+  },
+  {
+    id: "wm_challenge_2",
+    category: "الامتثال التنظيمي",
+    question: "كيف يعالج كوماند هاب تحدي الامتثال للأنظمة المالية المتغيرة؟",
+    options: [
+      "يتجاهل الأنظمة تماماً",
+      "تحديثات تلقائية للقواعد التنظيمية مع تنبيهات فورية",
+      "يعتمد على الورق فقط",
+      "يحوّل كل شيء للعملات الرقمية"
+    ],
+    correct: 1,
+    hint: "النظام يتكيف تلقائياً مع التغييرات التنظيمية",
+    explanation: "يوفر كوماند هاب نظام امتثال متكامل يتتبع التحديثات التنظيمية تلقائياً ويرسل تنبيهات فورية للمستشارين الماليين لضمان التوافق الدائم."
+  },
+  {
+    id: "wm_challenge_3",
+    category: "إعداد التقارير",
+    question: "ما الميزة التي يقدمها كوماند هاب لتبسيط إعداد تقارير الأداء للعملاء؟",
+    options: [
+      "طباعة التقارير يدوياً",
+      "إرسال رسائل نصية فقط",
+      "لوحات معلومات تفاعلية مع تقارير مخصصة آلية",
+      "لا يدعم التقارير"
+    ],
+    correct: 2,
+    hint: "التقارير التفاعلية تتيح للعملاء رؤية أدائهم بشكل مباشر",
+    explanation: "يتميز كوماند هاب بلوحات معلومات تفاعلية تُنشئ تقارير أداء مخصصة تلقائياً، مما يوفر وقت المستشارين ويمنح العملاء شفافية كاملة."
+  },
+  {
+    id: "wm_challenge_4",
+    category: "إدارة المخاطر",
+    question: "كيف يتعامل كوماند هاب مع تحدي قياس وإدارة المخاطر في المحافظ الاستثمارية؟",
+    options: [
+      "لا يقيس المخاطر",
+      "يعتمد على الحظ",
+      "يستخدم جداول Excel فقط",
+      "نماذج تحليل مخاطر متقدمة مع محاكاة سيناريوهات"
+    ],
+    correct: 3,
+    hint: "النظام يستخدم نماذج رياضية متطورة ومحاكاة",
+    explanation: "يستخدم كوماند هاب نماذج تحليل مخاطر متقدمة تشمل محاكاة مونت كارلو واختبارات الإجهاد لتقييم المخاطر وتقديم توصيات استباقية."
+  },
+  {
+    id: "wm_challenge_5",
+    category: "تجربة العميل",
+    question: "ما التحدي الذي يحله كوماند هاب في التواصل مع العملاء ذوي الثروات العالية؟",
+    options: [
+      "إرسال فاكسات",
+      "تجاهل العملاء",
+      "بوابة عميل رقمية شاملة مع تواصل مخصص وآمن",
+      "الاتصال الهاتفي فقط"
+    ],
+    correct: 2,
+    hint: "العملاء يحتاجون قناة رقمية آمنة ومخصصة",
+    explanation: "يوفر كوماند هاب بوابة عميل رقمية متكاملة تتيح تواصلاً مشفراً ومخصصاً، مع إشعارات ذكية وتقارير حية تعزز تجربة العملاء ذوي الثروات العالية."
+  }
+];
+
+// ── Game State ──
+let currentIndex = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answered = false;
+let hintUsed = false;
+let allUserData = [];
+
+// ── Data SDK ──
+const dataHandler = {
+  onDataChanged(data) {
+    allUserData = data;
+    updateWelcomeStats();
+  }
+};
+
+async function initApp() {
+  const res = await window.dataSdk.init(dataHandler);
+  if (!res.isOk) {
+    console.error("Data SDK init failed");
+  }
+}
+initApp();
+
+function updateWelcomeStats() {
+  let totalAttempts = 0, totalCorrect = 0, topStreak = 0;
+  allUserData.forEach(d => {
+    totalAttempts += (d.correct_count || 0) + (d.wrong_count || 0);
+    totalCorrect += (d.correct_count || 0);
+    if ((d.best_streak || 0) > topStreak) topStreak = d.best_streak;
+  });
+  const elTotal = document.getElementById('stat-total');
+  const elCorrect = document.getElementById('stat-correct');
+  const elStreak = document.getElementById('stat-streak');
+  if (elTotal) elTotal.textContent = totalAttempts;
+  if (elCorrect) elCorrect.textContent = totalCorrect;
+  if (elStreak) elStreak.textContent = topStreak;
+}
+
+// ── Screens ──
+function showScreen(id) {
+  ['screen-welcome','screen-game','screen-results'].forEach(s => {
+    document.getElementById(s).style.display = s === id ? 'flex' : 'none';
+  });
+}
+
+// ── Game Logic ──
+function startGame() {
+  currentIndex = 0; score = 0; streak = 0; bestStreak = 0;
+  correctCount = 0; wrongCount = 0;
+  showScreen('screen-game');
+  loadCard();
+}
+
+function loadCard() {
+  answered = false; hintUsed = false;
+  const card = CARDS[currentIndex];
+
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('card-category').textContent = card.category;
+  document.getElementById('card-question').textContent = card.question;
+  document.getElementById('card-number').textContent = `البطاقة ${currentIndex + 1} من ${CARDS.length}`;
+  document.getElementById('card-explanation').textContent = card.explanation;
+  document.getElementById('hint-text').textContent = card.hint;
+  document.getElementById('hint-box').classList.remove('show');
+  document.getElementById('btn-next').style.display = 'none';
+
+  document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${CARDS.length}`;
+  document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / CARDS.length) * 100}%`;
+
+  document.getElementById('game-streak').textContent = streak;
+  document.getElementById('game-score').textContent = score;
+
+  // Build options
+  const area = document.getElementById('options-area');
+  area.innerHTML = '';
+  card.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn py-3 px-4 rounded-xl font-semibold text-sm text-right';
+    btn.style.cssText = 'background: #1e293b; color: #cbd5e1; border: 1.5px solid #334155;';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(i, btn));
+    area.appendChild(btn);
+  });
+
+  lucide.createIcons();
+}
+
+async function selectAnswer(index, btnEl) {
+  if (answered) return;
+  answered = true;
+
+  const card = CARDS[currentIndex];
+  const isCorrect = index === card.correct;
+  const allBtns = document.querySelectorAll('#options-area .option-btn');
+
+  // Highlight correct
+  allBtns[card.correct].classList.add('correct-answer');
+
+  if (isCorrect) {
+    const bonus = hintUsed ? 5 : 10;
+    score += bonus;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    correctCount++;
+
+    const scoreEl = document.getElementById('game-score');
+    scoreEl.textContent = score;
+    scoreEl.classList.add('animate-score-pop');
+    setTimeout(() => scoreEl.classList.remove('animate-score-pop'), 400);
+
+    if (streak >= 3) {
+      document.getElementById('game-streak').classList.add('animate-streak');
+    }
+    document.getElementById('game-streak').textContent = streak;
+
+    showToast(window.elementSdk?.config?.correct_msg || 'أحسنت! إجابة صحيحة ✨', 'success');
+    spawnConfetti(btnEl);
+  } else {
+    btnEl.classList.add('wrong-answer');
+    btnEl.classList.add('animate-shake');
+    streak = 0;
+    wrongCount++;
+    document.getElementById('game-streak').textContent = streak;
+    document.getElementById('game-streak').classList.remove('animate-streak');
+
+    showToast(window.elementSdk?.config?.wrong_msg || 'حاول مرة أخرى 💪', 'error');
+  }
+
+  // Flip card to show explanation
+  setTimeout(() => {
+    document.getElementById('card-inner').classList.add('flipped');
+  }, 600);
+
+  document.getElementById('btn-next').style.display = 'block';
+
+  // Save progress
+  await saveCardProgress(card.id, isCorrect);
+}
+
+async function saveCardProgress(cardId, isCorrect) {
+  const existing = allUserData.find(d => d.card_id === cardId);
+  if (existing) {
+    const updated = { ...existing };
+    if (isCorrect) updated.correct_count = (updated.correct_count || 0) + 1;
+    else updated.wrong_count = (updated.wrong_count || 0) + 1;
+    if (bestStreak > (updated.best_streak || 0)) updated.best_streak = bestStreak;
+    updated.last_played = new Date().toISOString();
+    await window.dataSdk.update(updated);
+  } else {
+    if (allUserData.length >= 999) {
+      showToast('تم الوصول للحد الأقصى من السجلات', 'error');
+      return;
+    }
+    await window.dataSdk.create({
+      card_id: cardId,
+      correct_count: isCorrect ? 1 : 0,
+      wrong_count: isCorrect ? 0 : 1,
+      best_streak: bestStreak,
+      last_played: new Date().toISOString()
+    });
+  }
+}
+
+function nextCard() {
+  currentIndex++;
+  if (currentIndex >= CARDS.length) {
+    showResults();
+  } else {
+    loadCard();
+  }
+}
+
+function showResults() {
+  showScreen('screen-results');
+  document.getElementById('res-correct').textContent = correctCount;
+  document.getElementById('res-wrong').textContent = wrongCount;
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-streak').textContent = bestStreak;
+
+  const pct = correctCount / CARDS.length;
+  const wrap = document.getElementById('result-icon-wrap');
+  const title = document.getElementById('result-title');
+  const sub = document.getElementById('result-subtitle');
+
+  if (pct >= 0.8) {
+    wrap.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+    title.textContent = '🏆 ممتاز!';
+    sub.textContent = 'أنت خبير في كوماند هاب!';
+  } else if (pct >= 0.5) {
+    wrap.style.background = 'linear-gradient(135deg, #d97706, #f59e0b)';
+    title.textContent = '👏 جيد!';
+    sub.textContent = 'أداء جيد، واصل التعلم!';
+  } else {
+    wrap.style.background = 'linear-gradient(135deg, #dc2626, #ef4444)';
+    title.textContent = '💪 لا تستسلم!';
+    sub.textContent = 'حاول مرة أخرى لتحسين نتيجتك';
+  }
+
+  lucide.createIcons();
+}
+
+// ── Helpers ──
+function toggleHint() {
+  hintUsed = true;
+  document.getElementById('hint-box').classList.toggle('show');
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.background = type === 'success' ? '#065f46' : '#7f1d1d';
+  toast.style.borderColor = type === 'success' ? '#059669' : '#dc2626';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function spawnConfetti(anchor) {
+  const colors = ['#818cf8','#34d399','#facc15','#fb923c','#f87171','#a78bfa'];
+  const rect = anchor.getBoundingClientRect();
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.background = colors[i % colors.length];
+    p.style.left = (rect.left + rect.width / 2 + (Math.random() - 0.5) * 80) + 'px';
+    p.style.top = (rect.top - 10) + 'px';
+    p.style.animation = `confetti-fall ${0.6 + Math.random() * 0.6}s ease-out forwards`;
+    p.style.animationDelay = (Math.random() * 0.2) + 's';
+    p.style.position = 'fixed';
+    p.style.zIndex = '99';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
+  }
+}
+
+// ── Event Listeners ──
+document.getElementById('btn-start').addEventListener('click', startGame);
+document.getElementById('btn-home').addEventListener('click', () => showScreen('screen-welcome'));
+document.getElementById('btn-next').addEventListener('click', nextCard);
+document.getElementById('btn-retry').addEventListener('click', startGame);
+document.getElementById('btn-back-home').addEventListener('click', () => showScreen('screen-welcome'));
+
+// ── Element SDK ──
+const defaultConfig = {
+  app_title: 'كوماند هاب - إدارة الثروة',
+  welcome_text: 'اختبر معرفتك بنظام كوماند هاب',
+  correct_msg: 'أحسنت! إجابة صحيحة ✨',
+  wrong_msg: 'حاول مرة أخرى 💪',
+  background_color: '#0a0e1a',
+  surface_color: '#1e293b',
+  text_color: '#e0e7ff',
+  primary_action: '#4f46e5',
+  secondary_action: '#94a3b8',
+  font_family: 'Noto Kufi Arabic',
+  font_size: 16
+};
+
+function applyConfig(config) {
+  const bg = config.background_color || defaultConfig.background_color;
+  const surface = config.surface_color || defaultConfig.surface_color;
+  const text = config.text_color || defaultConfig.text_color;
+  const primary = config.primary_action || defaultConfig.primary_action;
+  const secondary = config.secondary_action || defaultConfig.secondary_action;
+  const fontFamily = config.font_family || defaultConfig.font_family;
+  const fontSize = config.font_size || defaultConfig.font_size;
+
+  // Background
+  document.getElementById('app-wrapper').style.background = bg;
+
+  // Title & welcome text
+  const titleEl = document.getElementById('el-title');
+  const welcomeEl = document.getElementById('el-welcome');
+  if (titleEl) {
+    titleEl.textContent = config.app_title || defaultConfig.app_title;
+    titleEl.style.color = text;
+    titleEl.style.fontFamily = `${fontFamily}, sans-serif`;
+    titleEl.style.fontSize = `${fontSize * 1.9}px`;
+  }
+  if (welcomeEl) {
+    welcomeEl.textContent = config.welcome_text || defaultConfig.welcome_text;
+    welcomeEl.style.color = secondary;
+    welcomeEl.style.fontFamily = `${fontFamily}, sans-serif`;
+    welcomeEl.style.fontSize = `${fontSize * 1.1}px`;
+  }
+
+  // Start button
+  const btnStart = document.getElementById('btn-start');
+  if (btnStart) {
+    btnStart.style.background = `linear-gradient(135deg, ${primary}, ${adjustColor(primary, 30)})`;
+    btnStart.style.color = text;
+    btnStart.style.fontFamily = `${fontFamily}, sans-serif`;
+    btnStart.style.fontSize = `${fontSize * 1.1}px`;
+  }
+
+  // Stat cards
+  document.querySelectorAll('#stats-summary > div').forEach(el => {
+    el.style.background = surface;
+    el.style.borderColor = adjustColor(surface, 20);
+  });
+
+  // Font on body
+  document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+  document.body.style.fontSize = `${fontSize}px`;
+}
+
+function adjustColor(hex, amount) {
+  let c = hex.replace('#','');
+  if (c.length === 3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  let r = Math.min(255, parseInt(c.substring(0,2),16) + amount);
+  let g = Math.min(255, parseInt(c.substring(2,4),16) + amount);
+  let b = Math.min(255, parseInt(c.substring(4,6),16) + amount);
+  return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => { applyConfig(config); },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_action || defaultConfig.primary_action, set: (v) => { config.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); } },
+      { get: () => config.secondary_action || defaultConfig.secondary_action, set: (v) => { config.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); } }
+    ],
+    borderables: [],
+    fontEditable: {
+      get: () => config.font_family || defaultConfig.font_family,
+      set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+    },
+    fontSizeable: {
+      get: () => config.font_size || defaultConfig.font_size,
+      set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+    }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['app_title', config.app_title || defaultConfig.app_title],
+    ['welcome_text', config.welcome_text || defaultConfig.welcome_text],
+    ['correct_msg', config.correct_msg || defaultConfig.correct_msg],
+    ['wrong_msg', config.wrong_msg || defaultConfig.wrong_msg]
+  ])
+});
+
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dee7e36666e78a6',t:'MTc3Mzk0NDQ0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
