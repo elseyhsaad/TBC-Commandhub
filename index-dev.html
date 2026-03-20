@@ -76,16 +76,97 @@
 </a>
 
     </section>
+    <section class="card span-3 finance-v2">
+
+  <div class="finance-top">
+    <div>
+      <div class="badge">ACCOUNT STATUS</div>
+      <h2>لوحة الحساب المالية</h2>
+    </div>
+
+    <div class="balance-box">
+      <span>الرصيد الفعلي</span>
+      <strong>$9,600</strong>
+      <div class="growth">+12.4%</div>
+    </div>
+  </div>
+
+  <div class="finance-cards">
+
+    <div class="f-card highlight">
+      <span>الأرباح</span>
+      <strong>$3,200</strong>
+    </div>
+
+    <div class="f-card">
+      <span>راس المال</span>
+      <strong>$12,000</strong>
+    </div>
+
+    <div class="f-card">
+      <span>الرصيد المجمد</span>
+      <strong>$2,400</strong>
+    </div>
+
+    <div class="f-card">
+      <span>المسموح للسحب</span>
+      <strong>$1,500</strong>
+    </div>
+
+    <div class="f-card">
+      <span>المسموح للتحويل</span>
+      <strong>$2,000</strong>
+    </div>
+
+    <div class="f-card">
+      <span>المسموح للتبرع</span>
+      <strong>$500</strong>
+    </div>
+
+    <div class="f-card">
+      <span>النقاط</span>
+      <strong>320</strong>
+    </div>
+
+    <div class="f-card">
+      <span>المستوى</span>
+      <strong>Lv. 3</strong>
+    </div>
+
+    <div class="f-card">
+      <span>الجوائز</span>
+      <strong>12</strong>
+    </div>
+
+    <div class="f-card">
+      <span>كروت التحدي</span>
+      <strong>8</strong>
+    </div>
+
+    <div class="f-card">
+      <span>كروت الدعم</span>
+      <strong>15</strong>
+    </div>
+
+    <div class="f-card">
+      <span>كروت الحظ</span>
+      <strong>5</strong>
+    </div>
+
+  </div>
+
+</section>
 
  
     <section class="grid">
 
-      <article class="card span-2">
-        <div class="card-head">
-          <h2>Sales & Distribution</h2>
-          <span class="chip">Live</span>
-        </div>
-
+     <article class="card span-2 collapsed">
+       <div class="card-head collapsible">
+  <h2>Sales & Distribution</h2>
+  <span class="chip">Live</span>
+  <span class="toggle-icon">＋</span>
+</div>
+  <div class="card-body">
         <div class="stats">
           <div class="stat">
             <div class="k">Current Sales Points</div>
@@ -220,14 +301,17 @@
            
           </div>
         </div>
+        </div>
       </article>
 
      
-      <article class="card">
-        <div class="card-head">
+     <article class="card collapsed">
+          <div class="card-head collapsible">
           <h2> Dev Community Forum</h2>
           <span class="chip violet">Calendar</span>
+              <span class="toggle-icon">＋</span>
         </div>
+          <div class="card-body">
 
         <div class="event-block">
           <h3>Private Events</h3>
@@ -283,14 +367,16 @@
 
 
 </div>
-
+</div>
       </article>
 
-      <article class="card">
-        <div class="card-head">
+    <article class="card collapsed">
+        <div class="card-head collapsible">
           <h2>Overall Progress Level</h2>
           <span class="chip gold">Score</span>
+              <span class="toggle-icon">＋</span>
         </div>
+        <div class="card-body">
 
         <div class="big">
           <div class="big-num" id="overallPercent">0%</div>
@@ -316,16 +402,17 @@
           </div>
         </div>
 
-        
+        </div>
       </article>
 
    
-      <article class="card span-2">
-        <div class="card-head">
+      <article class="card span-2 collapsed">
+      <div class="card-head collapsible">
           <h2>Reports Dashboard</h2>
           <span class="chip pink">Export</span>
+          <span class="toggle-icon">＋</span>
         </div>
-
+        <div class="card-body">
         <div class="reports">
           <div class="report">
             <div class="r-title">Performance Report</div>
@@ -365,14 +452,17 @@
         </div>
 
         <div class="note muted" id="reportNote">اختر View/Download وسيظهر إشعار بسيط (محاكاة).</div>
+        </div>
       </article>
 
      
-      <article class="card span-3">
-        <div class="card-head">
+     <article class="card span-3 collapsed">
+         <div class="card-head collapsible">
           <h2>Admin Communication</h2>
           <span class="chip">Read / Comment / Acknowledge</span>
+           <span class="toggle-icon">＋</span>
         </div>
+        <div class="card-body">
 
         <div class="admin-grid">
           <section class="posts">
@@ -410,6 +500,7 @@
               <ul class="comment-list" id="commentList"></ul>
             </div>
           </section>
+        </div>
         </div>
       </article>
     </section>
