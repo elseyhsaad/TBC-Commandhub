@@ -363,22 +363,60 @@ function renderEvents(){
   p.innerHTML = "";
   u.innerHTML = "";
 
-  const renderOne = (ul, e) => {
-    const li = document.createElement("li");
-    li.className = "li";
-    const regTag =
-      e.reg === "Open" ? `<span class="tag active">Open</span>` :
-      e.reg === "Waitlist" ? `<span class="tag prep">Waitlist</span>` :
-      `<span class="tag ended">Closed</span>`;
-    li.innerHTML = `
-      <div>
-        <div class="strong">${e.name}</div>
-        <div class="muted tiny">${e.date}</div>
+ const renderOne = (ul, e) => {
+  const li = document.createElement("li");
+  li.className = "li";
+  li.style.cursor = "pointer";
+
+  // Status badge
+  const regTag =
+    e.reg === "Open" ? `<span class="tag active">Open</span>` :
+    e.reg === "Waitlist" ? `<span class="tag prep">Waitlist</span>` :
+    `<span class="tag ended">Closed</span>`;
+
+  // İçerik
+  li.innerHTML = `
+    <div>
+      <div class="strong">${e.name}</div>
+      <div class="muted tiny">${e.date}</div>
+    </div>
+    ${regTag}
+  `;
+
+  // Tıklayınca popup aç
+  li.addEventListener("click", () => {
+    openModal(
+      e.name,
+      `
+      <div style="line-height:1.6">
+        <div><b>📅 Date:</b> ${e.date}</div>
+        <div><b>📌 Status:</b> ${e.reg}</div>
       </div>
-      ${regTag}
-    `;
-    ul.appendChild(li);
-  };
+      `,
+      [
+        {
+          label: "Join Event",
+          className: "cta small",
+          onClick: () => {
+            // 🔥 EVENT BİLGİSİNİ TAŞI
+            localStorage.setItem("selected_event", JSON.stringify(e));
+
+            // 🔥 SAYFAYA GİT
+            window.location.href = "code.html";
+          }
+        },
+        {
+          label: "Close",
+          className: "ghost",
+          onClick: closeModal
+        }
+      ]
+    );
+  });
+
+  // Listeye ekle
+  ul.appendChild(li);
+};
 
   state.eventsPrivate.forEach(e => renderOne(p, e));
   state.eventsPublic.forEach(e => renderOne(u, e));
@@ -569,7 +607,32 @@ document.getElementById("commentForm")?.addEventListener("submit", (e) => {
   window.open(`https://wa.me/${phone}?text=${text}`, "_blank", "noopener");
 });
 
+document.querySelectorAll(".card").forEach(card => {
 
+  const head = card.querySelector(".collapsible");
+  const body = card.querySelector(".card-body");
+
+  if (!head || !body) return;
+
+  head.addEventListener("click", () => {
+
+    const isOpen = card.classList.contains("open");
+
+    // hepsini kapat
+    document.querySelectorAll(".card").forEach(c => {
+      c.classList.remove("open");
+      c.classList.add("collapsed");
+    });
+
+    // tekrar aç
+    if (!isOpen) {
+      card.classList.remove("collapsed");
+      card.classList.add("open");
+    }
+
+  });
+
+});
 // ---------- Init ----------
 applyManualAnnualPercent(); // 👈 MUTLAKA EN ÜSTTE
 
