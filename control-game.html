@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آلة التحكم بالكوماند هاب</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Cairo', sans-serif; }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #0a1628 0%, #020408 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .controller-body {
+      background: linear-gradient(145deg, #0a1628 0%, #1a2847 50%, #0f1f3a 100%);
+      border-radius: 40px;
+      border: 4px solid #4a9eff;
+      box-shadow:
+        0 0 60px rgba(74, 158, 255, 0.4),
+        inset 0 2px 4px rgba(255,255,255,0.15),
+        0 20px 60px rgba(0,0,0,0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .controller-body::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 20%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(100, 180, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0% {
+        background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(74, 158, 255, 0.1) 0%, transparent 50%);
+      }
+      50% {
+        background: radial-gradient(circle at 30% 20%, rgba(251, 146, 60, 0.25) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(100, 180, 255, 0.2) 0%, transparent 50%);
+      }
+      100% {
+        background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.25) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(74, 158, 255, 0.1) 0%, transparent 50%);
+      }
+    }
+
+    .screen-display {
+      background: linear-gradient(180deg, #051220 0%, #0a1f35 100%);
+      border: 3px solid #4a9eff;
+      border-radius: 20px;
+      box-shadow:
+        inset 0 4px 20px rgba(0,0,0,0.8),
+        0 0 30px rgba(74, 158, 255, 0.25);
+      position: relative;
+    }
+
+    .screen-display::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 40%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+      border-radius: 17px 17px 0 0;
+      pointer-events: none;
+    }
+
+    .ctrl-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.15);
+      font-weight: 900;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .ctrl-btn::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px; right: 3px;
+      height: 40%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .ctrl-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 25px rgba(255,255,255,0.2);
+    }
+
+    .ctrl-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-color-1 { background: linear-gradient(145deg, #e94560, #c0392b); box-shadow: 0 6px 20px rgba(233,69,96,0.4); }
+    .btn-color-2 { background: linear-gradient(145deg, #3498db, #2471a3); box-shadow: 0 6px 20px rgba(52,152,219,0.4); }
+    .btn-color-3 { background: linear-gradient(145deg, #2ecc71, #27ae60); box-shadow: 0 6px 20px rgba(46,204,113,0.4); }
+    .btn-color-4 { background: linear-gradient(145deg, #f39c12, #d68910); box-shadow: 0 6px 20px rgba(243,156,18,0.4); }
+
+    .btn-correct {
+      animation: correctPulse 0.6s ease;
+      box-shadow: 0 0 40px rgba(46, 204, 113, 0.8) !important;
+      border-color: #2ecc71 !important;
+    }
+
+    .btn-wrong {
+      animation: wrongShake 0.5s ease;
+      box-shadow: 0 0 40px rgba(231, 76, 60, 0.8) !important;
+      border-color: #e74c3c !important;
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .answer-reveal {
+      animation: fadeSlide 0.4s ease forwards;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-led {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      transition: all 0.3s ease;
+    }
+
+    .score-led.correct {
+      background: #2ecc71;
+      box-shadow: 0 0 8px rgba(46, 204, 113, 0.8);
+    }
+
+    .score-led.wrong {
+      background: #e74c3c;
+      box-shadow: 0 0 8px rgba(231, 76, 60, 0.6);
+    }
+
+    .dpad {
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+
+    .dpad-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30px; height: 30px;
+      background: #2a2a4a;
+      border-radius: 50%;
+      border: 2px solid #3a3a5a;
+    }
+
+    .dpad-arm {
+      position: absolute;
+      background: linear-gradient(145deg, #2a2a4a, #1a1a2e);
+      border: 1px solid #3a3a5a;
+    }
+
+    .dpad-v { width: 28px; height: 100px; left: 50%; transform: translateX(-50%); border-radius: 6px; }
+    .dpad-h { height: 28px; width: 100px; top: 50%; transform: translateY(-50%); border-radius: 6px; }
+
+    .grip-texture {
+      width: 40px;
+      height: 80px;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(255,255,255,0.03) 3px,
+        rgba(255,255,255,0.03) 6px
+      );
+      border-radius: 8px;
+    }
+
+    .progress-ring {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .result-screen {
+      animation: resultReveal 0.8s ease forwards;
+    }
+
+    @keyframes resultReveal {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .star-burst {
+      animation: starSpin 2s linear infinite;
+    }
+
+    @keyframes starSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      animation: confettiFall 3s ease-in-out infinite;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(300px) rotate(720deg); opacity: 0; }
+    }
+
+    .space-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #0a1628 0%, #020408 100%);
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      animation: nebulaDrift 15s ease-in-out infinite;
+    }
+
+    @keyframes nebulaDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .comet {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.6);
+      animation: cometTrail 8s ease-in infinite;
+    }
+
+    @keyframes cometTrail {
+      0% {
+        opacity: 0;
+        transform: translateX(-100px) translateY(-100px);
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(200px) translateY(200px);
+      }
+    }
+
+    .planet {
+      position: absolute;
+      border-radius: 50%;
+      animation: planetRotate 20s linear infinite;
+    }
+
+    @keyframes planetRotate {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.05); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .stat-box {
+      transition: all 0.3s ease;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(74, 158, 255, 0.3) !important;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div class="space-bg" id="spaceBg"></div>
+  <div id="app" class="h-full w-full flex items-center justify-center p-4" style="background: transparent;">
+   <div class="controller-body w-full max-w-2xl p-6 md:p-8" style="transform: scale(0.8); transform-origin: center center; margin: auto;">
+    <!-- Top Bar with Logo & Score -->
+    <div class="flex items-center justify-between mb-4">
+     <div class="flex items-center gap-3">
+      <div class="w-3 h-3 rounded-full bg-red-500" style="box-shadow: 0 0 8px rgba(239,68,68,0.6);"></div>
+      <div class="w-3 h-3 rounded-full bg-yellow-500" style="box-shadow: 0 0 8px rgba(234,179,8,0.6);"></div>
+      <div class="w-3 h-3 rounded-full bg-green-500" style="box-shadow: 0 0 8px rgba(34,197,94,0.6);"></div>
+     </div>
+     <h1 id="gameTitle" class="text-base md:text-lg font-black text-cyan-300 tracking-wide" style="text-shadow: 0 0 20px rgba(74,158,255,0.6);">آلة التحكم بالكوماند هاب</h1>
+     <div class="flex items-center gap-2"><span id="scoreDisplay" class="text-xl font-black text-cyan-300" style="text-shadow: 0 0 10px rgba(74,158,255,0.6);">0</span> <span class="text-gray-500 text-sm">/25</span>
+     </div>
+    </div><!-- LED Score Bar -->
+    <div id="ledBar" class="flex justify-center gap-1.5 mb-4 flex-wrap px-4">
+    </div><!-- Main Screen -->
+    <div class="screen-display p-5 md:p-6 mb-6 min-h-[220px] flex flex-col justify-center">
+     <!-- Welcome Screen -->
+     <div id="welcomeScreen" class="text-center">
+      <div style="font-size: 3.5rem; margin-bottom: 12px; animation: pulse 2s ease-in-out infinite;">
+       🎮
+      </div>
+      <h2 class="text-2xl font-black text-white mb-3" style="text-shadow: 0 2px 8px rgba(74,158,255,0.3);">آلة التحكم بالكوماند هاب</h2>
+      <p class="text-cyan-300 text-sm mb-4 font-semibold" style="text-shadow: 0 0 10px rgba(74,158,255,0.4);">🌟 منصة الأفكار الناجحة</p>
+      <div style="background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 12px; padding: 10px; margin: 12px 0; font-size: 0.85rem;">
+       <div style="color: #a3e635; font-weight: bold; margin-bottom: 6px;">
+        ✨ إحصائيات مثيرة:
+       </div>
+       <div style="color: #e0f2fe; font-size: 0.8rem; line-height: 1.6;">
+        <div>
+         👥 أكثر من <span style="color: #fbbf24; font-weight: bold;">5500+ لاعب</span> نشط
+        </div>
+        <div>
+         🎁 جوائز خفية في كل جولة
+        </div>
+        <div>
+         🏆 تحديات حصرية منتظرة
+        </div>
+       </div>
+      </div>
+      <div style="background: rgba(251, 146, 60, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 12px; padding: 10px; margin: 12px 0; font-size: 0.8rem;">
+       <div style="color: #f97316; font-weight: bold; margin-bottom: 5px;">
+        🎯 مميزات اللعبة:
+       </div>
+       <div style="color: #fed7aa; text-align: right; line-height: 1.5;">
+        <div>
+         ✓ 25 سؤال عن كوماند هاب
+        </div>
+        <div>
+         ✓ نقاط وجوائز حقيقية
+        </div>
+        <div>
+         ✓ لوحة نجوم مباشرة
+        </div>
+       </div>
+      </div>
+      <p class="text-gray-400 mb-6 text-xs">هل أنت جاهز لتصبح بطل كوماند هاب؟</p><button onclick="goToStartGame()" class="px-8 py-3 rounded-full font-bold text-white text-lg transition-all duration-300 hover:scale-105" style="background: linear-gradient(145deg, #e94560, #c0392b); box-shadow: 0 4px 20px rgba(233,69,96,0.4);"> 🚀 ابدأ المغامرة </button>
+     </div><!-- Start Screen -->
+     <div id="startScreen" class="hidden text-center">
+      <div class="text-5xl mb-4">
+       🎮
+      </div>
+      <h2 class="text-2xl font-black text-white mb-2">مرحباً بك في كوماند هاب</h2>
+      <p class="text-gray-400 mb-6 text-sm">25 سؤال • أجب بالضغط على أزرار التحكم</p><button onclick="startGame()" class="px-8 py-3 rounded-full font-bold text-white text-lg" style="background: linear-gradient(145deg, #e94560, #c0392b); box-shadow: 0 4px 20px rgba(233,69,96,0.4);"> ابدأ اللعبة </button>
+     </div><!-- Question Screen -->
+     <div id="questionScreen" class="hidden">
+      <div class="flex items-center justify-between mb-3">
+       <span id="questionNum" class="text-xs font-bold text-cyan-300 bg-cyan-300/10 px-3 py-1 rounded-full">سؤال 1/25</span> <!-- Mini progress ring -->
+       <svg width="40" height="40" class="transform -rotate-90">
+        <circle cx="20" cy="20" r="16" stroke="#1a2847" stroke-width="3" fill="none" /> <circle id="progressRing" cx="20" cy="20" r="16" stroke="#4a9eff" stroke-width="3" fill="none" stroke-dasharray="100.53" stroke-dashoffset="100.53" class="progress-ring" stroke-linecap="round" />
+       </svg>
+      </div>
+      <h3 id="questionText" class="text-lg md:text-xl font-bold text-white leading-relaxed mb-4"></h3>
+      <div id="answerReveal" class="hidden answer-reveal text-center py-2 px-4 rounded-xl mb-2">
+       <span id="answerText" class="font-bold text-sm"></span>
+      </div><!-- Answer Labels -->
+      <div id="answerLabels" class="grid grid-cols-2 gap-2 mt-3">
+       <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style="background: linear-gradient(145deg, #e94560, #c0392b);">A</span> <span id="labelA" class="text-gray-300 text-sm truncate"></span>
+       </div>
+       <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style="background: linear-gradient(145deg, #3498db, #2471a3);">B</span> <span id="labelB" class="text-gray-300 text-sm truncate"></span>
+       </div>
+       <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style="background: linear-gradient(145deg, #2ecc71, #27ae60);">C</span> <span id="labelC" class="text-gray-300 text-sm truncate"></span>
+       </div>
+       <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white" style="background: linear-gradient(145deg, #f39c12, #d68910);">D</span> <span id="labelD" class="text-gray-300 text-sm truncate"></span>
+       </div>
+      </div>
+     </div><!-- Result Screen -->
+     <div id="resultScreen" class="hidden text-center result-screen relative overflow-hidden">
+      <div id="confettiContainer"></div>
+      <div id="resultEmoji" class="text-6xl mb-3"></div>
+      <h2 id="resultTitle" class="text-2xl font-black text-white mb-2"></h2>
+      <p id="resultSubtitle" class="text-gray-400 mb-4"></p>
+      <div class="flex justify-center gap-6 mb-4">
+       <div class="text-center">
+        <div id="resultCorrect" class="text-3xl font-black text-green-400"></div>
+        <div class="text-xs text-gray-500">
+         صحيح
+        </div>
+       </div>
+       <div class="text-center">
+        <div id="resultWrong" class="text-3xl font-black text-red-400"></div>
+        <div class="text-xs text-gray-500">
+         خطأ
+        </div>
+       </div>
+      </div>
+      <div id="resultBar" class="h-3 rounded-full bg-gray-800 overflow-hidden mb-5 mx-8">
+       <div id="resultFill" class="h-full rounded-full transition-all duration-1000" style="width:0%"></div>
+      </div>
+      <div class="flex gap-3 justify-center">
+       <button onclick="shareWhatsApp()" class="px-6 py-3 rounded-full font-bold text-white flex items-center gap-2" style="background: linear-gradient(145deg, #25d366, #1fa857); box-shadow: 0 4px 20px rgba(37,211,102,0.4);"> <i data-lucide="share-2" style="width: 18px; height: 18px;"></i> شارك النتيجة </button> <button onclick="resetGame()" class="px-8 py-3 rounded-full font-bold text-white" style="background: linear-gradient(145deg, #3498db, #2471a3); box-shadow: 0 4px 20px rgba(52,152,219,0.4);"> العب مرة أخرى </button>
+      </div>
+     </div>
+    </div><!-- Controller Buttons Area -->
+    <div class="flex items-center justify-between px-4 md:px-8">
+     <!-- Left: D-Pad (decorative) -->
+     <div class="dpad hidden md:block">
+      <div class="dpad-arm dpad-v"></div>
+      <div class="dpad-arm dpad-h"></div>
+      <div class="dpad-center"></div>
+     </div><!-- Center: Grip Textures -->
+     <div class="hidden md:flex gap-6">
+      <div class="grip-texture"></div>
+      <div class="grip-texture"></div>
+     </div><!-- Right: Action Buttons -->
+     <div class="relative" style="width: 180px; height: 180px;">
+      <!-- A - Top --> <button id="btnA" onclick="answer(0)" class="ctrl-btn btn-color-1 absolute" style="top: 0; left: 50%; transform: translateX(-50%);"> A </button> <!-- B - Right --> <button id="btnB" onclick="answer(1)" class="ctrl-btn btn-color-2 absolute" style="top: 50%; right: 0; transform: translateY(-50%);"> B </button> <!-- C - Bottom --> <button id="btnC" onclick="answer(2)" class="ctrl-btn btn-color-3 absolute" style="bottom: 0; left: 50%; transform: translateX(-50%);"> C </button> <!-- D - Left --> <button id="btnD" onclick="answer(3)" class="ctrl-btn btn-color-4 absolute" style="top: 50%; left: 0; transform: translateY(-50%);"> D </button>
+     </div>
+    </div><!-- Bottom Bar -->
+    <div class="flex justify-center gap-2 mt-5">
+     <div class="w-16 h-1.5 rounded-full bg-gray-700"></div>
+     <div class="w-8 h-1.5 rounded-full bg-gray-700"></div>
+    </div><!-- Website Link -->
+    <div class="text-center mt-4">
+     <a href="https://www.tbccommandhub.site" target="_blank" rel="noopener noreferrer" class="text-sm text-cyan-400 hover:text-cyan-300 font-semibold transition-colors" style="text-shadow: 0 0 10px rgba(74,158,255,0.4);"> 🌐 www.tbccommandhub.site </a>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Command Hub Marketing Questions
+    const questions = [
+      { q: "ما هو الهدف الرئيسي لمنصة كوماند هاب؟", options: ["بيع المنتجات", "تحويل الأفكار إلى مشاريع ناجحة", "العاب فقط", "حسابات بنكية"], correct: 1 },
+      { q: "كم عدد المشتركين النشطين في كوماند هاب تقريباً؟", options: ["1000", "10,000+", "100", "50,000"], correct: 1 },
+      { q: "ما هي أحد فوائد تحديد المسار التخصصي في كوماند هاب؟", options: ["الارتباك أكثر", "التركيز على الاختصاص الصحيح", "عدم تطوير المهارات", "البقاء عاطلاً"], correct: 1 },
+      { q: "هل يمكن تحويل النقاط المكتسبة في كوماند هاب؟", options: ["لا، لا تملك قيمة", "نعم، إلى مزايا وفرص", "فقط للعرض", "لا أحد يعرف"], correct: 1 },
+      { q: "كم نسبة المطورين المشاركين في كوماند هاب تقريباً؟", options: ["10%", "25%+", "1%", "70%"], correct: 1 },
+      { q: "ما هي إحدى فوائد كروت الدعم في كوماند هاب؟", options: ["لا فائدة منها", "زيادة فرص النجاح مع التمويل", "تأخير المشاريع", "تعقيد العملية"], correct: 1 },
+      { q: "هل يمكن فتح مشروع من الصفر عبر كوماند هاب؟", options: ["لا", "نعم، عبر المراحل التخصصية", "فقط الخبراء", "غير ممكن"], correct: 1 },
+      { q: "كم نسبة الأشخاص العاديين الذين غيّرت الكوماند هاب حياتهم؟", options: ["5%", "20%+", "0%", "1%"], correct: 1 },
+      { q: "ما دور الحظ في نجاح مشروعك بالكوماند هاب؟", options: ["كل شيء يعتمد على الحظ", "عنصر إضافي مع العمل والدعم والنقاط", "الحظ غير موجود", "الحظ الوحيد"], correct: 1 },
+      { q: "هل تتزايد الاشتراكات اليومية في كوماند هاب؟", options: ["لا، ثابتة", "نعم، بسرعة ملحوظة", "تنخفض", "غير محدد"], correct: 1 },
+      { q: "ما الفرق بين مجرد فكرة وفكرة ناجحة في كوماند هاب؟", options: ["لا فرق", "الدعم والتطوير والالتزام", "الحظ فقط", "الأموال"], correct: 1 },
+      { q: "كيف يمكن جمع النقاط في كوماند هاب؟", options: ["بدون عمل", "عبر الإجابة على الأسئلة والمشاركة الفعالة", "الشراء فقط", "الطلب المباشر"], correct: 1 },
+      { q: "هل قوة الدعم في كوماند هاب حقيقية؟", options: ["ضعيفة جداً", "قوية جداً — تدعم المشاريع من البداية", "وهمية", "لا وجود لها"], correct: 1 },
+      { q: "ما هي المتعة الحقيقية في كوماند هاب؟", options: ["فقط الألعاب", "رؤية فكرتك تتحول لمشروع حقيقي ناجح", "الخسارة", "الملل"], correct: 1 },
+      { q: "كم مرحلة تخصصية يجب اتباعها لإطلاق مشروع؟", options: ["0 مراحل", "مراحل منظمة وواضحة", "100 مرحلة", "لا توجد مراحل"], correct: 1 },
+      { q: "هل يمكن للشخص العادي أن ينجح في كوماند هاب؟", options: ["لا، فقط الخبراء", "نعم، مع الجدية والالتزام والدعم", "قد يكون محظوظاً فقط", "غير ممكن"], correct: 1 },
+      { q: "ما هو الدور الأساسي للنقاط والدعم معاً؟", options: ["لا دور", "بناء أساس قوي للمشروع الناجح", "عائق فقط", "تعقيد الأمور"], correct: 1 },
+      { q: "هل كوماند هاب تساعد على اكتشاف موهبتك الحقيقية؟", options: ["لا", "نعم، عبر تحديد المسار والتطوير", "ربما فقط", "بالصدفة"], correct: 1 },
+      { q: "ما هي السرعة المتوقعة لنمو مشروعك في كوماند هاب؟", options: ["بطيء جداً", "متسارع مع الدعم الصحيح", "لا ينمو", "سنة واحدة فقط"], correct: 1 },
+      { q: "هل يمكن الجمع بين العمل والدراسة في كوماند هاب؟", options: ["لا", "نعم، هي مرنة وتدعم الموازنة", "فقط للعاطلين", "صعب جداً"], correct: 1 },
+      { q: "ما أهمية الانضمام للكوماند هاب الآن؟", options: ["لا فائدة", "فرصة ذهبية قبل أن تزداد المنافسة", "يمكن لاحقاً", "غير مهم"], correct: 1 },
+      { q: "هل الفكرة التقليدية في كوماند هاب تنجح؟", options: ["فقط التقليدية", "الأفكار المطورة + الدعم = نجاح", "الأفكار القديمة فقط", "لا شيء ينجح"], correct: 1 },
+      { q: "ما دور مجتمع كوماند هاب في نجاحك؟", options: ["لا دور", "كبير جداً — شبكة من المدعومين والمتطورين", "دور صغير", "معطل"], correct: 1 },
+      { q: "هل يمكن للشخص تغيير مساره في كوماند هاب؟", options: ["لا، ثابت", "نعم، مع التطور والتعلم", "فقط مرة واحدة", "محظور"], correct: 1 },
+      { q: "ما الرسالة النهائية لكوماند هاب؟", options: ["لا رسالة", "كل فكرة جيدة تستحق أن تصير مشروع ناجح معنا", "الفشل محتوم", "لا تبدأ"], correct: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let isAnswering = false;
+    let gameStarted = false;
+    let isWelcomeScreen = true;
+
+    // Build LED bar
+    const ledBar = document.getElementById('ledBar');
+    for (let i = 0; i < 25; i++) {
+      const led = document.createElement('div');
+      led.className = 'score-led';
+      led.id = `led-${i}`;
+      ledBar.appendChild(led);
+    }
+
+    function startGame() {
+      gameStarted = true;
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById('scoreDisplay').textContent = '0';
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
+      document.getElementById('questionScreen').classList.remove('hidden');
+      for (let i = 0; i < 25; i++) {
+        const led = document.getElementById(`led-${i}`);
+        led.className = 'score-led';
+      }
+      showQuestion();
+    }
+
+    function goToStartGame() {
+      isWelcomeScreen = false;
+      document.getElementById('welcomeScreen').classList.add('hidden');
+      document.getElementById('startScreen').classList.remove('hidden');
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('questionNum').textContent = `سؤال ${currentQuestion + 1}/25`;
+      document.getElementById('questionText').textContent = q.q;
+      
+      const positions = [0, 1, 2, 3];
+      const shuffled = positions.sort(() => Math.random() - 0.5);
+      const buttonIds = ['btnA', 'btnB', 'btnC', 'btnD'];
+      const labelIds = ['labelA', 'labelB', 'labelC', 'labelD'];
+      
+      const newCorrectIndex = shuffled.indexOf(q.correct);
+      questions[currentQuestion].correctDisplay = newCorrectIndex;
+      
+      const shuffledOptions = [];
+      for (let i = 0; i < 4; i++) {
+        shuffledOptions[i] = q.options[shuffled[i]];
+      }
+      
+      document.getElementById('labelA').textContent = shuffledOptions[0];
+      document.getElementById('labelB').textContent = shuffledOptions[1];
+      document.getElementById('labelC').textContent = shuffledOptions[2];
+      document.getElementById('labelD').textContent = shuffledOptions[3];
+
+      const progress = ((currentQuestion) / 25) * 100.53;
+      document.getElementById('progressRing').style.strokeDashoffset = 100.53 - progress;
+
+      document.getElementById('answerReveal').classList.add('hidden');
+
+      ['btnA', 'btnB', 'btnC', 'btnD'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.classList.remove('btn-correct', 'btn-wrong');
+        btn.disabled = false;
+      });
+
+      isAnswering = false;
+    }
+
+    function answer(index) {
+      if (isAnswering || !gameStarted) return;
+      isAnswering = true;
+
+      const q = questions[currentQuestion];
+      const isCorrect = index === q.correctDisplay;
+      const btnIds = ['btnA', 'btnB', 'btnC', 'btnD'];
+      const clickedBtn = document.getElementById(btnIds[index]);
+
+      const reveal = document.getElementById('answerReveal');
+      const answerText = document.getElementById('answerText');
+      reveal.classList.remove('hidden');
+
+      if (isCorrect) {
+        score++;
+        document.getElementById('scoreDisplay').textContent = score;
+        clickedBtn.classList.add('btn-correct');
+        reveal.style.background = 'rgba(46, 204, 113, 0.15)';
+        reveal.style.border = '1px solid rgba(46, 204, 113, 0.3)';
+        answerText.style.color = '#2ecc71';
+        answerText.textContent = '✓ إجابة صحيحة! — ' + q.options[q.correct];
+        document.getElementById(`led-${currentQuestion}`).classList.add('correct');
+      } else {
+        clickedBtn.classList.add('btn-wrong');
+        reveal.style.background = 'rgba(231, 76, 60, 0.15)';
+        reveal.style.border = '1px solid rgba(231, 76, 60, 0.3)';
+        answerText.style.color = '#e74c3c';
+        answerText.textContent = '✗ خطأ! الإجابة: ' + q.options[q.correct];
+        document.getElementById(`led-${currentQuestion}`).classList.add('wrong');
+      }
+
+      btnIds.forEach(id => document.getElementById(id).disabled = true);
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion >= 25) {
+          showResult();
+        } else {
+          showQuestion();
+        }
+      }, 1800);
+    }
+
+    function showResult() {
+      document.getElementById('questionScreen').classList.add('hidden');
+      document.getElementById('resultScreen').classList.remove('hidden');
+      gameStarted = false;
+
+      document.getElementById('progressRing').style.strokeDashoffset = 0;
+
+      const wrong = 25 - score;
+      document.getElementById('resultCorrect').textContent = score;
+      document.getElementById('resultWrong').textContent = wrong;
+
+      const fill = document.getElementById('resultFill');
+      const pct = (score / 25) * 100;
+
+      let emoji = '😔';
+      let title = 'للأسف خسرت!';
+      let subtitle = `حصلت على ${score} من 25 — حاول مرة أخرى!`;
+      let fillColor = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+      let rewards = [];
+
+      if (score >= 25) {
+        emoji = '🏆';
+        title = 'مبروك! أنت الأسطورة!';
+        subtitle = `حصلت على 25/25 — أداء مثالي! 🎯`;
+        fillColor = 'linear-gradient(90deg, #f39c12, #e67e22)';
+        rewards = ['500 نقطة 🎁', 'بطل القوماند هاب 👑'];
+        spawnConfetti();
+      } else if (score >= 20) {
+        emoji = '🥇';
+        title = 'مبروك! فائز ممتاز!';
+        subtitle = `حصلت على ${score}/25 — أداء استثنائي! 🚀`;
+        fillColor = 'linear-gradient(90deg, #2ecc71, #27ae60)';
+        rewards = ['كرت حظ 🎰', '200 نقطة 💎'];
+        spawnConfetti();
+      } else if (score >= 15) {
+        emoji = '🥈';
+        title = 'أداء قوي جداً!';
+        subtitle = `حصلت على ${score}/25 — كاد تكون نجماً! ⭐`;
+        fillColor = 'linear-gradient(90deg, #3498db, #2980b9)';
+        rewards = ['كرت حظ محجوز 🔐'];
+        spawnConfetti();
+      } else if (score >= 10) {
+        emoji = '😊';
+        title = 'أداء جيد!';
+        subtitle = `حصلت على ${score}/25 — على المسار الصحيح! 💪`;
+        fillColor = 'linear-gradient(90deg, #9b59b6, #8e44ad)';
+        rewards = ['100 نقطة ⭐'];
+      } else if (score >= 5) {
+        emoji = '🤔';
+        title = 'بداية جيدة!';
+        subtitle = `حصلت على ${score}/25 — واصل المحاولة! 💡`;
+        fillColor = 'linear-gradient(90deg, #e67e22, #d35400)';
+        rewards = ['50 نقطة 🎯'];
+      }
+
+      document.getElementById('resultEmoji').textContent = emoji;
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultSubtitle').textContent = subtitle;
+
+      const rewardContainer = document.getElementById('resultFill').parentElement;
+      let rewardHTML = '<div style="margin-top: 20px; text-align: center;">';
+      if (rewards.length > 0) {
+        rewardHTML += '<h3 style="color: #fbbf24; font-size: 16px; margin-bottom: 10px;">🎁 جوائزك:</h3>';
+        rewards.forEach(reward => {
+          rewardHTML += `<div style="color: #a3e635; font-size: 14px; margin: 5px 0; font-weight: bold;">${reward}</div>`;
+        });
+      }
+      rewardHTML += '</div>';
+      rewardContainer.insertAdjacentHTML('afterend', rewardHTML);
+
+      fill.style.background = fillColor;
+
+      setTimeout(() => {
+        fill.style.width = pct + '%';
+      }, 200);
+    }
+
+    function spawnConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const colors = ['#e94560', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#e74c3c'];
+      for (let i = 0; i < 30; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+        container.appendChild(piece);
+      }
+    }
+
+    function shareWhatsApp() {
+      const title = document.getElementById('resultTitle').textContent;
+      const score = document.getElementById('resultCorrect').textContent;
+      const message = `🎮 لقد حصلت على ${score}/25 في اختبار كوماند هاب!\n\n${title}\n\n📱 هل تستطيع تحقيق نتيجة أفضل؟ انضم الآن!`;
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    }
+
+    function resetGame() {
+      document.getElementById('confettiContainer').innerHTML = '';
+      const rewardDivs = document.querySelectorAll('#resultScreen > div[style*="margin-top"]');
+      rewardDivs.forEach(el => el.remove());
+      isWelcomeScreen = true;
+      document.getElementById('welcomeScreen').classList.remove('hidden');
+      document.getElementById('resultScreen').classList.add('hidden');
+      gameStarted = false;
+    }
+
+    // Element SDK
+    const defaultConfig = {
+      game_title: 'آلة التحكم بالكوماند هاب',
+      background_color: '#050510',
+      surface_color: '#1a1a2e',
+      text_color: '#ffffff',
+      primary_action_color: '#e94560',
+      secondary_action_color: '#3498db',
+      font_family: 'Cairo',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const title = config.game_title || defaultConfig.game_title;
+      document.getElementById('gameTitle').textContent = title;
+
+      const textColor = config.text_color || defaultConfig.text_color;
+      document.querySelectorAll('h1, h2, h3, .text-white').forEach(el => el.style.color = textColor);
+
+      const font = config.font_family || defaultConfig.font_family;
+      document.body.style.fontFamily = `${font}, Cairo, sans-serif`;
+
+      const baseSize = config.font_size || defaultConfig.font_size;
+      document.getElementById('gameTitle').style.fontSize = (baseSize * 1.1) + 'px';
+      document.getElementById('questionText').style.fontSize = (baseSize * 1.25) + 'px';
+    }
+
+   
+    // Initialize space background
+    function initSpaceBackground() {
+      const bg = document.getElementById('spaceBg');
+
+      for (let i = 0; i < 80; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2 + 0.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        star.style.animationDuration = (2 + Math.random() * 3) + 's';
+        bg.appendChild(star);
+      }
+
+      const nebulaColors = [
+        'rgba(236, 72, 153, 0.2)',
+        'rgba(251, 146, 60, 0.15)',
+        'rgba(74, 158, 255, 0.15)'
+      ];
+
+      for (let i = 0; i < 3; i++) {
+        const nebula = document.createElement('div');
+        nebula.className = 'nebula';
+        nebula.style.background = nebulaColors[i];
+        nebula.style.width = (150 + Math.random() * 200) + 'px';
+        nebula.style.height = nebula.style.width;
+        nebula.style.left = Math.random() * 80 + '%';
+        nebula.style.top = Math.random() * 80 + '%';
+        nebula.style.animationDelay = i * 5 + 's';
+        nebula.style.animationDuration = (12 + Math.random() * 8) + 's';
+        bg.appendChild(nebula);
+      }
+
+      for (let i = 0; i < 2; i++) {
+        const comet = document.createElement('div');
+        comet.className = 'comet';
+        comet.style.left = Math.random() * 20 + '%';
+        comet.style.top = Math.random() * 30 + '%';
+        comet.style.animationDelay = i * 4 + 's';
+        comet.style.animationDuration = (6 + Math.random() * 4) + 's';
+        bg.appendChild(comet);
+      }
+
+      const planetData = [
+        { color: 'rgba(239, 68, 68, 0.3)', size: 60, shadow: 'rgba(239, 68, 68, 0.5)' },
+        { color: 'rgba(251, 146, 60, 0.25)', size: 80, shadow: 'rgba(251, 146, 60, 0.4)' },
+        { color: 'rgba(74, 158, 255, 0.2)', size: 100, shadow: 'rgba(74, 158, 255, 0.3)' }
+      ];
+
+      planetData.forEach((data, index) => {
+        const planet = document.createElement('div');
+        planet.className = 'planet';
+        planet.style.background = data.color;
+        planet.style.width = data.size + 'px';
+        planet.style.height = data.size + 'px';
+        planet.style.left = (20 + index * 35) + '%';
+        planet.style.top = (15 + index * 10) + '%';
+        planet.style.boxShadow = `inset 0 0 30px ${data.shadow}, 0 0 40px ${data.shadow}`;
+        planet.style.animationDelay = index * 2 + 's';
+        bg.appendChild(planet);
+      });
+    }
+
+    initSpaceBackground();
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dff7783210c78a6',t:'MTc3NDEyMjQzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

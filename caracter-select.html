@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحدي الشخصية الإبداعية</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Kufi Arabic', sans-serif; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-120px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes progressFill {
+      from { width: 0; }
+    }
+    .animate-slide { animation: slideIn 0.5s ease-out; }
+    .animate-pop { animation: popIn 0.4s ease-out; }
+    .animate-shake { animation: shake 0.5s ease-out; }
+    .animate-glow { animation: glow 2s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+
+    .star-burst {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      animation: confetti 0.8s ease-out forwards;
+    }
+
+    .progress-segment {
+      transition: all 0.5s ease;
+    }
+    .progress-segment.completed {
+      transform: scale(1.05);
+    }
+
+    .option-btn {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn:hover {
+      transform: translateY(-2px);
+    }
+    .option-btn:active {
+      transform: scale(0.97);
+    }
+    .option-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      pointer-events: none;
+    }
+
+    .hint-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .hint-reveal.show {
+      max-height: 80px;
+      opacity: 1;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+
+ </head>
+ <body class="h-full">
+  <div id="app-wrapper" class="h-full w-full overflow-auto" style="background: #0f172a;"><!-- Decorative BG -->
+   <div style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;">
+    <div style="position:absolute;top:-50%;right:-30%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.08),transparent 70%);"></div>
+    <div style="position:absolute;bottom:-40%;left:-20%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,0.08),transparent 70%);"></div>
+   </div>
+   <div class="relative z-10 max-w-lg mx-auto px-4 py-6" style="min-height:100%;"><!-- Header -->
+    <header class="text-center mb-6 animate-slide">
+     <div class="inline-flex items-center gap-2 mb-2 px-4 py-1 rounded-full" style="background:rgba(251,191,36,0.15);"><i data-lucide="sparkles" style="width:16px;height:16px;color:#fbbf24;"></i> <span style="color:#fbbf24;font-size:13px;font-weight:600;" id="level-badge">المستوى 1</span>
+     </div>
+     <h1 id="quiz-title" class="text-3xl font-black mb-1" style="color:#f8fafc;letter-spacing:-0.5px;">تحدي الشخصية الإبداعية</h1>
+     <div id="score-display" class="flex items-center justify-center gap-3 mt-3">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl" style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.2);"><i data-lucide="trophy" style="width:16px;height:16px;color:#fbbf24;"></i> <span style="color:#fbbf24;font-weight:700;font-size:15px;" id="points-text">0</span> <span style="color:rgba(251,191,36,0.7);font-size:12px;">نقطة</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.2);"><i data-lucide="zap" style="width:16px;height:16px;color:#818cf8;"></i> <span style="color:#818cf8;font-weight:700;font-size:15px;" id="streak-text">0</span> <span style="color:rgba(129,140,248,0.7);font-size:12px;">متتالية</span>
+      </div>
+     </div>
+    </header><!-- Progress Bar -->
+    <div class="mb-6 px-1">
+     <div class="flex items-center justify-between mb-2"><span style="color:rgba(248,250,252,0.5);font-size:12px;">التقدم</span> <span style="color:rgba(248,250,252,0.5);font-size:12px;" id="progress-label">0 / 10</span>
+     </div>
+     <div class="flex gap-1.5" id="progress-bar"></div>
+    </div><!-- Game Area -->
+    <main id="game-area"></main><!-- Results Screen -->
+    <div id="results-screen" class="hidden"></div>
+   </div>
+  </div>
+  <script>
+    // ===== GAME DATA - Personality Quiz =====
+    const questions = [
+      {
+        question: "عند مواجهة مشروع جديد، ما أول شيء تفعله؟",
+        category: "work_style",
+        options: [
+          { text: "أبدأ برسم خريطة ذهنية وتخطيط شامل", type: "strategist", points: 3 },
+          { text: "أغوص مباشرة وأتعلم أثناء التقدم", type: "innovator", points: 3 },
+          { text: "أستشير الآخرين وأجمع أفكارهم", type: "collaborator", points: 3 },
+          { text: "أحلل المشكلة وأبحث عن أفضل حل", type: "analyst", points: 3 }
+        ],
+        emoji: "🎯"
+      },
+      {
+        question: "ما أكثر شيء يستهويك في عملك؟",
+        category: "motivation",
+        options: [
+          { text: "رؤية نتائج ملموسة وإنجازات واقعية", type: "strategist", points: 3 },
+          { text: "تجربة أفكار جديدة وخلق شيء لم يكن موجوداً", type: "innovator", points: 3 },
+          { text: "بناء علاقات قوية والعمل مع فريق", type: "collaborator", points: 3 },
+          { text: "فهم العمق والتفاصيل الدقيقة", type: "analyst", points: 3 }
+        ],
+        emoji: "💡"
+      },
+      {
+        question: "كيف تتعامل مع الأخطاء والفشل؟",
+        category: "resilience",
+        options: [
+          { text: "أستخلص الدروس وأعدّل الخطة للمرة القادمة", type: "strategist", points: 3 },
+          { text: "أراها كفرصة للتعلم والابتكار", type: "innovator", points: 3 },
+          { text: "أشارك القلق مع فريقي وأطلب دعمهم", type: "collaborator", points: 3 },
+          { text: "أحللها بعمق لفهم السبب الجذري", type: "analyst", points: 3 }
+        ],
+        emoji: "🔄"
+      },
+      {
+        question: "هل لديك الاستعداد النفسي لبيع أفكارك الجديدة وإقناع الآخرين بها؟",
+        category: "entrepreneurship",
+        options: [
+          { text: "نعم، أنا واثق جداً من أفكاري وأستطيع إقناع أي شخص", type: "strategist", points: 3 },
+          { text: "نعم، أحب أن أشارك الأفكار الجديدة وأسمع الملاحظات", type: "innovator", points: 3 },
+          { text: "نعم، لكن أفضل أن أكون مع فريق يؤمن بالفكرة معي", type: "collaborator", points: 3 },
+          { text: "أحتاج أن أكون متأكداً من البيانات والأرقام قبل البيع", type: "analyst", points: 3 }
+        ],
+        emoji: "💼"
+      },
+      {
+        question: "عندما ينمو مشروعك بسرعة، كيف تتعامل مع المسؤوليات الإضافية؟",
+        category: "scaling",
+        options: [
+          { text: "أوسع الفريق وأفوّض المهام بشكل استراتيجي", type: "strategist", points: 3 },
+          { text: "أبحث عن طرق جديدة وأتكيف مع التغييرات بسرعة", type: "innovator", points: 3 },
+          { text: "أبني فريق قوي وأثق بهم وأدعمهم", type: "collaborator", points: 3 },
+          { text: "أضع أنظمة وعمليات واضحة وقابلة للقياس", type: "analyst", points: 3 }
+        ],
+        emoji: "📊"
+      },
+      {
+        question: "ما نوع الداعم (الشريك/المستثمر) الذي تفضل العمل معه؟",
+        category: "partnerships",
+        options: [
+          { text: "شخص رائد يشاركني الرؤية الكبيرة والطموح", type: "strategist", points: 3 },
+          { text: "شخص يثق بي ويعطيني حرية في التنفيذ والإبداع", type: "innovator", points: 3 },
+          { text: "شخص أستطيع التواصل معه بسهولة وبناء علاقة قوية", type: "collaborator", points: 3 },
+          { text: "شخص متابع للتفاصيل ويتخذ القرارات بناءً على البيانات", type: "analyst", points: 3 }
+        ],
+        emoji: "🤝"
+      },
+      {
+        question: "في أي مجال تحب أن تبني شركتك أو تطلق مشروعك الخاص؟",
+        category: "passion",
+        options: [
+          { text: "مجال الخدمات والحلول الكاملة التي تحل مشاكل حقيقية", type: "strategist", points: 3 },
+          { text: "مجال التكنولوجيا والابتكار والتصاميم الجديدة", type: "innovator", points: 3 },
+          { text: "مجال التدريب والتطوير البشري والمجتمعات", type: "collaborator", points: 3 },
+          { text: "مجال البحث العلمي والتحليلات والبيانات", type: "analyst", points: 3 }
+        ],
+        emoji: "🌟"
+      },
+      {
+        question: "كم سنة (أو شهر) أنت تفكر فيها وتحضر للتحول لرائد أعمال/مبدع؟",
+        category: "readiness",
+        options: [
+          { text: "أقل من 6 أشهر - أنا مستعد جداً والآن الوقت المناسب!", type: "strategist", points: 3 },
+          { text: "6 أشهر لسنة - أنا بصدد تطوير الفكرة والاستعداد", type: "innovator", points: 3 },
+          { text: "سنة أو سنتين - أنا أبني شبكتي والمهارات اللازمة", type: "collaborator", points: 3 },
+          { text: "أكثر من سنتين - أنا بدرس وأتعلم قبل الخطوة الكبيرة", type: "analyst", points: 3 }
+        ],
+        emoji: "⏱️"
+      },
+      {
+        question: "إذا واجهت تحدياً كبيراً يهدد مشروعك، ماذا تفعل؟",
+        category: "crisis",
+        options: [
+          { text: "أتخذ قرار سريع وأغيّر الاستراتيجية بجرأة", type: "strategist", points: 3 },
+          { text: "أبحث عن حلول إبداعية وجديدة لم نفكر فيها من قبل", type: "innovator", points: 3 },
+          { text: "أجمع فريقي وأستشيرهم وننحل المشكلة معاً", type: "collaborator", points: 3 },
+          { text: "أحلل المشكلة بعمق وأفهم الأسباب الجذرية", type: "analyst", points: 3 }
+        ],
+        emoji: "🔥"
+      }
+    ];
+
+    const personalities = {
+      strategist: {
+        title: "🎖️ الاستراتيجي الرائد",
+        color: "#f59e0b",
+        description: "أنت قائد ولديك رؤية واضحة! تخطط بذكاء وتنفذ بكفاءة عالية.",
+        details: [
+          "✨ نقطة قوتك: القدرة على رؤية الصورة الكاملة وترجمتها إلى خطط عملية",
+          "🎯 موهبتك: التخطيط الاستراتيجي وإدارة المشاريع المعقدة",
+          "💼 أنت الأفضل في: قيادة الفرق وتحديد الأولويات الحقيقية",
+          "🚀 تأثيرك: تحويل الأحلام إلى واقع ملموس"
+        ],
+        productivity: "عالية جداً",
+        creativity: "جيدة",
+        impact: "قوي وطويل الأمد"
+      },
+      innovator: {
+        title: "🚀 المبتكر العبقري",
+        color: "#8b5cf6",
+        description: "أنت صاحب أفكار جديدة! تجلب الابتكار والإبداع إلى كل شيء تلمسه.",
+        details: [
+          "✨ نقطة قوتك: القدرة على رؤية إمكانيات لا يراها الآخرون",
+          "🎨 موهبتك: الإبداع والابتكار والتفكير خارج الصندوق",
+          "💡 أنت الأفضل في: إنشاء حلول غير تقليدية وجديدة",
+          "🌟 تأثيرك: تغيير الطريقة التي يفكر بها الناس"
+        ],
+        productivity: "عالية",
+        creativity: "عالية جداً",
+        impact: "رائد ومؤثر"
+      },
+      collaborator: {
+        title: "🤝 المتعاون المجنح",
+        color: "#ec4899",
+        description: "أنت نسيج الفريق! تبني جسور وتحفز الآخرين على الإبداع معاً.",
+        details: [
+          "✨ نقطة قوتك: القدرة على إلهام الآخرين وتوحيد جهودهم",
+          "🎯 موهبتك: التواصل والقيادة الإنسانية وبناء الثقة",
+          "❤️ أنت الأفضل في: خلق بيئة عمل إيجابية ومحفزة",
+          "🌈 تأثيرك: تحسين حياة من حولك وتطورهم"
+        ],
+        productivity: "عالية",
+        creativity: "جيدة",
+        impact: "إنساني وعميق"
+      },
+      analyst: {
+        title: "🔬 المحلل الدقيق",
+        color: "#06b6d4",
+        description: "أنت المفكر الدقيق! تحلل المشاكل بعمق وتجد حلولاً مضبوطة.",
+        details: [
+          "✨ نقطة قوتك: القدرة على فهم التفاصيل المعقدة والأنماط الخفية",
+          "📊 موهبتك: التحليل العميق واتخاذ القرارات المبنية على البيانات",
+          "🎯 أنت الأفضل في: حل المشاكل المعقدة والتحسين المستمر",
+          "⚙️ تأثيرك: بناء أنظمة قوية وموثوقة"
+        ],
+        productivity: "عالية جداً",
+        creativity: "جيدة",
+        impact: "مستقر وموثوق"
+      }
+    };
+
+    // ===== GAME STATE =====
+    let currentQuestion = 0;
+    let points = 0;
+    let streak = 0;
+    let answers = [];
+    let personalityScores = { strategist: 0, innovator: 0, collaborator: 0, analyst: 0 };
+    let isAnimating = false;
+
+    // ===== DEFAULT CONFIG =====
+    const defaultConfig = {
+      quiz_title: "تحدي الشخصية الإبداعية",
+      background_color: "#0f172a",
+      surface_color: "#1e293b",
+      text_color: "#f8fafc",
+      primary_action_color: "#f59e0b",
+      secondary_action_color: "#8b5cf6",
+      font_family: "Noto Kufi Arabic",
+      font_size: 16
+    };
+
+
+    // ===== BUILD PROGRESS BAR =====
+    function buildProgressBar() {
+      const bar = document.getElementById('progress-bar');
+      bar.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const seg = document.createElement('div');
+        seg.className = 'progress-segment rounded-full';
+        seg.style.cssText = `height:8px;flex:1;transition:all 0.4s ease;cursor:pointer;`;
+        seg.dataset.index = i;
+        updateSegment(seg, i);
+        bar.appendChild(seg);
+      }
+    }
+
+    function updateSegment(seg, i) {
+      if (i < currentQuestion) {
+        seg.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
+        seg.style.boxShadow = '0 0 8px rgba(34,197,94,0.4)';
+      } else if (i === currentQuestion) {
+        seg.style.background = 'linear-gradient(90deg, #fbbf24, #f59e0b)';
+        seg.style.boxShadow = '0 0 8px rgba(251,191,36,0.4)';
+      } else {
+        seg.style.background = 'rgba(248,250,252,0.1)';
+        seg.style.boxShadow = 'none';
+      }
+    }
+
+    function refreshProgress() {
+      const segs = document.querySelectorAll('.progress-segment');
+      segs.forEach((seg, i) => updateSegment(seg, i));
+      document.getElementById('progress-label').textContent = `${currentQuestion} / 9`;
+      const level = Math.floor(currentQuestion / 3) + 1;
+      document.getElementById('level-badge').textContent = `المستوى ${Math.min(level, 3)}`;
+    }
+
+    // ===== RENDER QUESTION =====
+    function renderQuestion() {
+      const area = document.getElementById('game-area');
+      const q = questions[currentQuestion];
+
+      area.innerHTML = `
+        <div class="surface-card rounded-2xl p-5 mb-6 animate-slide" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+          <div class="flex items-center justify-between mb-4">
+            <span style="color:rgba(248,250,252,0.4);font-size:13px;">السؤال ${currentQuestion + 1} من 9</span>
+            <span class="text-3xl animate-float">${q.emoji}</span>
+          </div>
+          <p class="question-text text-lg font-bold leading-relaxed" style="color:#f8fafc;">${q.question}</p>
+        </div>
+
+        <div id="options-container" class="grid grid-cols-1 gap-2.5 mb-5">
+          ${q.options.map((opt, i) => `
+            <button class="option-btn rounded-xl px-4 py-3 text-right font-semibold transition-all hover:scale-105" 
+              style="background:rgba(248,250,252,0.05);border:1px solid rgba(248,250,252,0.1);color:#f8fafc;" 
+              data-option="${i}">
+              ${opt.text}
+            </button>
+          `).join('')}
+        </div>
+      `;
+
+      lucide.createIcons();
+
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.option), q));
+      });
+    }
+
+    // ===== HANDLE ANSWER =====
+    function handleAnswer(selectedIndex, q) {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const selectedOption = q.options[selectedIndex];
+      const personalityType = selectedOption.type;
+
+      personalityScores[personalityType] += selectedOption.points;
+      points += 15;
+      streak++;
+
+      answers.push({
+        question: q.question,
+        selected: selectedOption.text,
+        type: personalityType
+      });
+
+      const btn = document.querySelectorAll('.option-btn')[selectedIndex];
+      btn.style.background = 'rgba(34,197,94,0.2)';
+      btn.style.borderColor = 'rgba(34,197,94,0.5)';
+      btn.style.color = '#22c55e';
+      btn.innerHTML += ' ✓';
+
+      spawnStars(btn);
+      updateDisplays();
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < 9) {
+          refreshProgress();
+          renderQuestion();
+        } else {
+          showResults();
+        }
+        isAnimating = false;
+      }, 600);
+    }
+
+    // ===== UPDATE DISPLAYS =====
+    function updateDisplays() {
+      document.getElementById('points-text').textContent = points;
+      document.getElementById('streak-text').textContent = streak;
+    }
+
+    // ===== SPAWN STARS =====
+    function spawnStars(el) {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const colors = ['#fbbf24', '#22c55e', '#818cf8', '#f472b6', '#fb923c'];
+      for (let i = 0; i < 8; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-burst';
+        star.style.left = `${rect.left + rect.width * Math.random()}px`;
+        star.style.top = `${rect.top + rect.height / 2}px`;
+        star.style.background = colors[Math.floor(Math.random() * colors.length)];
+        star.style.position = 'fixed';
+        star.style.zIndex = '9999';
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 800);
+      }
+    }
+
+    // ===== SHOW RESULTS =====
+    function showResults() {
+      // Determine dominant personality
+      const dominantType = Object.entries(personalityScores).reduce((a, b) => 
+        personalityScores[a[0]] > personalityScores[b[0]] ? a : b
+      )[0];
+
+      const personality = personalities[dominantType];
+      const config = window.elementSdk?.config || defaultConfig;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+
+      document.getElementById('game-area').innerHTML = '';
+      const results = document.getElementById('results-screen');
+      results.classList.remove('hidden');
+
+      results.innerHTML = `
+        <div class="animate-slide">
+          <div class="text-6xl mb-4 text-center animate-float">${personality.title.charAt(0)}</div>
+          
+          <div class="surface-card rounded-2xl p-6 mb-5 text-center" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+            <h2 class="text-2xl font-black mb-3" style="color:${personality.color};">${personality.title}</h2>
+            <p style="color:rgba(248,250,252,0.7);font-size:15px;line-height:1.6;margin-bottom:16px;">${personality.description}</p>
+            
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div style="background:rgba(248,250,252,0.03);padding:12px;border-radius:8px;border:1px solid rgba(248,250,252,0.08);">
+                <div style="color:${personality.color};font-weight:700;margin-bottom:4px;">الإنتاجية</div>
+                <div style="color:rgba(248,250,252,0.5);font-size:12px;">${personality.productivity}</div>
+              </div>
+              <div style="background:rgba(248,250,252,0.03);padding:12px;border-radius:8px;border:1px solid rgba(248,250,252,0.08);">
+                <div style="color:${personality.color};font-weight:700;margin-bottom:4px;">الإبداعية</div>
+                <div style="color:rgba(248,250,252,0.5);font-size:12px;">${personality.creativity}</div>
+              </div>
+              <div style="background:rgba(248,250,252,0.03);padding:12px;border-radius:8px;border:1px solid rgba(248,250,252,0.08);grid-column:span 2;">
+                <div style="color:${personality.color};font-weight:700;margin-bottom:4px;">التأثير</div>
+                <div style="color:rgba(248,250,252,0.5);font-size:12px;">${personality.impact}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface-card rounded-2xl p-5 mb-5" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+            <h3 style="color:#f8fafc;font-weight:700;margin-bottom:12px;font-size:14px;">🎯 نقاط قوتك:</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              ${personality.details.map(detail => `
+                <div style="color:rgba(248,250,252,0.6);font-size:13px;line-height:1.5;padding:8px;background:rgba(248,250,252,0.02);border-radius:6px;border-right:3px solid ${personality.color};">
+                  ${detail}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mb-5 text-center">
+            <div class="surface-card rounded-xl p-4" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+              <div class="text-2xl font-black" style="color:${personality.color};">${points}</div>
+              <div style="color:rgba(248,250,252,0.4);font-size:11px;margin-top:4px;">النقاط</div>
+            </div>
+            <div class="surface-card rounded-xl p-4" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+              <div class="text-2xl font-black" style="color:#22c55e;">${streak}</div>
+              <div style="color:rgba(248,250,252,0.4);font-size:11px;margin-top:4px;">متتالية</div>
+            </div>
+            <div class="surface-card rounded-xl p-4" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+              <div class="text-2xl font-black" style="color:#818cf8;">100%</div>
+              <div style="color:rgba(248,250,252,0.4);font-size:11px;margin-top:4px;">إكمال</div>
+            </div>
+          </div>
+
+          <button id="restart-btn" class="w-full rounded-xl px-4 py-3.5 font-bold text-base transition-all animate-glow" 
+            style="background:linear-gradient(135deg,${personality.color},${adjustColor(personality.color, -20)});color:#0f172a;margin-bottom:4px;">
+            🔄 إعادة التحدي
+          </button>
+          <button id="share-btn" class="w-full rounded-xl px-4 py-3.5 font-bold text-base transition-all border" 
+            style="background:rgba(248,250,252,0.03);border:1px solid rgba(248,250,252,0.1);color:#f8fafc;">
+            📢 شارك النتيجة
+          </button>
+        </div>
+      `;
+
+      lucide.createIcons();
+      document.getElementById('restart-btn').addEventListener('click', restartGame);
+      document.getElementById('share-btn').addEventListener('click', shareResult);
+    }
+
+    function adjustColor(hex, percent) {
+      const num = parseInt(hex.replace("#",""), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+      const G = Math.min(255, Math.max(0, (num >> 8 & 0x00FF) + amt));
+      const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+      return "#" + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+    }
+
+    function shareResult() {
+      const dominantType = Object.entries(personalityScores).reduce((a, b) => 
+        personalityScores[a[0]] > personalityScores[b[0]] ? a : b
+      )[0];
+      const personality = personalities[dominantType];
+      const text = `🎯 أنا ${personality.title} في تحدي الشخصية الإبداعية! 💡\n\nالنقاط: ${points}\nشارك معي واكتشف شخصيتك الإبداعية!`;
+      
+      if (navigator.share) {
+        navigator.share({ title: "تحدي الشخصية", text });
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('تم نسخ النتيجة! 🎉');
+      }
+    }
+
+    // ===== RESTART =====
+    function restartGame() {
+      currentQuestion = 0;
+      points = 0;
+      streak = 0;
+      answers = [];
+      personalityScores = { strategist: 0, innovator: 0, collaborator: 0, analyst: 0 };
+      updateDisplays();
+      document.getElementById('results-screen').classList.add('hidden');
+      document.getElementById('results-screen').innerHTML = '';
+      refreshProgress();
+      renderQuestion();
+    }
+
+    // ===== INIT =====
+    buildProgressBar();
+    refreshProgress();
+    renderQuestion();
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9deef939938eb13f',t:'MTc3Mzk0OTQ4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

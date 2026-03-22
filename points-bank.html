@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مخزن النقاط</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
+    }
+    @keyframes shakeWrong {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    @keyframes celebrateBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    @keyframes starFloat {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-60px) scale(0.5); }
+    }
+    @keyframes progressFill {
+      from { width: 0%; }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .float-in { animation: floatIn 0.5s ease-out forwards; }
+    .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    .shake-wrong { animation: shakeWrong 0.4s ease-in-out; }
+    .celebrate { animation: celebrateBounce 0.5s ease-in-out; }
+    .slide-right { animation: slideRight 0.4s ease-out forwards; }
+
+    .memory-card {
+      perspective: 800px;
+      cursor: pointer;
+    }
+    .memory-card .card-inner {
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+    .memory-card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .memory-card .card-front, .memory-card .card-back {
+      backface-visibility: hidden;
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .memory-card .card-back {
+      transform: rotateY(180deg);
+    }
+
+    .timer-ring {
+      stroke-dasharray: 283;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .btn-option {
+      transition: all 0.2s ease;
+    }
+    .btn-option:hover {
+      transform: translateY(-2px);
+    }
+    .btn-option:active {
+      transform: translateY(0);
+    }
+
+    .grid-cell {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .grid-cell:hover {
+      transform: scale(1.05);
+    }
+
+    .toast-msg {
+      animation: floatIn 0.3s ease-out;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 25%, #1a1a1a 50%, #2d1b2e 75%, #1a1a1a 100%); position: relative;">
+  <div id="app" class="w-full h-full flex flex-col items-center justify-center p-4" style="min-height: 100%; position: relative; z-index: 1;">
+   <!-- شاشة البداية -->
+   <div id="start-screen" class="text-center float-in max-w-lg w-full">
+    <div class="mb-8">
+     <div class="text-6xl mb-4">
+      🏆
+     </div>
+     <h1 id="main-title" class="text-5xl font-black mb-3" style="color: #fbbf24; text-shadow: 0 0 30px rgba(251,191,36,0.3);">مخزن النقاط</h1>
+     <p class="text-lg mb-6" style="color: #94a3b8;">أكمل 10 تحديات متنوعة واجمع أكبر عدد من النقاط</p>
+    </div>
+    <div class="rounded-2xl p-6 mb-8" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(251, 191, 36, 0.2);">
+     <div class="grid grid-cols-2 gap-4 text-sm" style="color: #cbd5e1;">
+      <div class="flex items-center gap-2"><span class="text-xl">🧠</span> ألغاز ذاكرة
+      </div>
+      <div class="flex items-center gap-2"><span class="text-xl">🔢</span> تحديات رياضية
+      </div>
+      <div class="flex items-center gap-2"><span class="text-xl">🎯</span> ألعاب تركيز
+      </div>
+      <div class="flex items-center gap-2"><span class="text-xl">⚡</span> سرعة بديهة
+      </div>
+     </div>
+    </div><button onclick="startGame()" class="px-10 py-4 rounded-2xl text-xl font-bold transition-all hover:scale-105 active:scale-95 pulse-glow" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;"> ابدأ المغامرة 🚀 </button>
+   </div><!-- شاشة اللعب -->
+   <div id="game-screen" class="hidden max-w-2xl w-full">
+    <!-- الشريط العلوي -->
+    <div class="flex items-center justify-between mb-6 rounded-2xl p-4" style="background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(45,27,46,0.8) 100%); border: 1px solid rgba(212,175,255,0.2);">
+     <div class="flex items-center gap-3">
+      <div class="text-2xl">
+       🏆
+      </div>
+      <div>
+       <div class="text-xs" style="color: #64748b;">
+        النقاط
+       </div>
+       <div id="score-display" class="text-2xl font-black" style="color: #fbbf24;">
+        0
+       </div>
+      </div>
+     </div>
+     <div class="text-center">
+      <div class="text-xs" style="color: #64748b;">
+       المرحلة
+      </div>
+      <div id="stage-display" class="text-lg font-bold" style="color: #e2e8f0;">
+       1 / 10
+      </div>
+     </div>
+     <div class="flex items-center gap-3">
+      <div>
+       <div class="text-xs text-left" style="color: #64748b;">
+        الوقت
+       </div>
+       <div id="timer-display" class="text-2xl font-black" style="color: #38bdf8;">
+        00:00
+       </div>
+      </div>
+      <div class="text-2xl">
+       ⏱️
+      </div>
+     </div>
+    </div><!-- شريط التقدم -->
+    <div class="rounded-full h-3 mb-6 overflow-hidden" style="background: linear-gradient(135deg, rgba(26,26,26,0.9), rgba(45,27,46,0.8));">
+     <div id="progress-bar" class="h-full rounded-full transition-all duration-500" style="background: linear-gradient(90deg, #fbbf24, #ff69b4); width: 0%;"></div>
+    </div><!-- منطقة التحدي -->
+    <div id="challenge-area" class="rounded-2xl p-6" style="background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(45,27,46,0.9) 50%, rgba(26,26,26,0.9) 100%); border: 2px solid rgba(212,175,255,0.2); min-height: 400px;">
+    </div>
+    <div class="flex gap-3 mt-4 justify-center"><button onclick="skipChallenge()" id="skip-btn" class="px-6 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105 active:scale-95" style="background: rgba(107, 114, 128, 0.4); border: 2px solid rgba(107, 114, 128, 0.5); color: #9ca3af;"> تخطي ⏭️ </button>
+    </div><!-- رسالة التلميح -->
+    <div id="toast" class="hidden fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl text-base font-bold z-50" style="background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(251, 191, 36, 0.3); color: #fbbf24;"></div>
+   </div><!-- شاشة النتيجة -->
+   <div id="result-screen" class="hidden text-center float-in max-w-lg w-full">
+   </div>
+  </div>
+  <script>
+  // ====== CONFIG & SDK ======
+  const defaultConfig = {
+    game_title: 'مخزن النقاط',
+    background_color: '#0f172a',
+    surface_color: '#1e293b',
+    text_color: '#e2e8f0',
+    primary_color: '#fbbf24',
+    accent_color: '#38bdf8',
+    font_family: 'Tajawal',
+    font_size: 16
+  };
+
+  let config = { ...defaultConfig };
+
+ 
+
+  // ====== GAME STATE ======
+  let score = 0;
+  let currentStage = 0;
+  let totalTime = 0;
+  let timerInterval = null;
+  let stageTimerInterval = null;
+  let stageTimeLeft = 0;
+  let challengeActive = false;
+  let skippedCount = 0;
+  let firstSkipUsed = false;
+
+  // ====== CHALLENGES DATA ======
+  const challenges = [];
+
+  function buildChallenges() {
+    challenges.length = 0;
+
+    // 1. تحدي الذاكرة - تذكر الأرقام
+    challenges.push({
+      type: 'memory_numbers',
+      title: '🧠 تذكّر الأرقام',
+      desc: 'احفظ تسلسل الأرقام ثم أعد كتابتها بالترتيب',
+      timeLimit: 90
+    });
+
+    // 2. لغز رياضي
+    challenges.push({
+      type: 'math_puzzle',
+      title: '🔢 اللغز الرياضي',
+      desc: 'حل 5 معادلات رياضية قبل انتهاء الوقت',
+      timeLimit: 80
+    });
+
+    // 3. تحدي الألوان - ستروب
+    challenges.push({
+      type: 'stroop',
+      title: '🎨 تحدي الألوان',
+      desc: 'اختر اللون الصحيح للكلمة وليس النص المكتوب',
+      timeLimit: 60
+    });
+
+    // 4. ترتيب الكلمات
+    challenges.push({
+      type: 'word_order',
+      title: '📝 رتّب الجملة',
+      desc: 'أعد ترتيب الكلمات لتكوين جملة صحيحة',
+      timeLimit: 75
+    });
+
+    // 5. تحدي الأنماط
+    challenges.push({
+      type: 'pattern',
+      title: '🔮 أكمل النمط',
+      desc: 'اكتشف النمط واختر الرقم التالي',
+      timeLimit: 70
+    });
+
+    // 6. لعبة الذاكرة - تطابق البطاقات
+    challenges.push({
+      type: 'memory_cards',
+      title: '🃏 تطابق البطاقات',
+      desc: 'اعثر على جميع الأزواج المتطابقة',
+      timeLimit: 90
+    });
+
+    // 7. تحدي التقدير
+    challenges.push({
+      type: 'estimation',
+      title: '📏 تحدي التقدير',
+      desc: 'قدّر الإجابة الأقرب للصحيحة',
+      timeLimit: 60
+    });
+
+    // 8. تحدي الملاحظة
+    challenges.push({
+      type: 'observation',
+      title: '👁️ تحدي الملاحظة',
+      desc: 'اعثر على العنصر المختلف بسرعة',
+      timeLimit: 45
+    });
+
+    // 9. تحدي الكلمة المخفية
+    challenges.push({
+      type: 'hidden_word',
+      title: '🔤 الكلمة المخفية',
+      desc: 'اكتشف الكلمة من خلال التلميحات',
+      timeLimit: 90
+    });
+
+    // 10. التحدي الأخير - سريع
+    challenges.push({
+      type: 'rapid_fire',
+      title: '⚡ الجولة السريعة',
+      desc: 'أجب على 8 أسئلة سريعة متنوعة',
+      timeLimit: 90
+    });
+  }
+
+  // ====== CORE FUNCTIONS ======
+  function startGame() {
+    buildChallenges();
+    score = 0;
+    currentStage = 0;
+    totalTime = 0;
+    skippedCount = 0;
+    firstSkipUsed = false;
+
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+
+    updateUI();
+    startGlobalTimer();
+    loadChallenge();
+  }
+
+  function updateUI() {
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('stage-display').textContent = `${currentStage + 1} / 10`;
+    document.getElementById('progress-bar').style.width = `${(currentStage / 10) * 100}%`;
+  }
+
+  function startGlobalTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      totalTime++;
+      const m = String(Math.floor(totalTime / 60)).padStart(2, '0');
+      const s = String(totalTime % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function showToast(msg, duration = 2000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.remove('hidden');
+    toast.className = 'toast-msg fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl text-base font-bold z-50';
+    toast.style.background = 'rgba(30, 41, 59, 0.95)';
+    toast.style.border = '1px solid rgba(251, 191, 36, 0.3)';
+    toast.style.color = '#fbbf24';
+    setTimeout(() => toast.classList.add('hidden'), duration);
+  }
+
+  function startStageTimer(seconds, onEnd) {
+    clearInterval(stageTimerInterval);
+    stageTimeLeft = seconds;
+    const timerEl = document.getElementById('stage-timer');
+    if (timerEl) {
+      timerEl.textContent = stageTimeLeft;
+    }
+    stageTimerInterval = setInterval(() => {
+      stageTimeLeft--;
+      const el = document.getElementById('stage-timer');
+      if (el) el.textContent = stageTimeLeft;
+      if (stageTimeLeft <= 0) {
+        clearInterval(stageTimerInterval);
+        if (onEnd) onEnd();
+      }
+    }, 1000);
+  }
+
+  function winStage() {
+    clearInterval(stageTimerInterval);
+    challengeActive = false;
+    score++;
+    updateUI();
+    showToast('🎉 أحسنت! +1 نقطة');
+    setTimeout(() => {
+      currentStage++;
+      if (currentStage >= 10) {
+        endGame();
+      } else {
+        updateUI();
+        loadChallenge();
+      }
+    }, 1500);
+  }
+
+  function loseStage() {
+    clearInterval(stageTimerInterval);
+    challengeActive = false;
+    showToast('😔 لم تنجح هذه المرة');
+    setTimeout(() => {
+      currentStage++;
+      if (currentStage >= 10) {
+        endGame();
+      } else {
+        updateUI();
+        loadChallenge();
+      }
+    }, 1500);
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    clearInterval(stageTimerInterval);
+
+    document.getElementById('game-screen').classList.add('hidden');
+    const resultScreen = document.getElementById('result-screen');
+    resultScreen.classList.remove('hidden');
+    resultScreen.classList.add('float-in');
+
+    const m = String(Math.floor(totalTime / 60)).padStart(2, '0');
+    const s = String(totalTime % 60).padStart(2, '0');
+
+    let rank = '';
+    let emoji = '';
+    if (score >= 9) { rank = 'عبقري مطلق! 🧠✨'; emoji = '👑'; }
+    else if (score >= 7) { rank = 'ذكي جداً! 🌟'; emoji = '🥇'; }
+    else if (score >= 5) { rank = 'أداء جيد! 💪'; emoji = '🥈'; }
+    else if (score >= 3) { rank = 'لا بأس، حاول مرة أخرى! 🔄'; emoji = '🥉'; }
+    else { rank = 'تحتاج تمرين أكثر! 📚'; emoji = '💫'; }
+
+    const stars = [];
+    for (let i = 0; i < 10; i++) {
+      stars.push(i < score ? '⭐' : '☆');
+    }
+
+    resultScreen.innerHTML = `
+      <div class="mb-6">
+        <div class="text-7xl mb-4 celebrate">${emoji}</div>
+        <h2 class="text-4xl font-black mb-2" style="color: #fbbf24;">انتهت اللعبة!</h2>
+        <p class="text-xl font-bold mb-1" style="color: #e2e8f0;">${rank}</p>
+      </div>
+      <div class="rounded-2xl p-6 mb-6" style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(251, 191, 36, 0.2);">
+        <div class="text-3xl mb-4 tracking-wider">${stars.join(' ')}</div>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="rounded-xl p-4" style="background: rgba(15, 23, 42, 0.6);">
+            <div class="text-sm" style="color: #64748b;">النقاط</div>
+            <div class="text-3xl font-black" style="color: #fbbf24;">${score}<span class="text-xs" style="color: #64748b;">/10</span></div>
+          </div>
+          <div class="rounded-xl p-4" style="background: rgba(15, 23, 42, 0.6);">
+            <div class="text-sm" style="color: #64748b;">الوقت</div>
+            <div class="text-3xl font-black" style="color: #38bdf8;">${m}:${s}</div>
+          </div>
+          <div class="rounded-xl p-4" style="background: rgba(15, 23, 42, 0.6);">
+            <div class="text-sm" style="color: #64748b;">المتخطاة</div>
+            <div class="text-3xl font-black" style="color: #ef4444;">${skippedCount}</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-4 justify-center">
+        <button onclick="restartGame()" class="px-8 py-3 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;">
+          أعد المحاولة 🔄
+        </button>
+      </div>
+    `;
+  }
+
+  function restartGame() {
+    document.getElementById('result-screen').classList.add('hidden');
+    document.getElementById('start-screen').classList.remove('hidden');
+  }
+
+  function skipChallenge() {
+    if (!challengeActive) return;
+    let cost = 0;
+    let message = '';
+    
+    if (!firstSkipUsed) {
+      // أول تخطي مجاني
+      firstSkipUsed = true;
+      message = '⏭️ تم التخطي (مجاني - أول مرة)';
+    } else {
+      // التخطيات التالية تكلف 3 نقاط
+      if (score >= 3) {
+        score -= 3;
+        cost = 3;
+        message = '⏭️ تم التخطي (-3 نقاط)';
+      } else {
+        showToast('❌ ليس لديك 3 نقاط كافية للتخطي!');
+        return;
+      }
+    }
+    
+    skippedCount++;
+    clearInterval(stageTimerInterval);
+    challengeActive = false;
+    updateUI();
+    showToast(message);
+    
+    setTimeout(() => {
+      currentStage++;
+      if (currentStage >= 10) {
+        endGame();
+      } else {
+        updateUI();
+        loadChallenge();
+      }
+    }, 1000);
+  }
+
+  // ====== CHALLENGE LOADERS ======
+  function loadChallenge() {
+    challengeActive = true;
+    const ch = challenges[currentStage];
+    const area = document.getElementById('challenge-area');
+
+    area.innerHTML = `
+      <div class="float-in">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-2xl font-bold" style="color: #fbbf24;">${ch.title}</h3>
+            <p class="text-sm" style="color: #94a3b8;">${ch.desc}</p>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 rounded-xl" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+            <span>⏱️</span>
+            <span id="stage-timer" class="text-xl font-bold">${ch.timeLimit}</span>
+            <span class="text-sm">ثانية</span>
+          </div>
+        </div>
+        <div id="challenge-content" class="mt-6"></div>
+      </div>
+    `;
+
+    // Load specific challenge
+    switch (ch.type) {
+      case 'memory_numbers': loadMemoryNumbers(); break;
+      case 'math_puzzle': loadMathPuzzle(); break;
+      case 'stroop': loadStroop(); break;
+      case 'word_order': loadWordOrder(); break;
+      case 'pattern': loadPattern(); break;
+      case 'memory_cards': loadMemoryCards(); break;
+      case 'estimation': loadEstimation(); break;
+      case 'observation': loadObservation(); break;
+      case 'hidden_word': loadHiddenWord(); break;
+      case 'rapid_fire': loadRapidFire(); break;
+    }
+  }
+
+  // ---- 1. Memory Numbers ----
+  function loadMemoryNumbers() {
+    const len = 6;
+    const nums = [];
+    for (let i = 0; i < len; i++) nums.push(Math.floor(Math.random() * 9) + 1);
+    const content = document.getElementById('challenge-content');
+
+    content.innerHTML = `
+      <div class="text-center">
+        <p class="text-lg mb-4" style="color: #e2e8f0;">احفظ هذه الأرقام خلال 5 ثوانٍ</p>
+        <div id="nums-display" class="text-5xl font-black tracking-[0.3em] mb-6" style="color: #fbbf24;">${nums.join(' ')}</div>
+        <div id="nums-input-area" class="hidden">
+          <p class="mb-3" style="color: #94a3b8;">أدخل الأرقام بالترتيب:</p>
+          <div class="flex justify-center gap-2 mb-4" id="num-inputs"></div>
+          <button id="nums-submit" class="px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;">تحقق ✓</button>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      if (!challengeActive) return;
+      document.getElementById('nums-display').classList.add('hidden');
+      document.getElementById('nums-input-area').classList.remove('hidden');
+      const inputsContainer = document.getElementById('num-inputs');
+      for (let i = 0; i < len; i++) {
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '1'; inp.max = '9';
+        inp.className = 'w-12 h-14 text-center text-xl font-bold rounded-lg border-2 focus:outline-none';
+        inp.style.cssText = 'background: rgba(15,23,42,0.8); border-color: rgba(251,191,36,0.3); color: #fbbf24;';
+        inp.dataset.idx = i;
+        inp.addEventListener('input', function() {
+          if (this.value.length >= 1) {
+            const next = inputsContainer.children[parseInt(this.dataset.idx) + 1];
+            if (next) next.focus();
+          }
+        });
+        inputsContainer.appendChild(inp);
+      }
+      inputsContainer.children[0].focus();
+
+      startStageTimer(challenges[currentStage].timeLimit - 5, () => loseStage());
+
+      document.getElementById('nums-submit').addEventListener('click', () => {
+        const inputs = inputsContainer.querySelectorAll('input');
+        let correct = true;
+        inputs.forEach((inp, i) => {
+          if (parseInt(inp.value) !== nums[i]) correct = false;
+        });
+        if (correct) winStage();
+        else {
+          showToast('❌ تسلسل خاطئ، حاول مرة أخرى');
+          inputs.forEach(inp => { inp.value = ''; inp.classList.add('shake-wrong'); });
+          setTimeout(() => inputs.forEach(inp => inp.classList.remove('shake-wrong')), 400);
+          inputs[0].focus();
+        }
+      });
+    }, 5000);
+  }
+
+  // ---- 2. Math Puzzle ----
+  function loadMathPuzzle() {
+    let solved = 0;
+    const total = 5;
+    const content = document.getElementById('challenge-content');
+
+    function genProblem() {
+      const ops = ['+', '-', '×'];
+      const op = ops[Math.floor(Math.random() * ops.length)];
+      let a, b, answer;
+      if (op === '+') { a = Math.floor(Math.random() * 50) + 10; b = Math.floor(Math.random() * 50) + 10; answer = a + b; }
+      else if (op === '-') { a = Math.floor(Math.random() * 50) + 30; b = Math.floor(Math.random() * a) + 1; answer = a - b; }
+      else { a = Math.floor(Math.random() * 12) + 2; b = Math.floor(Math.random() * 12) + 2; answer = a * b; }
+      return { text: `${a} ${op} ${b} = ?`, answer };
+    }
+
+    function showProblem() {
+      const p = genProblem();
+      const wrongAnswers = new Set();
+      wrongAnswers.add(p.answer);
+      while (wrongAnswers.size < 4) {
+        wrongAnswers.add(p.answer + Math.floor(Math.random() * 20) - 10 || p.answer + 1);
+      }
+      const options = [...wrongAnswers].sort(() => Math.random() - 0.5);
+
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="mb-2" style="color: #64748b;">المسألة ${solved + 1} من ${total}</div>
+          <div class="flex justify-center gap-1 mb-4">${Array(total).fill(0).map((_, i) => `<div class="w-8 h-2 rounded-full" style="background: ${i < solved ? '#fbbf24' : 'rgba(100,116,139,0.3)'}"></div>`).join('')}</div>
+          <div class="text-4xl font-black mb-8" style="color: #e2e8f0;">${p.text}</div>
+          <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+            ${options.map(opt => `
+              <button onclick="checkMath(${opt}, ${p.answer})" class="btn-option py-4 rounded-xl text-2xl font-bold" style="background: rgba(15,23,42,0.6); border: 2px solid rgba(251,191,36,0.2); color: #e2e8f0;">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.checkMath = function(chosen, correct) {
+      if (!challengeActive) return;
+      if (chosen === correct) {
+        solved++;
+        if (solved >= total) {
+          winStage();
+        } else {
+          showToast('✅ صحيح!', 800);
+          showProblem();
+        }
+      } else {
+        showToast('❌ خطأ!', 800);
+        const btns = content.querySelectorAll('.btn-option');
+        btns.forEach(b => b.classList.add('shake-wrong'));
+        setTimeout(() => btns.forEach(b => b.classList.remove('shake-wrong')), 400);
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showProblem();
+  }
+
+  // ---- 3. Stroop Challenge ----
+  function loadStroop() {
+    let correct = 0;
+    const total = 8;
+    const colors = [
+      { name: 'أحمر', hex: '#ef4444' },
+      { name: 'أزرق', hex: '#3b82f6' },
+      { name: 'أخضر', hex: '#22c55e' },
+      { name: 'أصفر', hex: '#eab308' },
+      { name: 'بنفسجي', hex: '#a855f7' }
+    ];
+    const content = document.getElementById('challenge-content');
+
+    function showStroop() {
+      const textColor = colors[Math.floor(Math.random() * colors.length)];
+      let displayColor;
+      do { displayColor = colors[Math.floor(Math.random() * colors.length)]; } while (displayColor === textColor);
+
+      const options = [textColor];
+      while (options.length < 4) {
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        if (!options.includes(c)) options.push(c);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="mb-2" style="color: #64748b;">${correct} / ${total}</div>
+          <div class="flex justify-center gap-1 mb-4">${Array(total).fill(0).map((_, i) => `<div class="w-6 h-2 rounded-full" style="background: ${i < correct ? '#fbbf24' : 'rgba(100,116,139,0.3)'}"></div>`).join('')}</div>
+          <p class="text-sm mb-2" style="color: #94a3b8;">ما هو <u>لون</u> الكلمة (وليس معناها)؟</p>
+          <div class="text-5xl font-black mb-8" style="color: ${textColor.hex};">${displayColor.name}</div>
+          <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto">
+            ${options.map(opt => `
+              <button onclick="checkStroop('${opt.hex}', '${textColor.hex}')" class="btn-option py-4 rounded-xl font-bold text-lg" style="background: ${opt.hex}; color: white;">
+                ${opt.name}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.checkStroop = function(chosen, correctHex) {
+      if (!challengeActive) return;
+      if (chosen === correctHex) {
+        correct++;
+        if (correct >= total) winStage();
+        else { showToast('✅ صحيح!', 600); showStroop(); }
+      } else {
+        showToast('❌ خطأ! ركّز على اللون', 1000);
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showStroop();
+  }
+
+  // ---- 4. Word Order ----
+  function loadWordOrder() {
+    const sentences = [
+      { words: ['العلم', 'نور', 'والجهل', 'ظلام'], correct: 'العلم نور والجهل ظلام' },
+      { words: ['من', 'جدّ', 'وجد', 'ومن', 'زرع', 'حصد'], correct: 'من جدّ وجد ومن زرع حصد' },
+      { words: ['الصبر', 'مفتاح', 'الفرج'], correct: 'الصبر مفتاح الفرج' },
+      { words: ['خير', 'الكلام', 'ما', 'قلّ', 'ودلّ'], correct: 'خير الكلام ما قلّ ودلّ' },
+    ];
+    const sent = sentences[Math.floor(Math.random() * sentences.length)];
+    const shuffled = [...sent.words].sort(() => Math.random() - 0.5);
+    let selected = [];
+    const content = document.getElementById('challenge-content');
+
+    function render() {
+      content.innerHTML = `
+        <div class="text-center">
+          <p class="mb-4" style="color: #94a3b8;">اضغط على الكلمات بالترتيب الصحيح</p>
+          <div class="min-h-[60px] rounded-xl p-4 mb-6 flex flex-wrap justify-center gap-2" style="background: rgba(15,23,42,0.6); border: 2px dashed rgba(251,191,36,0.3);">
+            ${selected.map((w, i) => `<span onclick="removeWordOrder(${i})" class="px-4 py-2 rounded-lg text-lg font-bold cursor-pointer hover:opacity-80" style="background: rgba(251,191,36,0.2); color: #fbbf24;">${w}</span>`).join('')}
+            ${selected.length === 0 ? '<span style="color: #475569;">اضغط على الكلمات...</span>' : ''}
+          </div>
+          <div class="flex flex-wrap justify-center gap-3 mb-6">
+            ${shuffled.map((w, i) => {
+              const used = selected.includes(w) && selected.filter(x => x === w).length >= shuffled.filter(x => x === w).length;
+              return `<button onclick="addWordOrder('${w}')" class="btn-option px-5 py-3 rounded-xl text-lg font-bold ${used ? 'opacity-30 pointer-events-none' : ''}" style="background: rgba(30,41,59,0.8); border: 2px solid rgba(251,191,36,0.2); color: #e2e8f0;">${w}</button>`;
+            }).join('')}
+          </div>
+          <button onclick="checkWordOrder()" class="px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;">تحقق ✓</button>
+        </div>
+      `;
+    }
+
+    window.addWordOrder = function(w) {
+      if (!challengeActive) return;
+      selected.push(w);
+      render();
+    };
+    window.removeWordOrder = function(i) {
+      if (!challengeActive) return;
+      selected.splice(i, 1);
+      render();
+    };
+    window.checkWordOrder = function() {
+      if (!challengeActive) return;
+      if (selected.join(' ') === sent.correct) winStage();
+      else { showToast('❌ ترتيب خاطئ، حاول مجدداً'); selected = []; render(); }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    render();
+  }
+
+  // ---- 5. Pattern ----
+  function loadPattern() {
+    const patterns = [
+      { seq: [2, 4, 8, 16, 32], next: 64, rule: 'ضرب × 2' },
+      { seq: [3, 6, 12, 24, 48], next: 96, rule: 'ضرب × 2' },
+      { seq: [1, 1, 2, 3, 5], next: 8, rule: 'فيبوناتشي' },
+      { seq: [5, 10, 20, 40, 80], next: 160, rule: 'ضرب × 2' },
+      { seq: [100, 90, 81, 73, 66], next: 60, rule: 'طرح متناقص' },
+      { seq: [1, 4, 9, 16, 25], next: 36, rule: 'مربعات' },
+    ];
+    let round = 0;
+    const total = 3;
+    const used = new Set();
+    const content = document.getElementById('challenge-content');
+
+    function showPattern() {
+      let idx;
+      do { idx = Math.floor(Math.random() * patterns.length); } while (used.has(idx) && used.size < patterns.length);
+      used.add(idx);
+      const p = patterns[idx];
+      const options = [p.next];
+      while (options.length < 4) {
+        const fake = p.next + Math.floor(Math.random() * 40) - 20;
+        if (fake !== p.next && !options.includes(fake) && fake > 0) options.push(fake);
+      }
+      options.sort(() => Math.random() - 0.5);
+
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="mb-2" style="color: #64748b;">النمط ${round + 1} من ${total}</div>
+          <div class="flex justify-center gap-3 mb-8">
+            ${p.seq.map(n => `<div class="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold" style="background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3);">${n}</div>`).join('')}
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold" style="background: rgba(56,189,248,0.15); color: #38bdf8; border: 2px dashed rgba(56,189,248,0.5);">?</div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+            ${options.map(o => `<button onclick="checkPattern(${o}, ${p.next})" class="btn-option py-4 rounded-xl text-2xl font-bold" style="background: rgba(15,23,42,0.6); border: 2px solid rgba(251,191,36,0.2); color: #e2e8f0;">${o}</button>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.checkPattern = function(chosen, correct) {
+      if (!challengeActive) return;
+      if (chosen === correct) {
+        round++;
+        if (round >= total) winStage();
+        else { showToast('✅ صحيح!', 600); showPattern(); }
+      } else {
+        showToast('❌ خطأ!');
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showPattern();
+  }
+
+  // ---- 6. Memory Cards ----
+  function loadMemoryCards() {
+    const emojis = ['🎮', '🎯', '🎲', '🎪', '🎭', '🎨'];
+    const cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+    let flipped = [];
+    let matched = [];
+    let canFlip = true;
+    const content = document.getElementById('challenge-content');
+
+    function render() {
+      content.innerHTML = `
+        <div class="grid grid-cols-4 gap-3 max-w-sm mx-auto">
+          ${cards.map((emoji, i) => {
+            const isFlipped = flipped.includes(i) || matched.includes(i);
+            return `
+              <div class="memory-card ${isFlipped ? 'flipped' : ''}" onclick="flipCard(${i})" style="width: 100%; aspect-ratio: 1;">
+                <div class="card-inner w-full h-full">
+                  <div class="card-front" style="background: linear-gradient(135deg, #1e293b, #334155); border: 2px solid rgba(251,191,36,0.3);">
+                    <span class="text-2xl" style="color: #fbbf24;">?</span>
+                  </div>
+                  <div class="card-back" style="background: ${matched.includes(i) ? 'rgba(34,197,94,0.2)' : 'rgba(251,191,36,0.1)'}; border: 2px solid ${matched.includes(i) ? '#22c55e' : '#fbbf24'};">
+                    <span class="text-3xl">${emoji}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    window.flipCard = function(idx) {
+      if (!challengeActive || !canFlip || flipped.includes(idx) || matched.includes(idx)) return;
+      flipped.push(idx);
+      render();
+
+      if (flipped.length === 2) {
+        canFlip = false;
+        const [a, b] = flipped;
+        if (cards[a] === cards[b]) {
+          matched.push(a, b);
+          flipped = [];
+          canFlip = true;
+          render();
+          if (matched.length === cards.length) winStage();
+        } else {
+          setTimeout(() => { flipped = []; canFlip = true; render(); }, 800);
+        }
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    render();
+  }
+
+  // ---- 7. Estimation ----
+  function loadEstimation() {
+    const questions = [
+      { q: 'كم عدد دول العالم تقريباً؟', answer: 195, tolerance: 15 },
+      { q: 'كم عدد العظام في جسم الإنسان البالغ؟', answer: 206, tolerance: 20 },
+      { q: 'كم كيلومتر المسافة من الأرض إلى القمر (بالآلاف)؟', answer: 384, tolerance: 30 },
+      { q: 'كم درجة حرارة سطح الشمس (بالآلاف مئوية)؟', answer: 5500, tolerance: 500 },
+      { q: 'كم لتر دم في جسم الإنسان البالغ تقريباً؟', answer: 5, tolerance: 1 },
+    ];
+    let round = 0;
+    const total = 3;
+    const used = new Set();
+    const content = document.getElementById('challenge-content');
+
+    function showQ() {
+      let idx;
+      do { idx = Math.floor(Math.random() * questions.length); } while (used.has(idx) && used.size < questions.length);
+      used.add(idx);
+      const q = questions[idx];
+
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="mb-2" style="color: #64748b;">السؤال ${round + 1} من ${total}</div>
+          <p class="text-xl font-bold mb-6" style="color: #e2e8f0;">${q.q}</p>
+          <div class="max-w-xs mx-auto">
+            <input type="number" id="est-input" class="w-full text-center text-3xl font-bold py-4 rounded-xl mb-4 focus:outline-none" style="background: rgba(15,23,42,0.8); border: 2px solid rgba(251,191,36,0.3); color: #fbbf24;" placeholder="تقديرك">
+            <button onclick="checkEstimation(${q.answer}, ${q.tolerance})" class="w-full px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;">تحقق ✓</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('est-input').focus();
+    }
+
+    window.checkEstimation = function(answer, tol) {
+      if (!challengeActive) return;
+      const val = parseInt(document.getElementById('est-input').value);
+      if (isNaN(val)) { showToast('أدخل رقماً'); return; }
+      if (Math.abs(val - answer) <= tol) {
+        round++;
+        if (round >= total) winStage();
+        else { showToast(`✅ قريب جداً! الإجابة: ${answer}`, 1200); setTimeout(showQ, 1300); }
+      } else {
+        showToast(`❌ بعيد! الإجابة: ${answer}`, 1500);
+        round++;
+        if (round >= total) { setTimeout(() => loseStage(), 500); }
+        else { setTimeout(showQ, 1600); }
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showQ();
+  }
+
+  // ---- 8. Observation ----
+  function loadObservation() {
+    let round = 0;
+    const total = 3;
+    const content = document.getElementById('challenge-content');
+
+    function showGrid() {
+      const baseEmojis = ['🔵', '🟢', '🔴', '🟡', '🟠', '⚪'];
+      const base = baseEmojis[Math.floor(Math.random() * baseEmojis.length)];
+      let different;
+      do { different = baseEmojis[Math.floor(Math.random() * baseEmojis.length)]; } while (different === base);
+
+      const size = 5;
+      const grid = Array(size * size).fill(base);
+      const oddIdx = Math.floor(Math.random() * grid.length);
+      grid[oddIdx] = different;
+
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="mb-3" style="color: #64748b;">${round + 1} / ${total} - اعثر على المختلف!</div>
+          <div class="grid gap-2 max-w-xs mx-auto" style="grid-template-columns: repeat(${size}, 1fr);">
+            ${grid.map((emoji, i) => `
+              <button onclick="checkObs(${i}, ${oddIdx})" class="grid-cell text-3xl p-2 rounded-lg" style="background: rgba(15,23,42,0.6); border: 1px solid rgba(100,116,139,0.2);">
+                ${emoji}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.checkObs = function(chosen, correct) {
+      if (!challengeActive) return;
+      if (chosen === correct) {
+        round++;
+        if (round >= total) winStage();
+        else { showToast('✅ عين حادة!', 600); showGrid(); }
+      } else {
+        showToast('❌ ليس هذا!');
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showGrid();
+  }
+
+  // ---- 9. Hidden Word ----
+  function loadHiddenWord() {
+    const words = [
+      { word: 'برمجة', hints: ['تتعلق بالتكنولوجيا', 'تستخدم لغات خاصة', 'تنتج تطبيقات وبرامج'] },
+      { word: 'قمر', hints: ['يظهر في الليل', 'يدور حول الأرض', 'ينير السماء'] },
+      { word: 'كتاب', hints: ['مصنوع من ورق', 'يحتوي على معرفة', 'نقرأه للتعلم'] },
+      { word: 'بحر', hints: ['مساحة مائية واسعة', 'فيه أسماك وكائنات', 'لونه أزرق غالباً'] },
+      { word: 'موسيقى', hints: ['تسمعها بأذنيك', 'تستخدم آلات', 'تؤثر على المشاعر'] },
+    ];
+    const w = words[Math.floor(Math.random() * words.length)];
+    let hintIdx = 0;
+    let attempts = 3;
+    const content = document.getElementById('challenge-content');
+
+    function render() {
+      const shownHints = w.hints.slice(0, hintIdx + 1);
+      content.innerHTML = `
+        <div class="text-center">
+          <div class="mb-4" style="color: #64748b;">المحاولات المتبقية: ${'❤️'.repeat(attempts)}${'🖤'.repeat(3 - attempts)}</div>
+          <div class="space-y-3 mb-6">
+            ${shownHints.map((h, i) => `<div class="slide-right rounded-xl p-3" style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: #38bdf8; animation-delay: ${i * 0.1}s;">💡 ${h}</div>`).join('')}
+          </div>
+          ${hintIdx < w.hints.length - 1 ? `<button onclick="nextHint()" class="mb-4 px-4 py-2 rounded-lg text-sm" style="background: rgba(100,116,139,0.2); color: #94a3b8;">تلميح إضافي 💡</button>` : ''}
+          <div class="max-w-xs mx-auto">
+            <input type="text" id="word-input" class="w-full text-center text-2xl font-bold py-3 rounded-xl mb-4 focus:outline-none" style="background: rgba(15,23,42,0.8); border: 2px solid rgba(251,191,36,0.3); color: #fbbf24;" placeholder="ما هي الكلمة؟">
+            <button onclick="checkWord('${w.word}')" class="w-full px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a;">تحقق ✓</button>
+          </div>
+        </div>
+      `;
+    }
+
+    window.nextHint = function() {
+      if (hintIdx < w.hints.length - 1) { hintIdx++; render(); }
+    };
+
+    window.checkWord = function(correct) {
+      if (!challengeActive) return;
+      const val = document.getElementById('word-input').value.trim();
+      if (val === correct) winStage();
+      else {
+        attempts--;
+        if (attempts <= 0) loseStage();
+        else { showToast(`❌ خطأ! تبقى ${attempts} محاولات`); render(); }
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    render();
+  }
+
+  // ---- 10. Rapid Fire ----
+  function loadRapidFire() {
+    const allQuestions = [
+      { q: 'ما هي عاصمة اليابان؟', options: ['طوكيو', 'بكين', 'سيول', 'بانكوك'], answer: 0 },
+      { q: 'كم عدد أيام السنة الكبيسة؟', options: ['365', '366', '364', '367'], answer: 1 },
+      { q: 'ما هو أكبر كوكب في المجموعة الشمسية؟', options: ['زحل', 'المشتري', 'أورانوس', 'نبتون'], answer: 1 },
+      { q: 'ما هو الغاز الأكثر وفرة في الغلاف الجوي؟', options: ['الأكسجين', 'النيتروجين', 'ثاني أكسيد الكربون', 'الهيليوم'], answer: 1 },
+      { q: 'في أي سنة هبط الإنسان على القمر؟', options: ['1965', '1969', '1971', '1973'], answer: 1 },
+      { q: 'ما هي أطول نهر في العالم؟', options: ['الأمازون', 'النيل', 'المسيسيبي', 'اليانغتسي'], answer: 1 },
+      { q: 'كم عدد ألوان قوس قزح؟', options: ['5', '6', '7', '8'], answer: 2 },
+      { q: 'ما هو العنصر الكيميائي للماء؟', options: ['CO2', 'H2O', 'O2', 'NaCl'], answer: 1 },
+      { q: 'ما هي أصغر قارة في العالم؟', options: ['أوروبا', 'أنتاركتيكا', 'أستراليا', 'أمريكا الجنوبية'], answer: 2 },
+      { q: 'كم عدد أسنان الإنسان البالغ؟', options: ['28', '30', '32', '34'], answer: 2 },
+    ];
+    const questions = allQuestions.sort(() => Math.random() - 0.5).slice(0, 8);
+    let qIdx = 0;
+    let correct = 0;
+    const content = document.getElementById('challenge-content');
+
+    function showQ() {
+      const q = questions[qIdx];
+      content.innerHTML = `
+        <div class="text-center slide-right">
+          <div class="flex justify-center gap-1 mb-3">${Array(8).fill(0).map((_, i) => `<div class="w-6 h-2 rounded-full" style="background: ${i < qIdx ? (i < correct ? '#22c55e' : '#ef4444') : i === qIdx ? '#fbbf24' : 'rgba(100,116,139,0.3)'}"></div>`).join('')}</div>
+          <p class="text-xl font-bold mb-6" style="color: #e2e8f0;">${q.q}</p>
+          <div class="grid grid-cols-1 gap-3 max-w-sm mx-auto">
+            ${q.options.map((opt, i) => `
+              <button onclick="checkRapid(${i}, ${q.answer})" class="btn-option py-3 px-6 rounded-xl text-lg font-bold text-right" style="background: rgba(15,23,42,0.6); border: 2px solid rgba(251,191,36,0.2); color: #e2e8f0;">
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    window.checkRapid = function(chosen, correctIdx) {
+      if (!challengeActive) return;
+      if (chosen === correctIdx) {
+        correct++;
+        showToast('✅', 400);
+      } else {
+        showToast('❌', 400);
+      }
+      qIdx++;
+      if (qIdx >= 8) {
+        if (correct >= 5) winStage();
+        else loseStage();
+      } else {
+        setTimeout(showQ, 500);
+      }
+    };
+
+    startStageTimer(challenges[currentStage].timeLimit, () => loseStage());
+    showQ();
+  }
+
+  // Init Lucide
+  lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dffa132968cb13f',t:'MTc3NDEyNDEzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

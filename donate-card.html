@@ -1,0 +1,1414 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كرت الدعم</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+*{font-family:'Tajawal',sans-serif;box-sizing:border-box}
+html,body{height:100%;margin:0;padding:0;overflow:hidden}
+.game-bg{background:#000000;min-height:100%;height:100%;overflow-y:auto;position:relative;overflow-y:auto}
+.game-bg::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 20% 50%, rgba(255,215,0,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236,72,153,0.1) 0%, transparent 50%);pointer-events:none;animation:glowPulse 4s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+.card-glow{box-shadow:0 0 30px rgba(99,102,241,0.3),0 0 60px rgba(99,102,241,0.1)}
+.btn-primary{background:linear-gradient(135deg,#ff6b35,#ff8c5a);transition:all .3s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,53,0.4)}
+.btn-secondary{background:linear-gradient(135deg,#6366f1,#818cf8);transition:all .3s}
+.btn-secondary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(99,102,241,0.4)}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669);transition:all .3s}
+.btn-success:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,0.4)}
+.progress-bar{background:linear-gradient(90deg,#ff6b35,#6366f1,#ff6b35);border-radius:999px;transition:width .5s ease}
+.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes spin360{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.fade-in{animation:fadeIn .5s ease forwards}
+.pop-in{animation:popIn .4s ease forwards}
+.pulse-anim{animation:pulse 2s infinite}
+.memory-card{perspective:1000px;cursor:pointer}
+.memory-card-inner{transition:transform .6s;transform-style:preserve-3d;position:relative;width:100%;height:100%}
+.memory-card.flipped .memory-card-inner{transform:rotateY(180deg)}
+.memory-card-front,.memory-card-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.memory-card-front{background:linear-gradient(135deg,#ff6b35,#6366f1);color:white;font-size:2rem}
+.memory-card-back{background:linear-gradient(135deg,#1e1b4b,#0f0f0f);transform:rotateY(180deg);font-size:2.5rem}
+.wheel-container{position:relative;width:280px;height:280px;margin:0 auto}
+.wheel{width:280px;height:280px;border-radius:50%;border:4px solid #ff6b35;position:relative;overflow:hidden;transition:transform 4s cubic-bezier(0.17,0.67,0.12,0.99)}
+.wheel-segment{position:absolute;width:50%;height:50%;transform-origin:100% 100%;clip-path:polygon(0 0,100% 0,100% 100%)}
+.wheel-pointer{position:absolute;top:-15px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:25px solid #6366f1;z-index:10;filter:drop-shadow(0 0 8px rgba(99,102,241,0.6))}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:12px;color:white;font-weight:700;animation:fadeIn .3s ease}
+.toast-success{background:linear-gradient(135deg,#10b981,#059669)}
+.toast-error{background:linear-gradient(135deg,#ef4444,#dc2626)}
+.shape-build-cell{width:50px;height:50px;border:2px solid rgba(255,107,53,0.3);border-radius:8px;cursor:pointer;transition:all .3s}
+.shape-build-cell:hover{border-color:#ff6b35}
+.shape-build-cell.active{background:#ff6b35;border-color:#ff6b35}
+.tap-btn{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#818cf8);border:none;cursor:pointer;font-size:2rem;color:white;font-weight:900;transition:transform .1s;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(99,102,241,0.4)}
+.tap-btn:active{transform:scale(0.92)}
+.star{color:#fbbf24;font-size:1.5rem}
+.shadow-card{background:#000000;border:1px solid rgba(255,107,53,0.2);border-radius:16px;padding:20px;backdrop-filter:blur(10px)}
+.img-placeholder{width:100%;height:200px;background:linear-gradient(135deg,#0f0f0f,#1a1a1a);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:4rem;border:2px solid rgba(255,107,53,0.3)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.1)}
+::-webkit-scrollbar-thumb{background:#6366f1;border-radius:3px}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="game-bg">
+   <!-- Toast container -->
+   <div id="toast-container"></div><!-- All screens rendered by JS -->
+   <div id="screen" class="h-full overflow-y-auto"></div>
+  </div>
+  <script>
+// ============ GAME STATE ============
+const TOTAL_STAGES = 25;
+let gameState = {
+  currentStage: 0,
+  totalPoints: 0,
+  luckyCards: 0,
+  supportCardReserved: false,
+  supportCardsWon: 0,
+  stageResults: {},
+  playerName: '',
+  answers: {}
+};
+
+const defaultConfig = {
+  game_title: 'كرت الدعم',
+  background_color: '#0f0f0f',
+  surface_color: '#1a1a1a',
+  text_color: '#ffffff',
+  primary_color: '#ff6b35',
+  secondary_color: '#6366f1',
+  font_family: 'Tajawal',
+  font_size: 16
+};
+
+let config = { ...defaultConfig };
+
+// ============ SDK INIT ============
+
+// ============ HELPERS ============
+function $(id) { return document.getElementById(id); }
+function showToast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  $('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+function addPoints(pts) {
+  gameState.totalPoints += pts;
+  if (gameState.totalPoints >= 100 && !gameState.luckyCards) {
+    gameState.luckyCards++;
+    showToast('🎉 مبروك! حصلت على كرت حظ محجوز!');
+  }
+  if (gameState.totalPoints >= 200 && gameState.luckyCards < 2) {
+    gameState.luckyCards = 2;
+    showToast('🎉 كرت حظ إضافي!');
+  }
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderScreen(html) {
+  $('screen').innerHTML = html;
+  $('screen').scrollTop = 0;
+  if (window.lucide) lucide.createIcons();
+}
+
+function stageHeader(num, title, subtitle) {
+  const pct = Math.round((num / TOTAL_STAGES) * 100);
+  return `
+    <div class="p-4 fade-in">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-purple-300 text-sm font-bold">المرحلة ${num} من ${TOTAL_STAGES}</span>
+        <span class="text-yellow-400 font-bold">⭐ ${gameState.totalPoints} نقطة</span>
+      </div>
+      <div class="w-full h-3 bg-gray-800 rounded-full mb-4">
+        <div class="progress-bar h-3" style="width:${pct}%"></div>
+      </div>
+      <h2 class="text-2xl font-black text-white mb-1">${title}</h2>
+      <p class="text-purple-300 text-sm mb-4">${subtitle}</p>
+      <button onclick="skipStage()" class="w-full mb-4 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-red-400 font-bold text-sm border border-red-500/30 transition-all">⏭️ تخطي (-3 نقاط)</button>
+    </div>`;
+}
+
+function skipStage() {
+  if (gameState.totalPoints >= 3) {
+    gameState.totalPoints -= 3;
+    showToast('-3 نقاط من التخطي! ⏭️');
+  } else {
+    gameState.totalPoints = 0;
+    showToast('لا توجد نقاط كافية للتخطي!', 'error');
+    return;
+  }
+  setTimeout(nextStage, 800);
+}
+
+// ============ STAGE DEFINITIONS ============
+
+// STAGE 0: Welcome
+function renderWelcome() {
+  renderScreen(`
+    <div class="flex items-center justify-center h-full p-6">
+      <div class="text-center fade-in max-w-md w-full">
+        <div class="text-7xl mb-6">🎴</div>
+        <h1 class="game-main-title text-4xl font-black text-white mb-3">${config.game_title}</h1>
+        <p class="text-purple-300 mb-2">25 مرحلة مليئة بالتحديات والمرح!</p>
+        <p class="text-purple-400 text-sm mb-8">ألغاز • ذاكرة • سرعة • ذكاء • دولاب حظ</p>
+        <div class="shadow-card mb-6 text-right">
+          <label class="text-purple-300 text-sm block mb-2">اسمك</label>
+          <input id="pname" type="text" placeholder="أدخل اسمك" class="w-full p-3 rounded-xl bg-gray-800 text-white border border-purple-500/30 focus:border-purple-500 outline-none">
+        </div>
+        <button onclick="startGame()" class="btn-primary text-white font-bold py-4 px-10 rounded-2xl text-lg w-full">🚀 ابدأ المغامرة</button>
+      </div>
+    </div>`);
+}
+
+function startGame() {
+  const name = ($('pname') ? $('pname').value.trim() : '') || 'لاعب';
+  gameState.playerName = name;
+  gameState.currentStage = 1;
+  renderStage(1);
+}
+
+// Route to stage
+function renderStage(n) {
+  gameState.currentStage = n;
+  const stages = {
+    1: stage1_shapeBuilder,
+    2: stage2_wisdom,
+    3: stage3_tapChallenge,
+    4: stage4_matchShapes,
+    5: stage5_whySupportCard,
+    6: stage6_completion,
+    7: stage7_memoryGame,
+    8: stage8_hasIdea,
+    9: stage9_trivia1,
+    10: stage10_shadowMatch,
+    11: stage11_symbolMatch,
+    12: stage12_wheelOfLuck,
+    13: stage13_iqTest,
+    14: stage14_inviteQuestion,
+    15: stage15_imageApp,
+    16: stage16_speedMath,
+    17: stage17_wordScramble,
+    18: stage18_colorMemory,
+    19: stage19_trivia2,
+    20: stage20_patternRecognition,
+    21: stage21_reactionTime,
+    22: stage22_trivia3,
+    23: stage23_finalPuzzle,
+    24: stage24_bonusWheel,
+    25: stage25_grandFinale
+  };
+  if (stages[n]) stages[n]();
+}
+
+function nextStage() {
+  if (gameState.currentStage < TOTAL_STAGES) {
+    renderStage(gameState.currentStage + 1);
+  } else {
+    renderFinalResult();
+  }
+}
+
+// ========= STAGE 1: Shape Builder =========
+function stage1_shapeBuilder() {
+  const targets = [
+    [[0,1,1,0],[1,1,1,1],[1,1,1,1],[0,1,1,0]],
+    [[1,0,0,1],[0,1,1,0],[0,1,1,0],[1,0,0,1]],
+    [[1,1,0,0],[1,1,0,0],[0,0,1,1],[0,0,1,1]],
+    [[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,1]],
+    [[0,0,1,0],[0,1,1,0],[1,1,0,0],[1,0,0,0]],
+    [[1,1,1,0],[0,1,1,1],[1,1,0,0],[0,0,1,1]]
+  ];
+  const target = targets[Math.floor(Math.random() * targets.length)];
+  let grid = Array(4).fill(null).map(() => Array(4).fill(false));
+  let timeLeft = 30;
+
+  renderScreen(`
+    ${stageHeader(1, '🔷 بناء الشكل بسرعة', 'انسخ الشكل المطلوب بالنقر على المربعات')}
+    <div class="px-4 fade-in">
+      <div class="text-center mb-4">
+        <span id="s1timer" class="text-2xl font-black text-yellow-400">⏱ ${timeLeft}</span>
+      </div>
+      <p class="text-purple-300 text-sm text-center mb-3">الشكل المطلوب:</p>
+      <div class="flex justify-center mb-4">
+        <div class="grid grid-cols-4 gap-1" id="s1target"></div>
+      </div>
+      <p class="text-purple-300 text-sm text-center mb-3">شكلك:</p>
+      <div class="flex justify-center mb-6">
+        <div class="grid grid-cols-4 gap-1" id="s1grid"></div>
+      </div>
+      <button id="s1check" class="btn-success text-white font-bold py-3 px-8 rounded-xl w-full">✅ تحقق</button>
+    </div>`);
+
+  const targetEl = $('s1target');
+  const gridEl = $('s1grid');
+  // Render target
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+    const d = document.createElement('div');
+    d.style.cssText = `width:40px;height:40px;border-radius:8px;${target[r][c] ? 'background:#8b5cf6' : 'background:rgba(139,92,246,0.1);border:1px dashed rgba(139,92,246,0.3)'}`;
+    targetEl.appendChild(d);
+  }
+  // Render grid
+  function renderGrid() {
+    gridEl.innerHTML = '';
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+      const d = document.createElement('div');
+      d.className = 'shape-build-cell' + (grid[r][c] ? ' active' : '');
+      d.onclick = () => { grid[r][c] = !grid[r][c]; renderGrid(); };
+      gridEl.appendChild(d);
+    }
+  }
+  renderGrid();
+
+  const timer = setInterval(() => {
+    timeLeft--;
+    const te = $('s1timer');
+    if (te) te.textContent = `⏱ ${timeLeft}`;
+    if (timeLeft <= 0) { clearInterval(timer); checkS1(); }
+  }, 1000);
+
+  function checkS1() {
+    clearInterval(timer);
+    let correct = true;
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+      if ((grid[r][c] ? 1 : 0) !== target[r][c]) correct = false;
+    }
+    if (correct) { addPoints(8); showToast('+8 نقاط! 🎉'); }
+    else showToast('حاول في المرحلة القادمة!', 'error');
+    setTimeout(nextStage, 1500);
+  }
+
+  $('s1check').onclick = checkS1;
+}
+
+// ========= STAGE 2: Wisdom Puzzle =========
+function stage2_wisdom() {
+  const riddles = [
+    { q: 'ما الذي يمشي بلا أرجل؟', a: 'الماء', opts: ['الماء', 'الهواء', 'الشمس', 'الصوت'] },
+    { q: 'كلما أخذت منه كبر، ما هو؟', a: 'الحفرة', opts: ['الحفرة', 'البحر', 'الجبل', 'الشجرة'] },
+    { q: 'ما الشيء الذي له رأس ولا عين له؟', a: 'الدبوس', opts: ['الإبرة', 'الدبوس', 'المسمار', 'القلم'] },
+    { q: 'ما الشيء الذي إذا قطعته ستبكي؟', a: 'البصل', opts: ['البصل', 'التفاح', 'الجزر', 'الخيار'] },
+    { q: 'له أوراق لكن ليس له جذور؟', a: 'الكتاب', opts: ['الكتاب', 'الشجرة', 'النبات', 'الزهرة'] },
+    { q: 'ما الذي يملك عين واحدة فقط؟', a: 'الإبرة', opts: ['الإبرة', 'الملح', 'السكر', 'الدقيق'] },
+    { q: 'أنا بيضاء من الداخل وسوداء من الخارج؟', a: 'لوحة الطباشير', opts: ['لوحة الطباشير', 'الحليب', 'الفحم', 'البيض'] },
+    { q: 'ما الذي يحمل ملايين الأشخاص وليس حي؟', a: 'الطريق', opts: ['الطريق', 'السيارة', 'الجسر', 'القطار'] },
+    { q: 'ما الشيء الذي يسقط ولا يؤلم والبيت يسقط فيؤلم؟', a: 'المطر', opts: ['المطر', 'الثلج', 'الريح', 'الرطوبة'] },
+    { q: 'أنا أسود في يدك، وأحمر في الأرض، وأبيض في الكيس؟', a: 'الفحم', opts: ['الفحم', 'الحديد', 'النار', 'الرماد'] }
+  ];
+  const r = riddles[Math.floor(Math.random() * riddles.length)];
+  const shuffled = shuffleArray(r.opts);
+
+  renderScreen(`
+    ${stageHeader(2, '🧩 لغز الحكمة', 'أجب عن اللغز بشكل صحيح')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card text-center mb-6">
+        <p class="text-white text-xl font-bold">${r.q}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s2opts"></div>
+    </div>`);
+
+  const optsEl = $('s2opts');
+  shuffled.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-white font-bold text-lg py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = opt;
+    b.onclick = () => {
+      if (opt === r.a) { addPoints(6); showToast('+6 نقاط! إجابة صحيحة 🎉'); }
+      else showToast('إجابة خاطئة! الجواب: ' + r.a, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    optsEl.appendChild(b);
+  });
+}
+
+// ========= STAGE 3: Tap Challenge =========
+function stage3_tapChallenge() {
+  let taps = 0;
+  let started = false;
+  let startTime = 0;
+  let completed = false;
+  const TARGETS = [200, 250, 300];
+  const TARGET = TARGETS[Math.floor(Math.random() * TARGETS.length)];
+
+  renderScreen(`
+    ${stageHeader(3, '👆 تحدي التكبيس', 'اوصل ل 200 كبسة بأسرع وقت!')}
+    <div class="px-4 fade-in text-center">
+      <div class="mb-4">
+        <span id="s3count" class="text-5xl font-black text-white">0</span>
+        <span class="text-purple-300 text-lg"> / ${TARGET}</span>
+      </div>
+      <div class="w-full h-4 bg-gray-800 rounded-full mb-4">
+        <div id="s3bar" class="h-4 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all" style="width:0%"></div>
+      </div>
+      <p id="s3time" class="text-yellow-400 font-bold mb-6">⏱ 0.0 ثانية</p>
+      <div class="flex justify-center mb-6">
+        <button id="s3btn" class="tap-btn">👆<br>اضغط!</button>
+      </div>
+      <p class="text-purple-400 text-sm">⚡ أقل من 30 ثانية = 10 نقاط<br>⚡ أقل من 45 ثانية = 6 نقاط</p>
+    </div>`);
+
+  let timerInterval;
+  function completeStage() {
+    if (completed) return;
+    completed = true;
+    clearInterval(timerInterval);
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    let pts = 3;
+    if (elapsed < 30) pts = 10;
+    else if (elapsed < 45) pts = 6;
+    addPoints(pts);
+    showToast(`أنهيت بـ ${elapsed} ثانية! +${pts} نقاط 🎉`);
+    setTimeout(nextStage, 1500);
+  }
+
+  $('s3btn').onclick = () => {
+    if (completed) return;
+    if (!started) { started = true; startTime = Date.now(); timerInterval = setInterval(updateTime, 100); }
+    taps++;
+    $('s3count').textContent = taps;
+    $('s3bar').style.width = Math.min(100, (taps / TARGET) * 100) + '%';
+    if (taps >= TARGET) {
+      completeStage();
+    }
+  };
+
+  function updateTime() {
+    const e = ((Date.now() - startTime) / 1000).toFixed(1);
+    const te = $('s3time');
+    if (te) te.textContent = `⏱ ${e} ثانية`;
+  }
+}
+
+// ========= STAGE 4: Match Shapes =========
+function stage4_matchShapes() {
+  const shapes = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'];
+  const numPairs = Math.floor(Math.random() * 2) + 3; // 3 or 4 pairs
+  const selectedShapes = shuffleArray(shapes).slice(0, numPairs);
+  const pairs = shuffleArray([...selectedShapes, ...selectedShapes]);
+  let flipped = [];
+  let matched = [];
+  let moves = 0;
+
+  renderScreen(`
+    ${stageHeader(4, '🔍 التعرف على أشكال متطابقة', 'اعثر على كل الأزواج المتطابقة')}
+    <div class="px-4 fade-in">
+      <div class="text-center mb-4">
+        <span id="s4moves" class="text-purple-300">المحاولات: 0</span>
+      </div>
+      <div class="grid grid-cols-4 gap-3 max-w-xs mx-auto" id="s4grid"></div>
+    </div>`);
+
+  const gridEl = $('s4grid');
+  pairs.forEach((shape, i) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.style.height = '70px';
+    card.innerHTML = `<div class="memory-card-inner"><div class="memory-card-front">?</div><div class="memory-card-back">${shape}</div></div>`;
+    card.onclick = () => flipCard(i, card);
+    card.dataset.idx = i;
+    gridEl.appendChild(card);
+  });
+
+  function flipCard(idx, el) {
+    if (flipped.length >= 2 || matched.includes(idx) || flipped.find(f => f.idx === idx)) return;
+    el.classList.add('flipped');
+    flipped.push({ idx, el, shape: pairs[idx] });
+    if (flipped.length === 2) {
+      moves++;
+      $('s4moves').textContent = `المحاولات: ${moves}`;
+      if (flipped[0].shape === flipped[1].shape) {
+        matched.push(flipped[0].idx, flipped[1].idx);
+        flipped = [];
+        if (matched.length === pairs.length) {
+          const pts = moves <= 6 ? 8 : moves <= 10 ? 5 : 3;
+          addPoints(pts);
+          showToast(`أحسنت! +${pts} نقاط 🎉`);
+          setTimeout(nextStage, 1500);
+        }
+      } else {
+        setTimeout(() => {
+          flipped.forEach(f => f.el.classList.remove('flipped'));
+          flipped = [];
+        }, 800);
+      }
+    }
+  }
+}
+
+// ========= STAGE 5: Why Support Card =========
+function stage5_whySupportCard() {
+  renderScreen(`
+    ${stageHeader(5, '💬 ليش بدك كرت الدعم؟', 'شاركنا سبب رغبتك بكرت الدعم')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card mb-4">
+        <textarea id="s5answer" rows="4" placeholder="اكتب سببك هنا..." class="w-full bg-transparent text-white outline-none resize-none text-lg"></textarea>
+      </div>
+      <button onclick="submitS5()" class="btn-primary text-white font-bold py-3 px-8 rounded-xl w-full">📩 إرسال</button>
+    </div>`);
+}
+function submitS5() {
+  const ans = $('s5answer') ? $('s5answer').value.trim() : '';
+  if (!ans) { showToast('اكتب سببك أولاً', 'error'); return; }
+  gameState.answers.whySupportCard = ans;
+  addPoints(5);
+  showToast('+5 نقاط للمشاركة! 💜');
+  setTimeout(nextStage, 1200);
+}
+
+// ========= STAGE 6: Completion Challenge =========
+function stage6_completion() {
+  const sentences = [
+    { text: 'العلم نور و ___', answer: 'الجهل ظلام', opts: ['الجهل ظلام', 'الكتاب صديق', 'الحياة جميلة', 'النور ساطع'] },
+    { text: 'من جد ___', answer: 'وجد', opts: ['وجد', 'نام', 'ضحك', 'سافر'] },
+    { text: 'خير الأمور ___', answer: 'أوسطها', opts: ['أوسطها', 'أولها', 'آخرها', 'أكبرها'] },
+    { text: 'الصديق ___', answer: 'الوفي', opts: ['الوفي', 'القريب', 'اللطيف', 'الكريم'] },
+    { text: '___شجاع لا يخاف من الموت', answer: 'من', opts: ['من', 'ما', 'كيف', 'أين'] },
+    { text: 'المال والبنون ___الحياة الدنيا', answer: 'زينة', opts: ['زينة', 'حلوة', 'صعبة', 'غالية'] },
+    { text: 'الحياة ___والموت ___', answer: 'حركة وسكون', opts: ['حركة وسكون', 'نور وظلام', 'يوم وليل', 'حسن وقبح'] },
+    { text: 'الجود من طباع ___', answer: 'الكرام', opts: ['الكرام', 'الأغنياء', 'الملوك', 'الحكماء'] },
+    { text: 'الصبر مفتاح ___', answer: 'الفرج', opts: ['الفرج', 'النجاح', 'السعادة', 'الحرية'] },
+    { text: 'الحب ___في كل مكان', answer: 'ينتشر', opts: ['ينتشر', 'يسقط', 'يحترق', 'ينسى'] },
+    { text: 'الأصدقاء أكثر من الأقارب ___', answer: 'قيمة', opts: ['قيمة', 'عدداً', 'غنى', 'جمالاً'] }
+  ];
+  const s = sentences[Math.floor(Math.random() * sentences.length)];
+  const shuffled = shuffleArray(s.opts);
+
+  renderScreen(`
+    ${stageHeader(6, '✏️ أكمل الجملة', 'اختر الكلمة المناسبة لإكمال الجملة')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card text-center mb-6">
+        <p class="text-white text-xl font-bold">${s.text}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s6opts"></div>
+    </div>`);
+
+  shuffled.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-white font-bold py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = opt;
+    b.onclick = () => {
+      if (opt === s.answer) { addPoints(6); showToast('+6 نقاط! ✅'); }
+      else showToast('خطأ! الجواب: ' + s.answer, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    $('s6opts').appendChild(b);
+  });
+}
+
+// ========= STAGE 7: Memory Game =========
+function stage7_memoryGame() {
+  const emojisPool = ['🦁', '🐯', '🦊', '🐻', '🐼', '🐨', '🦓', '🦒', '🐸', '🦋'];
+  const emojis = shuffleArray(emojisPool).slice(0, 6);
+  const maxRounds = Math.floor(Math.random() * 2) + 4; // 4 or 5 rounds
+
+  renderScreen(`
+    ${stageHeader(7, '🧠 لعبة الذاكرة', 'احفظ التسلسل وأعد إدخاله')}
+    <div class="px-4 fade-in text-center">
+      <p id="s7msg" class="text-white text-lg mb-4">شاهد التسلسل...</p>
+      <div id="s7display" class="text-5xl mb-6 min-h-[60px]"></div>
+      <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto mb-4" id="s7btns"></div>
+      <p id="s7round" class="text-purple-300">الجولة: 1 / ${maxRounds}</p>
+    </div>`);
+
+  const sequence = [];
+  let playerSequence = [];
+  let round = 0;
+
+  function showSequence() {
+    const newEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    sequence.push(newEmoji);
+    playerSequence = [];
+    const display = $('s7display');
+    const msg = $('s7msg');
+    if (msg) msg.textContent = 'شاهد التسلسل...';
+    $('s7btns').style.pointerEvents = 'none';
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (display) display.textContent = sequence[i];
+      i++;
+      if (i >= sequence.length) {
+        clearInterval(interval);
+        setTimeout(() => {
+          if (display) display.textContent = '❓';
+          if (msg) msg.textContent = 'أعد التسلسل!';
+          $('s7btns').style.pointerEvents = 'auto';
+        }, 600);
+      }
+    }, 800);
+  }
+
+  emojis.forEach(emoji => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-3xl py-3 cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = emoji;
+    b.onclick = () => {
+      playerSequence.push(emoji);
+      const idx = playerSequence.length - 1;
+      if (playerSequence[idx] !== sequence[idx]) {
+        const pts = round * 2;
+        addPoints(pts);
+        showToast(`انتهى! +${pts} نقاط`, round > 1 ? 'success' : 'error');
+        setTimeout(nextStage, 1500);
+        return;
+      }
+      if (playerSequence.length === sequence.length) {
+        round++;
+        $('s7round').textContent = `الجولة: ${Math.min(round + 1, maxRounds)} / ${maxRounds}`;
+        if (round >= maxRounds) {
+          addPoints(10);
+          showToast('+10 نقاط! ذاكرة خارقة! 🧠');
+          setTimeout(nextStage, 1500);
+        } else {
+          showToast('ممتاز! التالي...', 'success');
+          setTimeout(showSequence, 1000);
+        }
+      }
+    };
+    $('s7btns').appendChild(b);
+  });
+
+  setTimeout(showSequence, 500);
+}
+
+// ========= STAGE 8: Has Idea? =========
+function stage8_hasIdea() {
+  renderScreen(`
+    ${stageHeader(8, '💡 هل امتلكت فكرة؟', 'هل عندك فكرة أو بعد للدعم بـ كوماند هاب؟')}
+    <div class="px-4 fade-in">
+      <div class="grid grid-cols-1 gap-4">
+        <button onclick="answerS8(true)" class="shadow-card text-center py-6 cursor-pointer hover:border-green-500 transition-all">
+          <span class="text-4xl block mb-2">✅</span>
+          <span class="text-white font-bold text-lg">نعم، عندي فكرة!</span>
+        </button>
+        <button onclick="answerS8(false)" class="shadow-card text-center py-6 cursor-pointer hover:border-pink-500 transition-all">
+          <span class="text-4xl block mb-2">🤔</span>
+          <span class="text-white font-bold text-lg">لا، بعدني بفكر</span>
+        </button>
+      </div>
+      <div id="s8follow" class="mt-4 hidden">
+        <textarea id="s8idea" rows="3" placeholder="شاركنا فكرتك..." class="w-full p-3 bg-gray-800 text-white rounded-xl border border-purple-500/30 outline-none resize-none"></textarea>
+        <button onclick="submitS8()" class="btn-primary text-white font-bold py-3 px-8 rounded-xl w-full mt-3">📩 إرسال</button>
+      </div>
+    </div>`);
+}
+function answerS8(hasIdea) {
+  gameState.answers.hasIdea = hasIdea;
+  if (hasIdea) {
+    $('s8follow').classList.remove('hidden');
+  } else {
+    addPoints(3);
+    showToast('+3 نقاط! لا تقلق، الفكرة ستأتي 💜');
+    setTimeout(nextStage, 1500);
+  }
+}
+function submitS8() {
+  const idea = $('s8idea') ? $('s8idea').value.trim() : '';
+  gameState.answers.idea = idea;
+  addPoints(7);
+  showToast('+7 نقاط! فكرة رائعة! 💡');
+  setTimeout(nextStage, 1500);
+}
+
+// ========= STAGE 9: Trivia 1 =========
+function stage9_trivia1() {
+  const questions = [
+    { q: 'ما هي أكبر قارة في العالم؟', a: 'آسيا', opts: ['آسيا', 'أفريقيا', 'أوروبا', 'أمريكا'] },
+    { q: 'كم عدد ألوان قوس القزح؟', a: '7', opts: ['5', '6', '7', '8'] },
+    { q: 'ما هو أسرع حيوان بري؟', a: 'الفهد', opts: ['الأسد', 'الفهد', 'الحصان', 'النمر'] },
+    { q: 'كم عدد قارات العالم؟', a: '7', opts: ['5', '6', '7', '8'] },
+    { q: 'ما هو أعمق محيط في العالم؟', a: 'الهادئ', opts: ['الأطلسي', 'الهندي', 'الهادئ', 'المتجمد'] },
+    { q: 'كم عدد أيام السنة الميلادية؟', a: '365', opts: ['360', '365', '366', '370'] },
+    { q: 'ما أطول جبل في العالم؟', a: 'إفرست', opts: ['كليمنجارو', 'إفرست', 'دنالي', 'الراين'] },
+    { q: 'ما هي عاصمة مصر؟', a: 'القاهرة', opts: ['الإسكندرية', 'القاهرة', 'الجيزة', 'أسوان'] },
+    { q: 'كم عدد أركان الإسلام؟', a: '5', opts: ['4', '5', '6', '7'] },
+    { q: 'ما هو أكبر كوكب في المجموعة الشمسية؟', a: 'المشتري', opts: ['زحل', 'المشتري', 'نبتون', 'أورانوس'] }
+  ];
+  const selected = shuffleArray(questions).slice(0, 3);
+  renderQuizStage(9, '📚 أسئلة عامة - الجولة 1', selected);
+}
+
+function renderQuizStage(num, title, questions) {
+  let qIdx = 0;
+  let score = 0;
+
+  function showQ() {
+    const q = questions[qIdx];
+    const shuffled = shuffleArray(q.opts);
+    renderScreen(`
+      ${stageHeader(num, title, `السؤال ${qIdx + 1} من ${questions.length}`)}
+      <div class="px-4 fade-in">
+        <div class="shadow-card text-center mb-6">
+          <p class="text-white text-xl font-bold">${q.q}</p>
+        </div>
+        <div class="grid grid-cols-1 gap-3" id="quizOpts"></div>
+      </div>`);
+
+    shuffled.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'shadow-card text-white font-bold py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+      b.textContent = opt;
+      b.onclick = () => {
+        if (opt === q.a) { score++; showToast('✅ صحيح!'); }
+        else showToast('❌ خطأ! الجواب: ' + q.a, 'error');
+        qIdx++;
+        if (qIdx < questions.length) setTimeout(showQ, 1200);
+        else {
+          const pts = score * 3;
+          addPoints(pts);
+          showToast(`+${pts} نقاط! ${score}/${questions.length} صحيح`);
+          setTimeout(nextStage, 1500);
+        }
+      };
+      $('quizOpts').appendChild(b);
+    });
+  }
+  showQ();
+}
+
+// ========= STAGE 10: Shadow Match =========
+function stage10_shadowMatch() {
+  const items = [
+    { emoji: '🌳', name: 'شجرة' },
+    { emoji: '🏠', name: 'بيت' },
+    { emoji: '🚗', name: 'سيارة' },
+    { emoji: '⭐', name: 'نجمة' }
+  ];
+  const correct = items[Math.floor(Math.random() * items.length)];
+  const shuffled = shuffleArray(items);
+
+  renderScreen(`
+    ${stageHeader(10, '👤 مطابقة الظل', 'أي شكل يطابق هذا الظل؟')}
+    <div class="px-4 fade-in text-center">
+      <div class="shadow-card mb-6 inline-block px-12 py-8">
+        <div class="text-7xl" style="filter:brightness(0) invert(1) contrast(2)">${correct.emoji}</div>
+        <p class="text-purple-300 mt-2">ما هو هذا الشكل؟</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s10opts"></div>
+    </div>`);
+
+  shuffled.forEach(item => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-center py-4 cursor-pointer hover:border-purple-500 transition-all';
+    b.innerHTML = `<span class="text-4xl block mb-1">${item.emoji}</span><span class="text-white">${item.name}</span>`;
+    b.onclick = () => {
+      if (item.name === correct.name) { addPoints(5); showToast('+5 نقاط! 🎯'); }
+      else showToast('خطأ! الجواب: ' + correct.name, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    $('s10opts').appendChild(b);
+  });
+}
+
+// ========= STAGE 11: Symbol Match =========
+function stage11_symbolMatch() {
+  const allAvailableSymbols = ['♠', '♥', '♦', '♣', '★', '●', '▲', '■', '◆', '◇', '✦', '✧', '⬟', '⬢', '◼', '◻'];
+  let attempts = 0;
+  let maxAttempts = 3;
+
+  function playSymbolRound() {
+    attempts++;
+    const shuffledSymbols = shuffleArray(allAvailableSymbols);
+    const target = shuffledSymbols.slice(0, 3);
+    const otherSyms = shuffledSymbols.slice(3, 8);
+    const allSymbols = shuffleArray([...target, ...otherSyms]);
+
+    renderScreen(`
+      ${stageHeader(11, '🔣 مطابقة الرموز', `المحاولة ${attempts} من ${maxAttempts}`)}
+      <div class="px-4 fade-in text-center">
+        <div class="shadow-card mb-4">
+          <p class="text-purple-300 mb-2">ابحث عن هذه الرموز:</p>
+          <div class="text-4xl text-white">${target.join('  ')}</div>
+        </div>
+        <div class="grid grid-cols-3 gap-3" id="s11grid"></div>
+        <button id="s11done" class="btn-success text-white font-bold py-3 px-8 rounded-xl w-full mt-4">✅ تم</button>
+      </div>`);
+
+    let selected = new Set();
+    allSymbols.forEach((sym, i) => {
+      const b = document.createElement('button');
+      b.className = 'shadow-card text-3xl py-4 cursor-pointer transition-all';
+      b.textContent = sym;
+      b.id = 's11b' + i;
+      b.onclick = () => {
+        if (selected.has(i)) { selected.delete(i); b.style.borderColor = ''; b.style.background = ''; }
+        else { selected.add(i); b.style.borderColor = '#8b5cf6'; b.style.background = 'rgba(139,92,246,0.2)'; }
+      };
+      $('s11grid').appendChild(b);
+    });
+
+    $('s11done').onclick = () => {
+      const selectedSyms = [...selected].map(i => allSymbols[i]);
+      const correct = target.every(t => selectedSyms.includes(t)) && selectedSyms.length === target.length;
+      if (correct) {
+        const pts = attempts === 1 ? 10 : attempts === 2 ? 7 : 5;
+        addPoints(pts);
+        showToast(`+${pts} نقاط! ممتاز! 🎯`);
+        setTimeout(nextStage, 1500);
+      } else {
+        if (attempts < maxAttempts) {
+          showToast('محاولة أخرى! رموز جديدة!', 'error');
+          setTimeout(playSymbolRound, 1200);
+        } else {
+          addPoints(2);
+          showToast('+2 نقاط! حاول في المرة القادمة 💪', 'error');
+          setTimeout(nextStage, 1500);
+        }
+      }
+    };
+  }
+
+  playSymbolRound();
+}
+
+// ========= STAGE 12: Wheel of Luck =========
+function stage12_wheelOfLuck() {
+  const prizes = ['5 نقاط', '10 نقاط', '🎴 كرت دعم', '8 نقاط', '15 نقاط', '1 نقطة', '12 نقاط', '7 نقاط'];
+  const prizeValues = [5, 10, 'support', 8, 15, 1, 12, 7];
+  const colors = ['#d4af37', '#9b4dca', '#c9a961', '#8a3fa0', '#e6c200', '#7d2e8f', '#f0e68c', '#a855a0'];
+  let spinning = false;
+
+  renderScreen(`
+    ${stageHeader(12, '🎡 دولاب الحظ', 'أدر الدولاب واربح نقاط أو كرت دعم!')}
+    <div class="px-4 fade-in text-center">
+      <div class="wheel-container mb-6">
+        <div class="wheel-pointer"></div>
+        <div id="wheel" class="wheel"></div>
+      </div>
+      <button id="spinBtn" class="btn-secondary text-white font-bold py-4 px-10 rounded-2xl text-lg">🎰 أدر الدولاب!</button>
+    </div>`);
+
+  const wheelEl = $('wheel');
+  const segAngle = 360 / prizes.length;
+  prizes.forEach((prize, i) => {
+    const seg = document.createElement('div');
+    const rotation = i * segAngle;
+    seg.style.cssText = `position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:center;`;
+    seg.innerHTML = `<div style="position:absolute;transform:rotate(${rotation + segAngle / 2}deg) translateY(-100px);color:white;font-weight:bold;font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,0.5)">${prize}</div>`;
+    wheelEl.appendChild(seg);
+
+    if (i === 0) {
+      let gradient = 'conic-gradient(';
+      prizes.forEach((_, j) => {
+        gradient += `${colors[j]} ${j * segAngle}deg ${(j + 1) * segAngle}deg`;
+        if (j < prizes.length - 1) gradient += ', ';
+      });
+      gradient += ')';
+      wheelEl.style.background = gradient;
+    }
+  });
+
+  $('spinBtn').onclick = () => {
+    if (spinning) return;
+    spinning = true;
+    const winIdx = Math.floor(Math.random() * prizes.length);
+    const extraRotations = 5 * 360;
+    const targetAngle = extraRotations + (360 - winIdx * segAngle - segAngle / 2);
+    wheelEl.style.transform = `rotate(${targetAngle}deg)`;
+
+    setTimeout(() => {
+      if (prizeValues[winIdx] === 'support') {
+        gameState.supportCardsWon++;
+        gameState.supportCardReserved = true;
+        showToast('🎉 🎴 ربحت كرت دعم محجوز!');
+      } else {
+        addPoints(prizeValues[winIdx]);
+        showToast(`🎉 ربحت ${prizes[winIdx]}!`);
+      }
+      setTimeout(nextStage, 1500);
+    }, 4200);
+  };
+}
+
+// ========= STAGE 13: IQ Test =========
+function stage13_iqTest() {
+  const puzzles = [
+    { q: 'ما العدد التالي: 2, 4, 8, 16, ___', a: '32', opts: ['24', '28', '32', '36'] },
+    { q: 'إذا كان أ = 1، ب = 2، ج = 3، فما قيمة أ + ب × ج؟', a: '7', opts: ['6', '7', '9', '5'] },
+    { q: 'أي شكل لا ينتمي: 🔴🔵🟢🟡🔺', a: '🔺', opts: ['🔴', '🔵', '🔺', '🟡'] },
+    { q: 'ما العدد الناقص: 5, 10, 20, ___', a: '40', opts: ['30', '35', '40', '45'] },
+    { q: 'إذا قلبت كلمة "سلام" ماذا تصبح؟', a: 'مالس', opts: ['ملاس', 'مالس', 'سلام', 'ملس'] },
+    { q: 'كم عدد زوايا المكعب؟', a: '8', opts: ['6', '8', '12', '10'] },
+    { q: 'ما العدد التالي: 1, 1, 2, 3, 5, ___', a: '8', opts: ['7', '8', '9', '10'] },
+    { q: 'أي من هذا لا يناسب: 🍎🍊🌻🍌', a: '🌻', opts: ['🍎', '🌻', '🍊', '🍌'] },
+    { q: 'ما العدد الناقص: 100, 81, 64, ___', a: '49', opts: ['49', '56', '50', '55'] },
+    { q: 'إذا كان اليوم الإثنين، كم يوماً بعد 10 أيام؟', a: 'الخميس', opts: ['الثلاثاء', 'الخميس', 'الجمعة', 'السبت'] }
+  ];
+  const p = puzzles[Math.floor(Math.random() * puzzles.length)];
+  const shuffled = shuffleArray(p.opts);
+
+  renderScreen(`
+    ${stageHeader(13, '🧠 اختبار الذكاء', 'حل هذا اللغز الذهني')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card text-center mb-6">
+        <p class="text-white text-xl font-bold">${p.q}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s13opts"></div>
+    </div>`);
+
+  shuffled.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-white font-bold text-xl py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = opt;
+    b.onclick = () => {
+      if (opt === p.a) { addPoints(8); showToast('+8 نقاط! عبقري! 🧠'); }
+      else showToast('خطأ! الجواب: ' + p.a, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    $('s13opts').appendChild(b);
+  });
+}
+
+// ========= STAGE 14: Invite Question =========
+function stage14_inviteQuestion() {
+  renderScreen(`
+    ${stageHeader(14, '📨 كم شخص دعيت؟', 'كم شخص دعيت إلى كوماند هاب؟')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card mb-6">
+        <label class="text-purple-300 text-sm block mb-2">عدد الأشخاص</label>
+        <input id="s14num" type="number" min="0" placeholder="أدخل العدد" class="w-full p-3 rounded-xl bg-gray-800 text-white border border-purple-500/30 focus:border-purple-500 outline-none text-2xl text-center">
+      </div>
+      <div class="shadow-card mb-4 text-center">
+        <p class="text-yellow-400 text-sm">🏆 أكثر من 30 شخص = كرت دعم محجوز!</p>
+      </div>
+      <button onclick="submitS14()" class="btn-primary text-white font-bold py-3 px-8 rounded-xl w-full">📩 إرسال</button>
+    </div>`);
+}
+function submitS14() {
+  const num = parseInt($('s14num') ? $('s14num').value : 0) || 0;
+  gameState.answers.invitedCount = num;
+  if (num >= 30) {
+    gameState.supportCardReserved = true;
+    addPoints(15);
+    showToast('🎉 مبروك! حصلت على كرت دعم محجوز! +15 نقطة');
+  } else {
+    addPoints(3);
+    showToast(`+3 نقاط! دعوت ${num} شخص. استمر بالدعوة! 💪`);
+  }
+  setTimeout(nextStage, 2000);
+}
+
+// ========= STAGE 15: Image App =========
+function stage15_imageApp() {
+  const artworks = [
+    { emoji: '🌅', name: 'غروب الشمس', colors: ['#ff6b35', '#f7c59f', '#004e89'] },
+    { emoji: '🌌', name: 'سماء النجوم', colors: ['#0d1b2a', '#1b263b', '#e0e1dd'] },
+    { emoji: '🌸', name: 'زهور الربيع', colors: ['#ff69b4', '#ff1493', '#98fb98'] },
+    { emoji: '🏔️', name: 'قمة الجبل', colors: ['#2d3436', '#636e72', '#dfe6e9'] }
+  ];
+
+  renderScreen(`
+    ${stageHeader(15, '🎨 تطبيق الصورة', 'أنشئ لوحتك الفنية!')}
+    <div class="px-4 fade-in">
+      <div class="grid grid-cols-2 gap-3 mb-4" id="s15gallery"></div>
+      <div id="s15canvas" class="shadow-card text-center mb-4 hidden">
+        <div id="s15art" class="rounded-xl p-8 mb-3" style="min-height:150px"></div>
+        <p id="s15name" class="text-white font-bold text-lg"></p>
+      </div>
+      <button id="s15save" class="btn-success text-white font-bold py-3 px-8 rounded-xl w-full hidden">💾 حفظ والمتابعة</button>
+    </div>`);
+
+  artworks.forEach((art, i) => {
+    const card = document.createElement('button');
+    card.className = 'shadow-card text-center py-6 cursor-pointer hover:border-purple-500 transition-all';
+    card.innerHTML = `<span class="text-4xl block mb-2">${art.emoji}</span><span class="text-white text-sm">${art.name}</span>`;
+    card.onclick = () => selectArt(art);
+    $('s15gallery').appendChild(card);
+  });
+
+  function selectArt(art) {
+    $('s15canvas').classList.remove('hidden');
+    $('s15save').classList.remove('hidden');
+    const artEl = $('s15art');
+    artEl.style.background = `linear-gradient(135deg, ${art.colors.join(',')})`;
+    artEl.innerHTML = `<span class="text-6xl">${art.emoji}</span>`;
+    $('s15name').textContent = art.name;
+  }
+
+  $('s15save').onclick = () => {
+    addPoints(5);
+    showToast('+5 نقاط! لوحة جميلة! 🎨');
+    setTimeout(nextStage, 1500);
+  };
+}
+
+// ========= STAGE 16: Speed Math =========
+function stage16_speedMath() {
+  let score = 0;
+  let qNum = 0;
+  const total = Math.floor(Math.random() * 2) + 4; // 4 or 5 questions
+  let timeLeft = 20 + total;
+
+  function genMath() {
+    const a = Math.floor(Math.random() * 20) + 1;
+    const b = Math.floor(Math.random() * 20) + 1;
+    const ops = ['+', '-', '×'];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    let answer;
+    if (op === '+') answer = a + b;
+    else if (op === '-') answer = a - b;
+    else answer = a * b;
+    return { q: `${a} ${op} ${b} = ?`, answer, opts: shuffleArray([answer, answer + 2, answer - 3, answer + 5].map(String)) };
+  }
+
+  function showMathQ() {
+    if (qNum >= total) {
+      clearInterval(timer);
+      const pts = score * 3;
+      addPoints(pts);
+      showToast(`+${pts} نقاط! ${score}/${total} صحيح 🔢`);
+      setTimeout(nextStage, 1500);
+      return;
+    }
+
+    const m = genMath();
+    renderScreen(`
+      ${stageHeader(16, '🔢 رياضيات سريعة', `السؤال ${qNum + 1} من ${total}`)}
+      <div class="px-4 fade-in text-center">
+        <span id="s16timer" class="text-2xl font-black text-yellow-400">⏱ ${timeLeft}</span>
+        <div class="shadow-card my-4">
+          <p class="text-white text-3xl font-black">${m.q}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3" id="s16opts"></div>
+      </div>`);
+
+    m.opts.forEach(opt => {
+      const b = document.createElement('button');
+      b.className = 'shadow-card text-white font-bold text-xl py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+      b.textContent = opt;
+      b.onclick = () => {
+        if (opt === String(m.answer)) { score++; showToast('✅ صحيح!'); }
+        else showToast('❌', 'error');
+        qNum++;
+        setTimeout(showMathQ, 800);
+      };
+      $('s16opts').appendChild(b);
+    });
+  }
+
+  const timer = setInterval(() => {
+    timeLeft--;
+    const te = $('s16timer');
+    if (te) te.textContent = `⏱ ${timeLeft}`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      const pts = score * 3;
+      addPoints(pts);
+      showToast(`انتهى الوقت! +${pts} نقاط`);
+      setTimeout(nextStage, 1500);
+    }
+  }, 1000);
+
+  showMathQ();
+}
+
+// ========= STAGE 17: Word Scramble =========
+function stage17_wordScramble() {
+  const words = [
+    { scrambled: 'ر ا ب م ج', answer: 'مبارج', display: 'مبرمج' },
+    { scrambled: 'ع ا د ب إ', answer: 'إبداع', display: 'إبداع' },
+    { scrambled: 'م ع ل ت', answer: 'تعلم', display: 'تعلم' },
+    { scrambled: 'ح ا ج ن', answer: 'نجاح', display: 'نجاح' }
+  ];
+  const w = words[Math.floor(Math.random() * words.length)];
+
+  renderScreen(`
+    ${stageHeader(17, '🔤 ترتيب الحروف', 'رتب الحروف لتكوين كلمة')}
+    <div class="px-4 fade-in text-center">
+      <div class="shadow-card mb-6">
+        <p class="text-3xl text-white font-bold tracking-widest">${w.scrambled}</p>
+      </div>
+      <input id="s17input" type="text" placeholder="اكتب الكلمة..." class="w-full p-4 rounded-xl bg-gray-800 text-white border border-purple-500/30 focus:border-purple-500 outline-none text-xl text-center mb-4">
+      <button onclick="checkS17('${w.display}')" class="btn-primary text-white font-bold py-3 px-8 rounded-xl w-full">✅ تحقق</button>
+    </div>`);
+}
+function checkS17(answer) {
+  const input = $('s17input') ? $('s17input').value.trim() : '';
+  if (input === answer) { addPoints(6); showToast('+6 نقاط! كلمة صحيحة! 🔤'); }
+  else showToast('الجواب: ' + answer, 'error');
+  setTimeout(nextStage, 1500);
+}
+
+// ========= STAGE 18: Color Memory =========
+function stage18_colorMemory() {
+  const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
+  const colorNames = ['أحمر', 'أزرق', 'أخضر', 'أصفر', 'بنفسجي', 'وردي'];
+  const sequence = [];
+  const seqLength = Math.floor(Math.random() * 2) + 3; // 3 or 4 colors
+  for (let i = 0; i < seqLength; i++) sequence.push(Math.floor(Math.random() * colors.length));
+  let playerIdx = 0;
+  let phase = 'watch';
+
+  renderScreen(`
+    ${stageHeader(18, '🎨 ذاكرة الألوان', 'احفظ تسلسل الألوان ثم أعد إدخاله')}
+    <div class="px-4 fade-in text-center">
+      <p id="s18msg" class="text-white text-lg mb-4">شاهد التسلسل...</p>
+      <div id="s18display" class="flex justify-center gap-2 mb-6 min-h-[60px]"></div>
+      <div class="grid grid-cols-3 gap-3 max-w-xs mx-auto" id="s18btns" style="pointer-events:none"></div>
+    </div>`);
+
+  colors.forEach((clr, i) => {
+    const b = document.createElement('button');
+    b.className = `${clr} rounded-xl py-4 text-white font-bold cursor-pointer transition-all hover:opacity-80`;
+    b.textContent = colorNames[i];
+    b.onclick = () => {
+      if (phase !== 'play') return;
+      if (i === sequence[playerIdx]) {
+        playerIdx++;
+        const display = $('s18display');
+        const dot = document.createElement('div');
+        dot.className = `${clr} w-10 h-10 rounded-full pop-in`;
+        display.appendChild(dot);
+        if (playerIdx >= sequence.length) {
+          addPoints(8);
+          showToast('+8 نقاط! ذاكرة ألوان ممتازة! 🎨');
+          setTimeout(nextStage, 1500);
+        }
+      } else {
+        showToast('خطأ! حاول في المرحلة القادمة', 'error');
+        setTimeout(nextStage, 1500);
+      }
+    };
+    $('s18btns').appendChild(b);
+  });
+
+  // Show sequence
+  let showIdx = 0;
+  const display = $('s18display');
+  const showInterval = setInterval(() => {
+    display.innerHTML = '';
+    const dot = document.createElement('div');
+    dot.className = `${colors[sequence[showIdx]]} w-16 h-16 rounded-full pop-in`;
+    display.appendChild(dot);
+    showIdx++;
+    if (showIdx >= sequence.length) {
+      clearInterval(showInterval);
+      setTimeout(() => {
+        display.innerHTML = '<p class="text-purple-300">أعد التسلسل!</p>';
+        $('s18msg').textContent = 'اختر الألوان بالترتيب!';
+        $('s18btns').style.pointerEvents = 'auto';
+        phase = 'play';
+      }, 800);
+    }
+  }, 900);
+}
+
+// ========= STAGE 19: Trivia 2 =========
+function stage19_trivia2() {
+  const questions = [
+    { q: 'ما عاصمة اليابان؟', a: 'طوكيو', opts: ['طوكيو', 'أوساكا', 'كيوتو', 'هيروشيما'] },
+    { q: 'كم عدد أضلاع المسدس؟', a: '6', opts: ['4', '5', '6', '8'] },
+    { q: 'ما هو العنصر الكيميائي للماء؟', a: 'H₂O', opts: ['CO₂', 'H₂O', 'O₂', 'NaCl'] },
+    { q: 'كم عدد أيام الأسبوع؟', a: '7', opts: ['6', '7', '8', '9'] },
+    { q: 'ما عاصمة فرنسا؟', a: 'باريس', opts: ['ليون', 'باريس', 'مارسيليا', 'نيس'] },
+    { q: 'كم عدد أضلاع المربع؟', a: '4', opts: ['3', '4', '5', '6'] },
+    { q: 'ما هو أكبر كوكب في المجموعة الشمسية؟', a: 'المشتري', opts: ['زحل', 'المشتري', 'نبتون', 'أورانوس'] },
+    { q: 'كم عدد ساعات اليوم؟', a: '24', opts: ['12', '24', '30', '36'] }
+  ];
+  const selected = shuffleArray(questions).slice(0, 3);
+  renderQuizStage(19, '📚 أسئلة عامة - الجولة 2', selected);
+}
+
+// ========= STAGE 20: Pattern Recognition =========
+function stage20_patternRecognition() {
+  const patterns = [
+    { seq: '🔴🔵🔴🔵🔴___', answer: '🔵', opts: ['🔴', '🔵', '🟢', '🟡'] },
+    { seq: '⬆️➡️⬇️⬅️⬆️___', answer: '➡️', opts: ['⬆️', '➡️', '⬇️', '⬅️'] },
+    { seq: '🌑🌓🌕🌗🌑___', answer: '🌓', opts: ['🌕', '🌓', '🌑', '🌗'] }
+  ];
+  const p = patterns[Math.floor(Math.random() * patterns.length)];
+
+  renderScreen(`
+    ${stageHeader(20, '🔁 التعرف على النمط', 'ما الرمز التالي في التسلسل؟')}
+    <div class="px-4 fade-in text-center">
+      <div class="shadow-card mb-6">
+        <p class="text-4xl text-white tracking-wider">${p.seq}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s20opts"></div>
+    </div>`);
+
+  p.opts.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-3xl py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = opt;
+    b.onclick = () => {
+      if (opt === p.answer) { addPoints(6); showToast('+6 نقاط! نمط صحيح! 🔁'); }
+      else showToast('خطأ! الجواب: ' + p.answer, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    $('s20opts').appendChild(b);
+  });
+}
+
+// ========= STAGE 21: Reaction Time =========
+function stage21_reactionTime() {
+  let waiting = true;
+  let startTime;
+
+  renderScreen(`
+    ${stageHeader(21, '⚡ سرعة الرد', 'اضغط فوراً عند تحول اللون إلى أخضر!')}
+    <div class="px-4 fade-in text-center">
+      <div id="s21box" class="rounded-2xl flex items-center justify-center cursor-pointer mx-auto" style="width:200px;height:200px;background:#ef4444" onclick="s21Click()">
+        <p class="text-white font-bold text-xl">انتظر...</p>
+      </div>
+      <p id="s21result" class="text-white text-xl font-bold mt-4"></p>
+    </div>`);
+
+  const delay = 2000 + Math.random() * 3000;
+  setTimeout(() => {
+    const box = $('s21box');
+    if (box && waiting) {
+      box.style.background = '#10b981';
+      box.innerHTML = '<p class="text-white font-bold text-xl">اضغط الآن!</p>';
+      startTime = Date.now();
+      waiting = false;
+    }
+  }, delay);
+
+  window.s21Click = () => {
+    if (waiting) {
+      showToast('باكر! انتظر اللون الأخضر', 'error');
+      return;
+    }
+    const reaction = Date.now() - startTime;
+    const pts = reaction < 300 ? 10 : reaction < 500 ? 7 : reaction < 800 ? 4 : 2;
+    addPoints(pts);
+    $('s21result').textContent = `⚡ ${reaction}ms`;
+    showToast(`+${pts} نقاط! سرعة: ${reaction}ms`);
+    setTimeout(nextStage, 2000);
+  };
+}
+
+// ========= STAGE 22: Trivia 3 =========
+function stage22_trivia3() {
+  const questions = [
+    { q: 'ما أطول نهر في العالم؟', a: 'النيل', opts: ['النيل', 'الأمازون', 'المسيسيبي', 'الدانوب'] },
+    { q: 'كم كوكب في المجموعة الشمسية؟', a: '8', opts: ['7', '8', '9', '10'] },
+    { q: 'ما هي لغة البرمجة الأشهر؟', a: 'Python', opts: ['Java', 'Python', 'C++', 'Ruby'] },
+    { q: 'كم عدد دول العالم تقريباً؟', a: '195', opts: ['150', '195', '230', '250'] },
+    { q: 'ما هو أكبر محيط في العالم؟', a: 'الهادئ', opts: ['الأطلسي', 'الهادئ', 'الهندي', 'المتجمد'] },
+    { q: 'كم عدد أنواع فصائل الدم الرئيسية؟', a: '4', opts: ['2', '3', '4', '8'] },
+    { q: 'ما هي أصغر دولة في العالم؟', a: 'الفاتيكان', opts: ['موناكو', 'الفاتيكان', 'ليختنشتاين', 'سان مارينو'] },
+    { q: 'كم عدد دول الخليج العربي؟', a: '6', opts: ['5', '6', '7', '8'] },
+    { q: 'ما هي أكبر دولة إسلامية من حيث السكان؟', a: 'إندونيسيا', opts: ['مصر', 'باكستان', 'إندونيسيا', 'بنغلاديش'] },
+    { q: 'كم عدد أيام شهر فبراير في السنة الكبيسة؟', a: '29', opts: ['28', '29', '30', '31'] }
+  ];
+  const selected = shuffleArray(questions).slice(0, 3);
+  renderQuizStage(22, '📚 أسئلة عامة - الجولة 3', selected);
+}
+
+// ========= STAGE 23: Final Puzzle =========
+function stage23_finalPuzzle() {
+  const puzzles = [
+    { q: 'أنا أحمل مدناً وبلداناً وبحاراً ولا أتحرك. من أنا؟', a: 'الخريطة', opts: ['الخريطة', 'الطائرة', 'الكتاب', 'الإنترنت'] },
+    { q: 'أنا أسود وأبيض وأحمر في كل مكان؟', a: 'الجريدة', opts: ['الجريدة', 'التلفاز', 'الكمبيوتر', 'المجلة'] },
+    { q: 'ما الذي يسير بدون ساق ويدخل بدون باب؟', a: 'الماء', opts: ['الهواء', 'الماء', 'الضوء', 'الصوت'] },
+    { q: 'أنا أعطيك الإجابات لكنني لا أسأل. من أنا؟', a: 'القاموس', opts: ['القاموس', 'المعلم', 'الحاسوب', 'الكتاب'] },
+    { q: 'ما الشيء الذي كلما زاد نقص؟', a: 'الحفرة', opts: ['الحفرة', 'الظل', 'الوقت', 'العمر'] },
+    { q: 'أنا ولدت من الماء ولا تقتلني الماء، من أنا؟', a: 'النار', opts: ['النار', 'الثلج', 'الرماد', 'البخار'] },
+    { q: 'ما الذي يتحدث كل اللغات وليس له فم؟', a: 'الصدى', opts: ['الصدى', 'الجدار', 'الهواء', 'الصوت'] }
+  ];
+  const puzzle = puzzles[Math.floor(Math.random() * puzzles.length)];
+  const shuffled = shuffleArray(puzzle.opts);
+
+  renderScreen(`
+    ${stageHeader(23, '🧩 اللغز الأخير', 'حل هذا اللغز الصعب!')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card text-center mb-6">
+        <p class="text-white text-xl font-bold leading-relaxed">${puzzle.q}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="s23opts"></div>
+    </div>`);
+
+  shuffled.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'shadow-card text-white font-bold text-lg py-4 text-center cursor-pointer hover:border-purple-500 transition-all';
+    b.textContent = opt;
+    b.onclick = () => {
+      if (opt === puzzle.a) { addPoints(10); showToast('+10 نقاط! لغز صعب! 🧩'); }
+      else showToast('الجواب: ' + puzzle.a, 'error');
+      setTimeout(nextStage, 1500);
+    };
+    $('s23opts').appendChild(b);
+  });
+}
+
+// ========= STAGE 24: Bonus Wheel =========
+function stage24_bonusWheel() {
+  const prizes = ['🎁 20 نقطة', '⭐ 5 نقاط', '🏅 كرت دعم محجوز', '🔥 10 نقاط', '🌟 25 نقطة', '💫 8 نقاط'];
+  const prizeValues = [20, 5, 'support', 10, 25, 8];
+  const colors2 = ['#d4af37', '#9b4dca', '#c9a961', '#8a3fa0', '#e6c200', '#7d2e8f'];
+  let spinning2 = false;
+
+  renderScreen(`
+    ${stageHeader(24, '🎰 دولاب الحظ الذهبي', 'فرصتك الأخيرة لربح نقاط أو كرت دعم محجوز!')}
+    <div class="px-4 fade-in text-center">
+      <div class="wheel-container mb-6">
+        <div class="wheel-pointer"></div>
+        <div id="wheel2" class="wheel"></div>
+      </div>
+      <button id="spinBtn2" class="btn-secondary text-white font-bold py-4 px-10 rounded-2xl text-lg pulse-anim">🎰 أدر الدولاب الذهبي!</button>
+    </div>`);
+
+  const wheelEl = $('wheel2');
+  const segAngle2 = 360 / prizes.length;
+  let gradient = 'conic-gradient(';
+  prizes.forEach((_, j) => {
+    gradient += `${colors2[j]} ${j * segAngle2}deg ${(j + 1) * segAngle2}deg`;
+    if (j < prizes.length - 1) gradient += ', ';
+  });
+  gradient += ')';
+  wheelEl.style.background = gradient;
+
+  prizes.forEach((prize, i) => {
+    const label = document.createElement('div');
+    const rotation = i * segAngle2 + segAngle2 / 2;
+    label.style.cssText = `position:absolute;width:100%;height:100%;top:0;left:0;display:flex;align-items:center;justify-content:center;`;
+    label.innerHTML = `<span style="transform:rotate(${rotation}deg) translateY(-90px);color:white;font-weight:bold;font-size:11px;text-shadow:0 1px 3px rgba(0,0,0,0.5);white-space:nowrap">${prize}</span>`;
+    wheelEl.appendChild(label);
+  });
+
+  $('spinBtn2').onclick = () => {
+    if (spinning2) return;
+    spinning2 = true;
+    const winIdx = Math.floor(Math.random() * prizes.length);
+    const extra = 6 * 360;
+    const target = extra + (360 - winIdx * segAngle2 - segAngle2 / 2);
+    wheelEl.style.transform = `rotate(${target}deg)`;
+
+    setTimeout(() => {
+      if (prizeValues[winIdx] === 'support') {
+        gameState.supportCardsWon++;
+        gameState.supportCardReserved = true;
+        showToast('🎉 🏅 ربحت كرت دعم محجوز! 🎴');
+      } else {
+        addPoints(prizeValues[winIdx]);
+        showToast(`🎉 ربحت ${prizes[winIdx]}!`);
+      }
+      setTimeout(nextStage, 1500);
+    }, 4200);
+  };
+}
+
+// ========= STAGE 25: Grand Finale =========
+function stage25_grandFinale() {
+  renderScreen(`
+    ${stageHeader(25, '🎯 المرحلة الأخيرة', 'سؤال أخير قبل النتيجة!')}
+    <div class="px-4 fade-in">
+      <div class="shadow-card text-center mb-6">
+        <p class="text-white text-xl font-bold">ما هو أهم شيء تعلمته من هذه اللعبة؟</p>
+      </div>
+      <textarea id="s25answer" rows="3" placeholder="شاركنا..." class="w-full p-4 rounded-xl bg-gray-800 text-white border border-purple-500/30 focus:border-purple-500 outline-none resize-none mb-4"></textarea>
+      <button onclick="finishGame()" class="btn-primary text-white font-bold py-4 px-10 rounded-2xl text-lg w-full pulse-anim">🏆 إنهاء اللعبة</button>
+    </div>`);
+}
+function finishGame() {
+  addPoints(5);
+  renderFinalResult();
+}
+
+// ========= FINAL RESULT =========
+function renderFinalResult() {
+  const pts = gameState.totalPoints;
+  let rank, rankEmoji;
+  if (pts >= 150) { rank = 'أسطوري'; rankEmoji = '👑'; }
+  else if (pts >= 100) { rank = 'محترف'; rankEmoji = '🏆'; }
+  else if (pts >= 60) { rank = 'متقدم'; rankEmoji = '⭐'; }
+  else { rank = 'مبتدئ'; rankEmoji = '🌱'; }
+
+  const hasReserved = gameState.supportCardReserved;
+  const hasLucky = gameState.luckyCards > 0;
+  const totalSupportCards = gameState.supportCardsWon + (gameState.luckyCards > 0 ? gameState.luckyCards : 0);
+
+  renderScreen(`
+    <div class="flex items-center justify-center h-full p-6">
+      <div class="text-center fade-in max-w-md w-full">
+        <div class="text-7xl mb-4 pop-in">${rankEmoji}</div>
+        <h1 class="text-3xl font-black text-white mb-2">مبروك ${gameState.playerName}!</h1>
+        <p class="text-purple-300 mb-6">أكملت جميع المراحل الـ 25!</p>
+
+        <div class="shadow-card mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-purple-300">النقاط الإجمالية</span>
+            <span class="text-3xl font-black text-yellow-400">⭐ ${pts}</span>
+          </div>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-purple-300">المستوى</span>
+            <span class="text-white font-bold">${rankEmoji} ${rank}</span>
+          </div>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-purple-300">🎴 كروت الدعم</span>
+            <span class="text-pink-400 font-bold text-lg">${totalSupportCards}</span>
+          </div>
+          ${gameState.luckyCards > 0 ? `<div class="flex justify-between items-center mb-3 p-2 rounded-xl" style="background:rgba(99,102,241,0.2);border:1px solid #8b5cf6">
+            <span class="text-purple-300">كروت الحظ المحجوزة</span>
+            <span class="text-white font-bold">🎴 ${gameState.luckyCards}</span>
+          </div>` : ''}
+          ${gameState.supportCardsWon > 0 ? `<div class="flex justify-between items-center mb-3 p-2 rounded-xl" style="background:rgba(236,72,153,0.2);border:1px solid #ec4899">
+            <span class="text-pink-300">كروت الدعم من الدولاب</span>
+            <span class="text-white font-bold">🏅 ${gameState.supportCardsWon}</span>
+          </div>` : ''}
+        </div>
+
+        ${pts >= 100 ? `
+        <div class="shadow-card mb-4" style="background:linear-gradient(135deg,rgba(99,102,241,0.3),rgba(236,72,153,0.3));border:2px solid #8b5cf6">
+          <p class="text-white font-bold text-lg mb-1">🎴 كرت الحظ المحجوز</p>
+          <p class="text-purple-200 text-sm">حصلت على كرت حظ لتجاوزك 100 نقطة!</p>
+        </div>` : ''}
+
+        <div class="flex gap-3 mt-4">
+          <button onclick="shareWhatsApp()" class="btn-secondary text-white font-bold py-4 px-6 rounded-2xl text-lg flex-1 flex items-center justify-center gap-2">📱 شارك النتيجة</button>
+          <button onclick="resetGame()" class="btn-primary text-white font-bold py-4 px-6 rounded-2xl text-lg flex-1">🔄 العب مرة أخرى</button>
+        </div>
+      </div>
+    </div>`);
+}
+
+function resetGame() {
+  gameState = { currentStage: 0, totalPoints: 0, luckyCards: 0, supportCardReserved: false, supportCardsWon: 0, stageResults: {}, playerName: '', answers: {} };
+  renderWelcome();
+}
+
+function shareWhatsApp() {
+  const pts = gameState.totalPoints;
+  let rank;
+  if (pts >= 150) rank = 'أسطوري 👑';
+  else if (pts >= 100) rank = 'محترف 🏆';
+  else if (pts >= 60) rank = 'متقدم ⭐';
+  else rank = 'مبتدئ 🌱';
+
+  const supportCardText = gameState.supportCardReserved ? '\n🏅 حصلت على كرت دعم محجوز!' : '';
+  const luckyCardsText = gameState.luckyCards > 0 ? `\n🎴 ${gameState.luckyCards} كرت حظ محجوز` : '';
+
+  const message = `🎮 أكملت لعبة كرت الدعم! 🎴\n\n👤 اسمي: ${gameState.playerName}\n⭐ النقاط: ${pts}\n🏅 المستوى: ${rank}${supportCardText}${luckyCardsText}\n\n25 مرحلة من المتعة والتحديات! 🚀\n\nجرب أنت أيضاً!`;
+
+  const encoded = encodeURIComponent(message);
+  const whatsappLink = `https://wa.me/?text=${encoded}`;
+  window.open(whatsappLink, '_blank');
+}
+
+// ============ INIT ============
+renderWelcome();
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e0099f04589b13f',t:'MTc3NDEzNDMyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

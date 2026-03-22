@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حملة المشاهير والمؤثرين - كوماند هاب</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1014 30%, #0d0a1a 60%, #0a0a0a 100%);
+    }
+
+    .card-glow-1 {
+      background: linear-gradient(145deg, rgba(255, 193, 7, 0.08), rgba(0, 0, 0, 0.4));
+      border: 1px solid rgba(255, 193, 7, 0.2);
+      backdrop-filter: blur(20px);
+    }
+
+    .card-glow-2 {
+      background: linear-gradient(145deg, rgba(255, 105, 180, 0.08), rgba(0, 0, 0, 0.4));
+      border: 1px solid rgba(255, 105, 180, 0.2);
+      backdrop-filter: blur(20px);
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glow-purple { box-shadow: 0 0 40px rgba(255, 193, 7, 0.15), 0 0 80px rgba(255, 193, 7, 0.03); }
+    .glow-teal { box-shadow: 0 0 40px rgba(255, 105, 180, 0.15), 0 0 80px rgba(255, 105, 180, 0.03); }
+
+    .whatsapp-btn {
+      background: linear-gradient(135deg, #FFD700, #FF69B4);
+      transition: all 0.3s ease;
+      color: #000;
+    }
+    .whatsapp-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 105, 180, 0.3);
+    }
+
+    .feature-item {
+      transition: transform 0.2s ease;
+    }
+    .feature-item:hover {
+      transform: translateX(-4px);
+    }
+
+    .float-anim {
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .fade-in {
+      animation: fadeSlideIn 0.6s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .delay-1 { animation-delay: 0.15s; }
+    .delay-2 { animation-delay: 0.3s; }
+    .delay-3 { animation-delay: 0.45s; }
+    .delay-4 { animation-delay: 0.6s; }
+
+    .step-number {
+      background: linear-gradient(135deg, #FFD700, #FF69B4);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+      color: #000;
+    }
+
+    .hero-badge {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 105, 180, 0.2));
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .dot-pattern {
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <!-- dot-pattern KALDIR -->
+<div id="app" class="gradient-bg w-full h-full overflow-auto">
+   <!-- Hero Section -->
+   <header class="text-center pt-12 pb-8 px-4 fade-in">
+    <div class="hero-badge inline-flex items-center gap-2 px-5 py-2 rounded-full mb-6 float-anim">
+     <span class="text-yellow-400 text-lg">⭐</span> <span id="badge-text" class="text-white text-sm font-medium">كوماند هاب - Command Hub</span>
+    </div>
+    <h1 id="main-title" class="text-4xl md:text-5xl lg:text-6xl font-900 text-white mb-4 leading-tight">حملة المشاهير<br><span class="bg-gradient-to-l from-yellow-400 to-pink-500 bg-clip-text text-transparent">والمؤثرين</span></h1>
+    <p class="text-gray-400 text-lg max-w-xl mx-auto">انضم إلى أكبر شبكة مؤثرين عرب وأجانب واستفد من فرص لا محدودة</p>
+   </header>
+   <main class="max-w-5xl mx-auto px-4 pb-16 space-y-8">
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 fade-in delay-1">
+     <div class="stat-pill rounded-2xl p-4 text-center">
+      <div class="text-2xl md:text-3xl font-900 text-yellow-300">
+       +500
+      </div>
+      <div class="text-gray-400 text-xs mt-1">
+       مؤثر مشترك
+      </div>
+     </div>
+     <div class="stat-pill rounded-2xl p-4 text-center">
+      <div class="text-2xl md:text-3xl font-900 text-pink-400">
+       +30
+      </div>
+      <div class="text-gray-400 text-xs mt-1">
+       مناسبة خاصة
+      </div>
+     </div>
+     <div class="stat-pill rounded-2xl p-4 text-center">
+      <div class="text-2xl md:text-3xl font-900 text-yellow-300">
+       $10K+
+      </div>
+      <div class="text-gray-400 text-xs mt-1">
+       أرباح شهرية
+      </div>
+     </div>
+     <div class="stat-pill rounded-2xl p-4 text-center">
+      <div class="text-2xl md:text-3xl font-900 text-pink-400">
+       ∞
+      </div>
+      <div class="text-gray-400 text-xs mt-1">
+       فرص نمو
+      </div>
+     </div>
+    </div><!-- Card 1: Benefits -->
+    <section class="card-glow-1 glow-purple rounded-3xl p-6 md:p-8 fade-in delay-2">
+     <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-yellow-500/20 flex items-center justify-center">
+       <i data-lucide="crown" class="text-yellow-300" style="width:24px;height:24px;"></i>
+      </div>
+      <div>
+       <h2 id="card1-title" class="text-2xl md:text-3xl font-800 text-white">مزايا الانضمام</h2>
+       <p class="text-yellow-300/60 text-sm">البطاقة الأولى</p>
+      </div>
+     </div>
+     <div class="grid md:grid-cols-2 gap-4">
+      <div class="feature-item flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="w-10 h-10 rounded-xl bg-yellow-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="users" class="text-yellow-300" style="width:18px;height:18px;"></i>
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">+500 مؤثر عربي وأجنبي</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">اشتراك أكثر من 500 مؤثر في منصة كوماند هاب من مختلف الدول</p>
+       </div>
+      </div>
+      <div class="feature-item flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="w-10 h-10 rounded-xl bg-pink-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="calendar" class="text-pink-400" style="width:18px;height:18px;"></i>
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">+30 مناسبة خاصة</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">إقامة أكثر من 30 مناسبة وفعالية حصرية للمؤثرين</p>
+       </div>
+      </div>
+      <div class="feature-item flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="w-10 h-10 rounded-xl bg-yellow-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="dollar-sign" class="text-yellow-300" style="width:18px;height:18px;"></i>
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">أرباح شهرية +$10,000</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">أرباح شهرية تصل لأكثر من 10 آلاف دولار للمؤثرين النشطين</p>
+       </div>
+      </div>
+      <div class="feature-item flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="w-10 h-10 rounded-xl bg-pink-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="unlock" class="text-pink-400" style="width:18px;height:18px;"></i>
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">حساب مؤثر مميز</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">فتح حساب مؤثر والوصول إلى الألعاب والمسابقات والتحديات</p>
+       </div>
+      </div>
+      <div class="feature-item flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] md:col-span-2">
+       <div class="w-10 h-10 rounded-xl bg-yellow-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <i data-lucide="handshake" class="text-yellow-300" style="width:18px;height:18px;"></i>
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">صفقات تجارية مع الداعمين</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">فرص حصرية للتعاون التجاري المباشر مع كبار الداعمين والعلامات التجارية</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Card 2: Subscription Mechanism -->
+    <section class="card-glow-2 glow-teal rounded-3xl p-6 md:p-8 fade-in delay-3">
+     <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 rounded-2xl bg-pink-500/20 flex items-center justify-center">
+       <i data-lucide="rocket" class="text-pink-400" style="width:24px;height:24px;"></i>
+      </div>
+      <div>
+       <h2 id="card2-title" class="text-2xl md:text-3xl font-800 text-white">آلية الاشتراك</h2>
+       <p class="text-pink-300/60 text-sm">البطاقة الثانية</p>
+      </div>
+     </div>
+     <div class="space-y-4">
+      <!-- Step 1 -->
+      <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="step-number text-white">
+        1
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">مكافأة المشاهدات</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">كل <span class="text-yellow-300 font-700">10,000 مشاهدة</span> لإعلان كوماند هاب تمنح المؤثر <span class="text-pink-400 font-700">200 نقطة</span></p>
+       </div>
+      </div><!-- Step 2 -->
+      <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="step-number text-white">
+        2
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">نسبة من الاشتراكات</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">يحصل المؤثر على نسبة <span class="text-yellow-300 font-700">10%</span> من جميع الاشتراكات الناتجة عن ترويجه</p>
+       </div>
+      </div><!-- Step 3 -->
+      <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="step-number text-white">
+        3
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">عضوية ذهبية في نادي الأعمال</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">منح <span class="text-pink-400 font-700">عضوية ذهبية</span> تمكّن المؤثر من تقديم أفكار للداعمين بشكل مباشر</p>
+       </div>
+      </div><!-- Step 4: CTA -->
+      <div class="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+       <div class="step-number text-white">
+        4
+       </div>
+       <div>
+        <h3 class="text-white font-700 text-base mb-1">الاشتراك الآن</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-3">تواصل مع الإدارة عبر واتساب للانضمام إلى حملة المؤثرين</p><a id="whatsapp-btn" href="https://wa.me/" target="_blank" rel="noopener noreferrer" class="whatsapp-btn inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-700 text-base">
+         <svg viewbox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+         </svg><span id="whatsapp-text">تواصل عبر واتساب</span> </a>
+       </div>
+      </div>
+     </div>
+    </section><!-- Bottom Highlight -->
+    <div class="text-center fade-in delay-4 pt-4 pb-4">
+     <div class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl stat-pill">
+      <i data-lucide="sparkles" class="text-yellow-400" style="width:18px;height:18px;"></i> <span class="text-gray-300 text-sm font-500">انضم الآن واستثمر تأثيرك مع كوماند هاب</span>
+     </div>
+    </div>
+   </main>
+  </div>
+  <script>
+    lucide.createIcons();
+
+    const defaultConfig = {
+      main_title: 'حملة المشاهير والمؤثرين',
+      card1_title: 'مزايا الانضمام',
+      card2_title: 'آلية الاشتراك',
+      whatsapp_text: 'تواصل عبر واتساب',
+      background_color: '#0a0a1a',
+      accent_purple: '#6336ff',
+      accent_teal: '#00c896',
+      text_color: '#ffffff',
+      muted_text: '#9ca3af',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const c = { ...defaultConfig, ...config };
+
+      const mainTitle = document.getElementById('main-title');
+      if (mainTitle) {
+        const parts = (c.main_title || defaultConfig.main_title).split(' ');
+        const mid = Math.ceil(parts.length / 2);
+        mainTitle.innerHTML = parts.slice(0, mid).join(' ') + '<br><span class="bg-gradient-to-l from-purple-400 to-teal-400 bg-clip-text text-transparent">' + parts.slice(mid).join(' ') + '</span>';
+      }
+
+      const card1Title = document.getElementById('card1-title');
+      if (card1Title) card1Title.textContent = c.card1_title || defaultConfig.card1_title;
+
+      const card2Title = document.getElementById('card2-title');
+      if (card2Title) card2Title.textContent = c.card2_title || defaultConfig.card2_title;
+
+      const waText = document.getElementById('whatsapp-text');
+      if (waText) waText.textContent = c.whatsapp_text || defaultConfig.whatsapp_text;
+
+      // Apply font
+      const fontFamily = c.font_family || defaultConfig.font_family;
+      const baseStack = 'Tajawal, Arial, sans-serif';
+      const fullStack = fontFamily === 'Tajawal' ? baseStack : `${fontFamily}, ${baseStack}`;
+      document.body.style.fontFamily = fullStack;
+
+      // Apply font size
+      const baseSize = c.font_size || defaultConfig.font_size;
+      document.body.style.fontSize = baseSize + 'px';
+    }
+      // Apply colors
+ 
+    function adjustColor(hex, amount) {
+      let r = parseInt(hex.slice(1, 3), 16);
+      let g = parseInt(hex.slice(3, 5), 16);
+      let b = parseInt(hex.slice(5, 7), 16);
+      r = Math.min(255, r + amount);
+      g = Math.min(255, g + amount);
+      b = Math.min(255, b + amount);
+      return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+    }
+
+    function mapToCapabilities(config) {
+      const c = { ...defaultConfig, ...config };
+      return {
+        recolorables: [
+          {
+            get: () => c.background_color || defaultConfig.background_color,
+            set: (v) => { c.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+          },
+          {
+            get: () => c.accent_purple || defaultConfig.accent_purple,
+            set: (v) => { c.accent_purple = v; window.elementSdk.setConfig({ accent_purple: v }); }
+          },
+          {
+            get: () => c.accent_teal || defaultConfig.accent_teal,
+            set: (v) => { c.accent_teal = v; window.elementSdk.setConfig({ accent_teal: v }); }
+          },
+          {
+            get: () => c.text_color || defaultConfig.text_color,
+            set: (v) => { c.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => c.muted_text || defaultConfig.muted_text,
+            set: (v) => { c.muted_text = v; window.elementSdk.setConfig({ muted_text: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => c.font_family || defaultConfig.font_family,
+          set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => c.font_size || defaultConfig.font_size,
+          set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      const c = { ...defaultConfig, ...config };
+      return new Map([
+        ['main_title', c.main_title || defaultConfig.main_title],
+        ['card1_title', c.card1_title || defaultConfig.card1_title],
+        ['card2_title', c.card2_title || defaultConfig.card2_title],
+        ['whatsapp_text', c.whatsapp_text || defaultConfig.whatsapp_text]
+      ]);
+    }
+
+    
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dff850aa2bd78a6',t:'MTc3NDEyMjk4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

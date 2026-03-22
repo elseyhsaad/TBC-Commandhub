@@ -1,0 +1,1808 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>اللعبة المستفزة</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; overflow: hidden; }
+
+    #game-canvas {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player {
+      width: 36px; height: 36px;
+      position: absolute;
+      transition: none;
+      z-index: 10;
+      font-size: 28px;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .goal {
+      width: 40px; height: 40px;
+      position: absolute;
+      z-index: 5;
+      font-size: 30px;
+      display: flex; align-items: center; justify-content: center;
+      animation: goalPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes goalPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    .obstacle {
+      position: absolute;
+      z-index: 6;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+    }
+
+    .troll-msg {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      padding: 20px 40px;
+      border-radius: 16px;
+      font-size: 24px;
+      font-weight: 900;
+      text-align: center;
+      pointer-events: none;
+      animation: trollPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+    }
+
+    @keyframes trollPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @keyframes trollFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5) rotate(10deg); }
+    }
+
+    .fake-goal {
+      animation: fakeGoalBlink 0.6s ease-in-out infinite;
+    }
+
+    @keyframes fakeGoalBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .trap-zone {
+      position: absolute;
+      z-index: 4;
+      border-radius: 50%;
+      opacity: 0;
+      animation: trapReveal 0.3s ease forwards;
+    }
+
+    @keyframes trapReveal {
+      to { opacity: 0.15; }
+    }
+
+    .speed-zone {
+      position: absolute;
+      z-index: 3;
+      border-radius: 12px;
+      opacity: 0.2;
+    }
+
+
+
+    .confetti {
+      position: fixed;
+      z-index: 200;
+      pointer-events: none;
+      font-size: 24px;
+      animation: confettiFall 2s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(300px) rotate(720deg); }
+    }
+
+    .screen-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-1deg); }
+      40% { transform: translateX(8px) rotate(1deg); }
+      60% { transform: translateX(-5px) rotate(-0.5deg); }
+      80% { transform: translateX(5px) rotate(0.5deg); }
+    }
+
+    .reverse-indicator {
+      position: fixed;
+      top: 70px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 90;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .invisible-mode .player {
+      opacity: 0.1 !important;
+    }
+
+    .mystery-box {
+      position: absolute;
+      z-index: 7;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      animation: boxBounce 0.8s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes boxBounce {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.1) rotate(-5deg); }
+      75% { transform: scale(1.1) rotate(5deg); }
+    }
+
+    .reward-popup {
+      position: fixed;
+      z-index: 180;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 900;
+      text-align: center;
+      pointer-events: none;
+      animation: rewardPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+    }
+
+    @keyframes rewardPop {
+      0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes rewardFade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.5) translateY(-50px); }
+    }
+
+    .shield-glow {
+      animation: shieldPulse 0.6s ease infinite;
+      filter: drop-shadow(0 0 12px #4ecdc4) drop-shadow(0 0 24px #4ecdc4);
+    }
+
+    @keyframes shieldPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .moving-target {
+      position: absolute;
+      z-index: 8;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      border: 3px solid white;
+      border-radius: 50%;
+      animation: targetPulse 0.6s ease infinite;
+      filter: drop-shadow(0 0 8px #ffffff) drop-shadow(0 0 16px #ffffff);
+      cursor: pointer;
+    }
+
+    @keyframes targetPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.9; }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full" style="background: #0f0f23;">
+  <div id="game-wrapper" class="h-full w-full relative flex flex-col">
+   <!-- HUD -->
+   <div id="hud" class="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2" style="background: rgba(15,15,35,0.85); backdrop-filter: blur(8px);">
+    <div class="flex items-center gap-3">
+     <span id="title-text" class="text-lg font-black" style="color: #ff6b6b;">🤬 اللعبة المستفزة</span>
+    </div>
+    <div class="flex items-center gap-4 text-sm font-bold" style="color: #ffd93d;">
+     <span id="timer-display" style="color: #ffd93d; font-size: 18px; font-weight: 900;">⏱️ 2:00</span> <span>النقاط: <span id="score" style="color: #6bcb77;">0</span></span> <span>💪 <span id="support-cards">0</span></span> <span>❄️ <span id="frozen-count">0</span></span> <span>💀 <span id="deaths">0</span></span>
+    </div>
+   </div><!-- Troll Message -->
+   <div id="troll-message" class="troll-msg" style="display:none; background: #ff6b6b; color: #0f0f23;"></div><!-- Reverse Indicator -->
+   <div id="reverse-indicator" class="reverse-indicator" style="display:none; background: #ff6b6b; color: white;">
+    ⚠️ الاتجاهات معكوسة! ⚠️
+   </div><!-- Target Indicator -->
+   <div id="target-indicator" class="reverse-indicator" style="display:none; background: #ffffff; color: #0f0f23;">
+    ⚪ لحق الهدف الأبيض! ⚪
+   </div><!-- Game Area -->
+   <div id="game-canvas">
+    <div id="player" class="player">
+     😤
+    </div>
+    <div id="goal" class="goal">
+     ⭐
+    </div>
+   </div><!-- Win/Lose Overlay -->
+   <div id="overlay" class="fixed inset-0 z-150 flex flex-col items-center justify-center" style="display:none; background: rgba(15,15,35,0.92); backdrop-filter: blur(6px); z-index:150;">
+    <div id="overlay-emoji" class="text-7xl mb-4"></div>
+    <div id="overlay-text" class="text-3xl font-black mb-2" style="color: #ffd93d;"></div>
+    <div id="overlay-sub" class="text-lg mb-6 font-bold" style="color: #ff6b6b;"></div><button id="overlay-btn" class="px-8 py-3 rounded-xl font-black text-lg border-none cursor-pointer" style="background: #ff6b6b; color: #0f0f23;">أعد المحاولة 😈</button>
+   </div>
+  </div>
+  <script>
+  // ============ CONFIG & SDK ============
+  const defaultConfig = {
+    game_title: 'اللعبة المستفزة',
+    background_color: '#0f0f23',
+    surface_color: '#1a1a3e',
+    text_color: '#ffd93d',
+    primary_action_color: '#ff6b6b',
+    secondary_action_color: '#6bcb77',
+    font_family: 'Tajawal',
+    font_size: 16
+  };
+
+  function applyConfig(cfg) {
+    document.body.style.background = cfg.background_color || defaultConfig.background_color;
+    const hud = document.getElementById('hud');
+    hud.style.background = `${cfg.surface_color || defaultConfig.surface_color}dd`;
+    const title = document.getElementById('title-text');
+    title.style.color = cfg.primary_action_color || defaultConfig.primary_action_color;
+    title.textContent = '🤬 ' + (cfg.game_title || defaultConfig.game_title);
+    const ff = (cfg.font_family || defaultConfig.font_family) + ', Tajawal, sans-serif';
+    document.body.style.fontFamily = ff;
+    const bs = cfg.font_size || defaultConfig.font_size;
+    title.style.fontSize = `${bs * 1.15}px`;
+  }
+
+ 
+
+  // ============ GAME ENGINE ============
+  const canvas = document.getElementById('game-canvas');
+  const playerEl = document.getElementById('player');
+  const goalEl = document.getElementById('goal');
+  const trollMsgEl = document.getElementById('troll-message');
+  const reverseInd = document.getElementById('reverse-indicator');
+  const overlay = document.getElementById('overlay');
+
+  let px, py, gx, gy;
+  let level = 1;
+  let attempts = 1;
+  let deaths = 0;
+  let speed = 5;
+  let reversed = false;
+  let invisible = false;
+  let obstacles = [];
+  let fakeGoals = [];
+  let trapZones = [];
+  let speedZones = [];
+  let goalMoveInterval = null;
+  let trollTimeout = null;
+  let gameActive = true;
+  let moveInterval = null;
+  let mysteryBoxes = [];
+  let rewardTimeout = null;
+  let score = 0;
+  let timeRemaining = 120; // 120 seconds = 2 minutes
+  let timerInterval = null;
+  let gameEnded = false;
+  let shieldActive = false;
+  let shieldTimeout = null;
+  let destroyerActive = false;
+  let destroyerTimeout = null;
+  let destroyerHiddenObstacles = [];
+  let movingTarget = null;
+  let movingTargetInterval = null;
+  let powerupTarget = null;
+  let powerupTargetInterval = null;
+  let fatherChasing = false;
+  let fatherElement = null;
+  let fatherX = 0;
+  let fatherY = 0;
+  let fatherInterval = null;
+  let motherChasing = false;
+  let motherElement = null;
+  let motherX = 0;
+  let motherY = 0;
+  let motherInterval = null;
+  let supportCards = 0;
+  let frozenCount = 0;
+  let protectionChases = 0;
+  let protectionActive = false;
+  let protectionElement = null;
+  let protectionX = 0;
+  let protectionY = 0;
+  let protectionInterval = null;
+  let friendHelperActivated = false;
+  let friendElement = null;
+  let friendX = 0;
+  let friendY = 0;
+  let friendInterval = null;
+  let jokerChasing = false;
+  let jokerElement = null;
+  let jokerX = 0;
+  let jokerY = 0;
+  let jokerInterval = null;
+
+  const trollMessages = [
+    '😂 ظنيت سهلة؟',
+    '🤣 حاول كمان مرة يا بطل',
+    '😈 مش هالمرة',
+    '💀 رووح ارجع',
+    '🫠 قربت... بس لأ',
+    '🤡 انت جدي بتحاول؟',
+    '😭 الله يعينك',
+    '🤪 هاد مش الهدف الحقيقي',
+    '🥲 بكرة بتزبط',
+    '👻 شو هالحظ!',
+    '🫣 يي قربت... نكتة',
+    '🤓 جرب العكس',
+    '💩 أكلتها',
+    '😵‍💫 مين قلك تروح هناك',
+    '🦧 حتى القرد أشطر',
+    '🐌 بطيء كتير',
+    '🫡 شكراً على المحاولة الفاشلة'
+  ];
+
+  const targetMessages = [
+    '⚪ لحقني لو قدرت!',
+    '👻 أنا هنا!',
+    '🏃 بهرب!',
+    '💨 اللحق!',
+    '🎯 اصيب!',
+    '✨ لحق الضوء!'
+  ];
+
+  const mysteryRewards = [
+    { emoji: '🍀', text: '+50 نقطة حظ!', effect: 'luck' },
+    { emoji: '🤝', text: 'كرت الدعم!', effect: 'support' },
+    { emoji: '🤡', text: 'جوكر مجنون يلحقك!', effect: 'joker' },
+    { emoji: '🤖', text: 'شلل 5 ثواني!', effect: 'paralysis' },
+    { emoji: '💰', text: '+100 نقطة!', effect: 'money' },
+    { emoji: '🛡️', text: 'درع حماية!', effect: 'shield' },
+    { emoji: '💥', text: 'مدمّر 5 ثواني!', effect: 'destroyer' }
+  ];
+
+  const deathMessages = [
+    '💥 بووووم!',
+    '☠️ انتهيت!',
+    '🪦 ارقد بسلام',
+    '😵 أووووف!',
+    '🔥 احترقت!',
+    '💣 انفجرت!',
+    '🫠 ذبت!'
+  ];
+
+  const winMessages = [
+    '😱 مستحيل فزت!',
+    '🤯 كيف!؟',
+    '🎉 حظ أعمى والله',
+    '🫢 غلط صار... فزت',
+    '🥳 أول واحد يفوز!*\n*مش أول واحد'
+  ];
+
+  function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+  function showTroll(msg, duration = 1500) {
+    clearTimeout(trollTimeout);
+    trollMsgEl.textContent = msg;
+    trollMsgEl.style.display = 'block';
+    trollMsgEl.style.animation = 'trollPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    trollTimeout = setTimeout(() => {
+      trollMsgEl.style.animation = 'trollFade 0.5s ease forwards';
+      setTimeout(() => { trollMsgEl.style.display = 'none'; }, 500);
+    }, duration);
+  }
+
+  function shakeScreen() {
+    canvas.classList.add('screen-shake');
+    setTimeout(() => canvas.classList.remove('screen-shake'), 400);
+  }
+
+  function clearLevel() {
+    document.querySelectorAll('.obstacle, .fake-goal, .trap-zone, .speed-zone, .mystery-box, .moving-target').forEach(e => e.remove());
+    document.getElementById('father-indicator')?.remove();
+    document.getElementById('mother-indicator')?.remove();
+    document.getElementById('protection-indicator')?.remove();
+    document.getElementById('joker-indicator')?.remove();
+    obstacles = [];
+    fakeGoals = [];
+    trapZones = [];
+    speedZones = [];
+    mysteryBoxes = [];
+    movingTarget = null;
+    fatherChasing = false;
+    fatherElement = null;
+    motherChasing = false;
+    motherElement = null;
+    protectionActive = false;
+    protectionElement = null;
+    jokerChasing = false;
+    jokerElement = null;
+    if (goalMoveInterval) clearInterval(goalMoveInterval);
+    if (movingTargetInterval) clearInterval(movingTargetInterval);
+    if (fatherInterval) clearInterval(fatherInterval);
+    if (motherInterval) clearInterval(motherInterval);
+    if (protectionInterval) clearInterval(protectionInterval);
+    if (jokerInterval) clearInterval(jokerInterval);
+    reversed = false;
+    invisible = false;
+    reverseInd.style.display = 'none';
+    document.getElementById('target-indicator').style.display = 'none';
+    canvas.classList.remove('invisible-mode');
+  }
+
+  function getCanvasBounds() {
+    const r = canvas.getBoundingClientRect();
+    return { w: r.width, h: r.height, top: 50, bottom: r.height - 120 };
+  }
+
+  function placePlayer() {
+    const b = getCanvasBounds();
+    px = b.w / 2 - 18;
+    py = b.bottom - 60;
+    updatePlayerPos();
+  }
+
+  function placeGoal() {
+    const b = getCanvasBounds();
+    gx = rand(40, b.w - 80);
+    gy = rand(b.top + 20, Math.min(b.top + 150, b.bottom - 200));
+    goalEl.style.left = gx + 'px';
+    goalEl.style.top = gy + 'px';
+  }
+
+  function updatePlayerPos() {
+    playerEl.style.left = px + 'px';
+    playerEl.style.top = py + 'px';
+  }
+
+  function createObstacle(x, y, size, emoji, speedX = 0, speedY = 0) {
+    const el = document.createElement('div');
+    el.className = 'obstacle';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.fontSize = (size * 0.7) + 'px';
+    el.textContent = emoji;
+    canvas.appendChild(el);
+    const ob = { el, x, y, size, speedX, speedY };
+    obstacles.push(ob);
+    return ob;
+  }
+
+  function createFakeGoal(x, y) {
+    const el = document.createElement('div');
+    el.className = 'goal fake-goal';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.textContent = '⭐';
+    canvas.appendChild(el);
+    fakeGoals.push({ el, x, y });
+  }
+
+  function createMysteryBox(x, y) {
+    const el = document.createElement('div');
+    el.className = 'mystery-box';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.textContent = '🎁';
+    el.dataset.x = x;
+    el.dataset.y = y;
+    el.dataset.speedX = 0;
+    el.dataset.speedY = 0;
+    canvas.appendChild(el);
+    const box = { el, x: parseFloat(x), y: parseFloat(y), speedX: 0, speedY: 0 };
+    mysteryBoxes.push(box);
+    
+    el.addEventListener('click', () => activateMysteryBox(box));
+    
+    return box;
+  }
+
+  function createMovingTarget() {
+    if (movingTarget) movingTarget.el.remove();
+    if (movingTargetInterval) clearInterval(movingTargetInterval);
+    
+    const b = getCanvasBounds();
+    const tx = rand(50, b.w - 100);
+    const ty = rand(b.top + 50, b.bottom - 100);
+    
+    const el = document.createElement('div');
+    el.className = 'moving-target';
+    el.style.left = tx + 'px';
+    el.style.top = ty + 'px';
+    el.textContent = '👰';
+    canvas.appendChild(el);
+    
+    const speedX = (Math.random() > 0.5 ? 1 : -1) * (1.5 + level * 0.3);
+    const speedY = (Math.random() > 0.5 ? 1 : -1) * (1 + level * 0.2);
+    
+    movingTarget = {
+      el,
+      x: tx,
+      y: ty,
+      speedX,
+      speedY,
+      timeLeft: 15 // 15 seconds to catch her
+    };
+    
+    document.getElementById('target-indicator').style.display = 'block';
+    showTroll('👰 لحق العروس هاربة! 15 ثانية بس!', 1500);
+    
+    // Update moving target every 30ms
+    movingTargetInterval = setInterval(updateMovingTarget, 30);
+  }
+
+  function updateMovingTarget() {
+    if (!movingTarget) return;
+    
+    const b = getCanvasBounds();
+    movingTarget.x += movingTarget.speedX;
+    movingTarget.y += movingTarget.speedY;
+    
+    // Bounce off walls
+    if (movingTarget.x <= 0 || movingTarget.x >= b.w - 50) movingTarget.speedX *= -1;
+    if (movingTarget.y <= b.top || movingTarget.y >= b.bottom - 50) movingTarget.speedY *= -1;
+    
+    movingTarget.el.style.left = movingTarget.x + 'px';
+    movingTarget.el.style.top = movingTarget.y + 'px';
+    
+    // Decrease time
+    movingTarget.timeLeft -= 0.03;
+    
+    // Time's up - target disappears
+    if (movingTarget.timeLeft <= 0) {
+      movingTarget.el.remove();
+      clearInterval(movingTargetInterval);
+      movingTargetInterval = null;
+      movingTarget = null;
+      document.getElementById('target-indicator').style.display = 'none';
+      showTroll('👰 هربت العروس!', 1000);
+    }
+  }
+
+  function startFatherChase() {
+    fatherChasing = true;
+    
+    // Create father element
+    fatherElement = document.createElement('div');
+    fatherElement.className = 'moving-target';
+    fatherElement.style.left = '50%';
+    fatherElement.style.top = '70px';
+    fatherElement.textContent = '👨‍🦱';
+    fatherElement.style.borderColor = '#ff1493';
+    fatherElement.style.filter = 'drop-shadow(0 0 8px #ff1493)';
+    canvas.appendChild(fatherElement);
+    
+    fatherX = canvas.getBoundingClientRect().width / 2;
+    fatherY = 100;
+    
+    const targetInd = document.createElement('div');
+    targetInd.id = 'father-indicator';
+    targetInd.className = 'reverse-indicator';
+    targetInd.style.background = '#ff1493';
+    targetInd.style.color = 'white';
+    targetInd.style.top = '90px';
+    targetInd.textContent = '👨‍🦱 أبو العروس يلحقك! 10 ثواني!';
+    document.body.appendChild(targetInd);
+    
+    showTroll('👨‍🦱 أبو العروس جاي يلحقك! اهرب 10 ثواني!', 1500);
+    
+    let fatherTimeLeft = 10000; // 10 seconds
+    
+    fatherInterval = setInterval(() => {
+      if (!fatherChasing || !fatherElement) {
+        clearInterval(fatherInterval);
+        return;
+      }
+      
+      fatherTimeLeft -= 30;
+      
+      // Calculate direction to player
+      const dx = px + 18 - fatherX;
+      const dy = py + 18 - fatherY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        const fatherSpeed = 2.5 + level * 0.3;
+        fatherX += (dx / distance) * fatherSpeed;
+        fatherY += (dy / distance) * fatherSpeed;
+      }
+      
+      const b = getCanvasBounds();
+      fatherX = Math.max(0, Math.min(fatherX, b.w - 50));
+      fatherY = Math.max(b.top, Math.min(fatherY, b.bottom - 50));
+      
+      fatherElement.style.left = fatherX + 'px';
+      fatherElement.style.top = fatherY + 'px';
+      
+      // Check if caught
+      const catchDist = Math.sqrt(
+        (px + 18 - fatherX - 25) ** 2 + 
+        (py + 18 - fatherY - 25) ** 2
+      );
+      
+      if (catchDist < 45) {
+        clearInterval(fatherInterval);
+        fatherElement.remove();
+        fatherChasing = false;
+        document.getElementById('father-indicator').remove();
+        die();
+        showTroll('😭 أبو العروس قبض عليك!', 1500);
+        return;
+      }
+      
+      // Time's up - escape!
+      if (fatherTimeLeft <= 0) {
+        clearInterval(fatherInterval);
+        fatherElement.remove();
+        fatherChasing = false;
+        document.getElementById('father-indicator').remove();
+        showTroll('😅 هربت من أبو العروس!', 1200);
+        
+        // Start mother chase after escaping father
+        setTimeout(() => {
+          startMotherChase();
+        }, 500);
+      }
+    }, 30);
+  }
+
+  function startMotherChase() {
+    motherChasing = true;
+    
+    // Create mother element
+    motherElement = document.createElement('div');
+    motherElement.className = 'moving-target';
+    motherElement.style.left = '50%';
+    motherElement.style.top = '70px';
+    motherElement.textContent = '👩';
+    motherElement.style.borderColor = '#00ffff';
+    motherElement.style.filter = 'drop-shadow(0 0 8px #00ffff)';
+    canvas.appendChild(motherElement);
+    
+    motherX = canvas.getBoundingClientRect().width / 2;
+    motherY = 100;
+    
+    const targetInd = document.createElement('div');
+    targetInd.id = 'mother-indicator';
+    targetInd.className = 'reverse-indicator';
+    targetInd.style.background = '#00ffff';
+    targetInd.style.color = '#0f0f23';
+    targetInd.style.top = '120px';
+    targetInd.textContent = '👩 حماتك تلحقك! اهرب 10 ثواني!';
+    document.body.appendChild(targetInd);
+    
+    showTroll('👩 حماتك جايه تلحقك! اهرب 10 ثواني!', 1500);
+    
+    let motherTimeLeft = 10000; // 10 seconds
+    
+    motherInterval = setInterval(() => {
+      if (!motherChasing || !motherElement) {
+        clearInterval(motherInterval);
+        return;
+      }
+      
+      motherTimeLeft -= 30;
+      
+      // Calculate direction to player
+      const dx = px + 18 - motherX;
+      const dy = py + 18 - motherY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        const motherSpeed = 2.5 + level * 0.3;
+        motherX += (dx / distance) * motherSpeed;
+        motherY += (dy / distance) * motherSpeed;
+      }
+      
+      const b = getCanvasBounds();
+      motherX = Math.max(0, Math.min(motherX, b.w - 50));
+      motherY = Math.max(b.top, Math.min(motherY, b.bottom - 50));
+      
+      motherElement.style.left = motherX + 'px';
+      motherElement.style.top = motherY + 'px';
+      
+      // Check if caught
+      const catchDist = Math.sqrt(
+        (px + 18 - motherX - 25) ** 2 + 
+        (py + 18 - motherY - 25) ** 2
+      );
+      
+      if (catchDist < 45) {
+        clearInterval(motherInterval);
+        motherElement.remove();
+        motherChasing = false;
+        document.getElementById('mother-indicator').remove();
+        
+        // Freeze player for 5 seconds
+        gameActive = false;
+        playerEl.textContent = '🥶';
+        frozenCount++;
+        document.getElementById('frozen-count').textContent = frozenCount;
+        showTroll('🥶 حماتك شللتك 5 ثواني! 😭', 1500);
+        
+        setTimeout(() => {
+          gameActive = true;
+          playerEl.textContent = '🫡';
+          showTroll('🥶 انتهت شلالة حماتك!', 1000);
+        }, 5000);
+        return;
+      }
+      
+      // Time's up - escape!
+      if (motherTimeLeft <= 0) {
+        clearInterval(motherInterval);
+        motherElement.remove();
+        motherChasing = false;
+        document.getElementById('mother-indicator').remove();
+        showTroll('😅 هربت من حماتك!', 1200);
+      }
+    }, 30);
+  }
+
+  function startProtectionChase() {
+    protectionActive = true;
+    protectionChases++;
+    
+    // Create protection (mother-in-law) element
+    protectionElement = document.createElement('div');
+    protectionElement.className = 'moving-target';
+    protectionElement.style.left = '50%';
+    protectionElement.style.top = '70px';
+    protectionElement.textContent = '👵';
+    protectionElement.style.borderColor = '#ff00ff';
+    protectionElement.style.filter = 'drop-shadow(0 0 8px #ff00ff) drop-shadow(0 0 16px #ff00ff)';
+    canvas.appendChild(protectionElement);
+    
+    protectionX = canvas.getBoundingClientRect().width / 2;
+    protectionY = 100;
+    
+    const targetInd = document.createElement('div');
+    targetInd.id = 'protection-indicator';
+    targetInd.className = 'reverse-indicator';
+    targetInd.style.background = '#ff00ff';
+    targetInd.style.color = 'white';
+    targetInd.style.top = '150px';
+    targetInd.textContent = '👵 الحماية تلحقك! اهرب 10 ثواني!';
+    document.body.appendChild(targetInd);
+    
+    showTroll('👵 الحماية جاية تلحقك! اهرب 10 ثواني!', 1500);
+    
+    let protectionTimeLeft = 10000; // 10 seconds
+    
+    protectionInterval = setInterval(() => {
+      if (!protectionActive || !protectionElement) {
+        clearInterval(protectionInterval);
+        return;
+      }
+      
+      protectionTimeLeft -= 30;
+      
+      // Calculate direction to player
+      const dx = px + 18 - protectionX;
+      const dy = py + 18 - protectionY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        const protectionSpeed = 2.7 + level * 0.35; // Slightly faster than father and mother
+        protectionX += (dx / distance) * protectionSpeed;
+        protectionY += (dy / distance) * protectionSpeed;
+      }
+      
+      const b = getCanvasBounds();
+      protectionX = Math.max(0, Math.min(protectionX, b.w - 50));
+      protectionY = Math.max(b.top, Math.min(protectionY, b.bottom - 50));
+      
+      protectionElement.style.left = protectionX + 'px';
+      protectionElement.style.top = protectionY + 'px';
+      
+      // Check if caught
+      const catchDist = Math.sqrt(
+        (px + 18 - protectionX - 25) ** 2 + 
+        (py + 18 - protectionY - 25) ** 2
+      );
+      
+      if (catchDist < 45) {
+        clearInterval(protectionInterval);
+        protectionElement.remove();
+        protectionActive = false;
+        document.getElementById('protection-indicator').remove();
+        
+        // Freeze player for 5 seconds
+        gameActive = false;
+        playerEl.textContent = '🥶';
+        frozenCount++;
+        document.getElementById('frozen-count').textContent = frozenCount;
+        showTroll('🥶 الحماية شللتك 5 ثواني! 😭', 1500);
+        
+        setTimeout(() => {
+          gameActive = true;
+          playerEl.textContent = '🫡';
+          showTroll('🥶 انتهت شلالة الحماية!', 1000);
+        }, 5000);
+        return;
+      }
+      
+      // Time's up - escape!
+      if (protectionTimeLeft <= 0) {
+        clearInterval(protectionInterval);
+        protectionElement.remove();
+        protectionActive = false;
+        document.getElementById('protection-indicator').remove();
+        showTroll('😅 هربت من الحماية!', 1200);
+      }
+    }, 30);
+  }
+
+  function startFriendHelper() {
+    if (friendHelperActivated) return;
+    friendHelperActivated = true;
+    
+    // Stop father and mother chases immediately
+    if (fatherChasing) {
+      if (fatherInterval) clearInterval(fatherInterval);
+      if (fatherElement) fatherElement.remove();
+      fatherChasing = false;
+      document.getElementById('father-indicator')?.remove();
+      showTroll('👨‍🦱 أبو العروس هرب! 😅', 800);
+    }
+    
+    if (motherChasing) {
+      if (motherInterval) clearInterval(motherInterval);
+      if (motherElement) motherElement.remove();
+      motherChasing = false;
+      document.getElementById('mother-indicator')?.remove();
+      showTroll('👩 حماتك هربت! 😅', 800);
+    }
+    
+    if (protectionActive) {
+      if (protectionInterval) clearInterval(protectionInterval);
+      if (protectionElement) protectionElement.remove();
+      protectionActive = false;
+      document.getElementById('protection-indicator')?.remove();
+      gameActive = true;
+      playerEl.textContent = '🫡';
+      showTroll('👵 الحماية هربت! 😅', 800);
+    }
+
+    if (jokerChasing) {
+      if (jokerInterval) clearInterval(jokerInterval);
+      if (jokerElement) jokerElement.remove();
+      jokerChasing = false;
+      document.getElementById('joker-indicator')?.remove();
+      showTroll('🤡 الجوكر هرب! 😅', 800);
+    }
+    
+    // Create friend element
+    friendElement = document.createElement('div');
+    friendElement.className = 'moving-target';
+    friendElement.style.left = '0px';
+    friendElement.style.top = Math.random() * 300 + 'px';
+    friendElement.textContent = '🤟';
+    friendElement.style.borderColor = '#00ff00';
+    friendElement.style.filter = 'drop-shadow(0 0 8px #00ff00) drop-shadow(0 0 16px #00ff00)';
+    canvas.appendChild(friendElement);
+    
+    friendX = 0;
+    friendY = parseFloat(friendElement.style.top);
+    
+    const targetInd = document.createElement('div');
+    targetInd.id = 'friend-indicator';
+    targetInd.className = 'reverse-indicator';
+    targetInd.style.background = '#00ff00';
+    targetInd.style.color = '#0f0f23';
+    targetInd.style.top = '180px';
+    targetInd.textContent = '🤟 صديقك جاي ينقذك! 10 ثواني مدمّر!';
+    document.body.appendChild(targetInd);
+    
+    showTroll('🤟 الصديق جاي! درع مدمّر لـ 10 ثواني!', 1500);
+    
+    // Activate destroyer
+    destroyerActive = true;
+    score += 10;
+    document.getElementById('score').textContent = score;
+    playerEl.style.filter = 'drop-shadow(0 0 20px #00ff00) drop-shadow(0 0 40px #00ff00)';
+    playerEl.textContent = '💚';
+    
+    // Hide all obstacles
+    destroyerHiddenObstacles = [];
+    obstacles.forEach(ob => {
+      destroyerHiddenObstacles.push(ob);
+      ob.el.style.display = 'none';
+    });
+    
+    // Hide all fake goals
+    fakeGoals.forEach(fg => {
+      fg.el.style.display = 'none';
+    });
+    
+    let friendTimeLeft = 10000; // 10 seconds
+    
+    friendInterval = setInterval(() => {
+      if (!friendHelperActivated || !friendElement) {
+        clearInterval(friendInterval);
+        return;
+      }
+      
+      friendTimeLeft -= 30;
+      
+      // Friend moves toward player from left side
+      const dx = px + 18 - friendX;
+      const dy = py + 18 - friendY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        const friendSpeed = 3 + level * 0.4;
+        friendX += (dx / distance) * friendSpeed;
+        friendY += (dy / distance) * friendSpeed;
+      }
+      
+      const b = getCanvasBounds();
+      friendX = Math.max(0, Math.min(friendX, b.w - 50));
+      friendY = Math.max(b.top, Math.min(friendY, b.bottom - 50));
+      
+      friendElement.style.left = friendX + 'px';
+      friendElement.style.top = friendY + 'px';
+      
+      // Time's up
+      if (friendTimeLeft <= 0) {
+        clearInterval(friendInterval);
+        friendElement.remove();
+        friendHelperActivated = false;
+        document.getElementById('friend-indicator').remove();
+        
+        // End destroyer
+        destroyerActive = false;
+        playerEl.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))';
+        playerEl.textContent = '🫡';
+        showTroll('💚 انتهت قوة الصديق!', 1000);
+        
+        // Show obstacles again
+        destroyerHiddenObstacles.forEach(ob => {
+          ob.el.style.display = 'flex';
+        });
+        
+        // Show fake goals again
+        fakeGoals.forEach(fg => {
+          fg.el.style.display = 'flex';
+        });
+        
+        destroyerHiddenObstacles = [];
+      }
+    }, 30);
+  }
+
+  function startJokerChase() {
+    jokerChasing = true;
+    
+    // Create joker element
+    jokerElement = document.createElement('div');
+    jokerElement.className = 'moving-target';
+    jokerElement.style.left = '50%';
+    jokerElement.style.top = '70px';
+    jokerElement.textContent = '🤡';
+    jokerElement.style.borderColor = '#ffff00';
+    jokerElement.style.filter = 'drop-shadow(0 0 8px #ffff00) drop-shadow(0 0 16px #ffff00)';
+    canvas.appendChild(jokerElement);
+    
+    jokerX = canvas.getBoundingClientRect().width / 2;
+    jokerY = 100;
+    
+    const targetInd = document.createElement('div');
+    targetInd.id = 'joker-indicator';
+    targetInd.className = 'reverse-indicator';
+    targetInd.style.background = '#ffff00';
+    targetInd.style.color = '#0f0f23';
+    targetInd.style.top = '210px';
+    targetInd.textContent = '🤡 الجوكر المجنون يلحقك! 12 ثانية!';
+    document.body.appendChild(targetInd);
+    
+    showTroll('🤡 الجوكر المجنون جاي! اهرب 12 ثانية!', 1500);
+    
+    let jokerTimeLeft = 12000; // 12 seconds
+    
+    jokerInterval = setInterval(() => {
+      if (!jokerChasing || !jokerElement) {
+        clearInterval(jokerInterval);
+        return;
+      }
+      
+      jokerTimeLeft -= 30;
+      
+      // Calculate direction to player
+      const dx = px + 18 - jokerX;
+      const dy = py + 18 - jokerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        const jokerSpeed = 2.8 + level * 0.35; // Slightly faster than mother
+        jokerX += (dx / distance) * jokerSpeed;
+        jokerY += (dy / distance) * jokerSpeed;
+      }
+      
+      const b = getCanvasBounds();
+      jokerX = Math.max(0, Math.min(jokerX, b.w - 50));
+      jokerY = Math.max(b.top, Math.min(jokerY, b.bottom - 50));
+      
+      jokerElement.style.left = jokerX + 'px';
+      jokerElement.style.top = jokerY + 'px';
+      
+      // Check if caught
+      const catchDist = Math.sqrt(
+        (px + 18 - jokerX - 25) ** 2 + 
+        (py + 18 - jokerY - 25) ** 2
+      );
+      
+      if (catchDist < 45) {
+        clearInterval(jokerInterval);
+        jokerElement.remove();
+        jokerChasing = false;
+        document.getElementById('joker-indicator').remove();
+        
+        // Freeze player for 8 seconds (longer than mother and protection)
+        gameActive = false;
+        playerEl.textContent = '🤡';
+        frozenCount++;
+        document.getElementById('frozen-count').textContent = frozenCount;
+        showTroll('🤡 الجوكر شللك 8 ثواني! 😭😭😭', 1500);
+        
+        setTimeout(() => {
+          gameActive = true;
+          playerEl.textContent = '🫡';
+          showTroll('🤡 انتهت شلالة الجوكر!', 1000);
+        }, 8000);
+        return;
+      }
+      
+      // Time's up - escape!
+      if (jokerTimeLeft <= 0) {
+        clearInterval(jokerInterval);
+        jokerElement.remove();
+        jokerChasing = false;
+        document.getElementById('joker-indicator').remove();
+        showTroll('😅 هربت من الجوكر المجنون!', 1200);
+      }
+    }, 30);
+  }
+
+  function updateMysteryBoxes() {
+    const b = getCanvasBounds();
+    mysteryBoxes.forEach(box => {
+      if (box.speedX === 0 && box.speedY === 0) return;
+      box.x += box.speedX;
+      box.y += box.speedY;
+      
+      // Wrap around screen
+      if (box.x < -50) box.x = b.w + 50;
+      if (box.x > b.w + 50) box.x = -50;
+      if (box.y < b.top - 50) box.y = b.bottom + 50;
+      if (box.y > b.bottom + 50) box.y = b.top - 50;
+      
+      box.el.style.left = box.x + 'px';
+      box.el.style.top = box.y + 'px';
+    });
+  }
+
+  function activateMysteryBox(box) {
+    if (!gameActive) return;
+    
+    const reward = mysteryRewards[rand(0, mysteryRewards.length - 1)];
+    showRewardPopup(box.x, box.y, reward);
+    
+    box.el.remove();
+    mysteryBoxes = mysteryBoxes.filter(b => b !== box);
+    
+    // Apply effect
+    switch(reward.effect) {
+      case 'luck':
+        showTroll('🍀 +50 نقطة حظ!', 1200);
+        break;
+      case 'support':
+        supportCards++;
+        document.getElementById('support-cards').textContent = supportCards;
+        showTroll('🤝 +1 كرت دعم!', 1200);
+        break;
+      case 'joker':
+        showTroll('🤡 جوكر مجنون!', 1200);
+        shakeScreen();
+        startJokerChase();
+        break;
+      case 'paralysis':
+        showTroll('🤖 شللت لمدة 5 ثواني!', 1500);
+        gameActive = false;
+        setTimeout(() => { gameActive = true; }, 5000);
+        break;
+      case 'money':
+        showTroll('💰 +100 نقطة!', 1200);
+        break;
+      case 'shield':
+        shieldActive = true;
+        score += 5;
+        document.getElementById('score').textContent = score;
+        playerEl.classList.add('shield-glow');
+        showTroll('🛡️ درع حماية لـ 10 ثواني!', 1500);
+        clearTimeout(shieldTimeout);
+        shieldTimeout = setTimeout(() => {
+          shieldActive = false;
+          playerEl.classList.remove('shield-glow');
+          showTroll('🛡️ انتهت الحماية!', 1000);
+        }, 10000);
+        break;
+      case 'destroyer':
+        destroyerActive = true;
+        score += 5;
+        document.getElementById('score').textContent = score;
+        playerEl.style.filter = 'drop-shadow(0 0 20px #ff1493) drop-shadow(0 0 40px #ff1493)';
+        playerEl.textContent = '💥';
+        showTroll('💥 مدمّر! العوائق اختفت!', 1500);
+        
+        // Hide all obstacles
+        destroyerHiddenObstacles = [];
+        obstacles.forEach(ob => {
+          destroyerHiddenObstacles.push(ob);
+          ob.el.style.display = 'none';
+        });
+        
+        clearTimeout(destroyerTimeout);
+        destroyerTimeout = setTimeout(() => {
+          destroyerActive = false;
+          playerEl.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))';
+          playerEl.textContent = '🫡';
+          showTroll('💥 انتهت قوة المدمّر!', 1000);
+          
+          // Show obstacles again
+          destroyerHiddenObstacles.forEach(ob => {
+            ob.el.style.display = 'flex';
+          });
+          destroyerHiddenObstacles = [];
+        }, 5000);
+        break;
+    }
+  }
+
+  function showRewardPopup(x, y, reward) {
+    clearTimeout(rewardTimeout);
+    const popup = document.createElement('div');
+    popup.className = 'reward-popup';
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    popup.style.background = '#ff6b6b';
+    popup.style.color = '#0f0f23';
+    popup.textContent = reward.emoji + ' ' + reward.text;
+    document.body.appendChild(popup);
+    
+    rewardTimeout = setTimeout(() => {
+      popup.style.animation = 'rewardFade 0.5s ease forwards';
+      setTimeout(() => popup.remove(), 500);
+    }, 1200);
+  }
+
+  function setupLevel() {
+    clearLevel();
+    const b = getCanvasBounds();
+    speed = Math.max(3, 6 - level * 0.3);
+
+    placePlayer();
+    placeGoal();
+
+    const emojis = ['💣', '🔥', '👻', '🌵', '⚡', '🦠', '☄️', '🕳️', '🧨', '💀'];
+
+    // Static obstacles
+    const numObs = Math.min(4 + level * 2, 20);
+    for (let i = 0; i < numObs; i++) {
+      const size = rand(28, 50);
+      const ox = rand(20, b.w - 60);
+      const oy = rand(b.top + 40, b.bottom - 60);
+      createObstacle(ox, oy, size, emojis[rand(0, emojis.length - 1)]);
+    }
+
+    // Moving obstacles from level 2+
+    if (level >= 2) {
+      const numMoving = Math.min(level, 6);
+      for (let i = 0; i < numMoving; i++) {
+        const size = rand(30, 44);
+        const ox = rand(40, b.w - 80);
+        const oy = rand(b.top + 60, b.bottom - 100);
+        const sx = (Math.random() > 0.5 ? 1 : -1) * (0.4 + level * 0.15);
+        const sy = (Math.random() > 0.5 ? 1 : -1) * (0.2 + level * 0.08);
+        createObstacle(ox, oy, size, '👾', sx, sy);
+      }
+    }
+
+    // Fake goals from level 3+
+    if (level >= 3) {
+      const numFake = Math.min(level - 1, 5);
+      for (let i = 0; i < numFake; i++) {
+        createFakeGoal(rand(30, b.w - 70), rand(b.top + 30, b.bottom - 80));
+      }
+    }
+
+    // Reverse controls from level 4+ - ALWAYS active!
+    reversed = false;
+    reverseInd.style.display = 'none';
+    showTroll('😈 لحق النجمة بسرعة! 30 ثانية الأخيرة فيها مصيبة!', 2000);
+
+    // Goal moves from level 5+
+    if (level >= 5) {
+      goalMoveInterval = setInterval(() => {
+        if (!gameActive) return;
+        const dist = Math.sqrt((px - gx) ** 2 + (py - gy) ** 2);
+        if (dist < 120) {
+          gx = rand(40, b.w - 80);
+          gy = rand(b.top + 20, b.bottom - 150);
+          goalEl.style.left = gx + 'px';
+          goalEl.style.top = gy + 'px';
+          showTroll('🏃 الهدف هرب منك!', 1200);
+        }
+      }, 800);
+    }
+
+    // Invisible player flicker from level 6+
+    if (level >= 6 && Math.random() > 0.5) {
+      invisible = true;
+      canvas.classList.add('invisible-mode');
+      showTroll('👻 وينك؟', 1500);
+    }
+
+    // Mystery boxes from level 2+
+    if (level >= 2) {
+      const numBoxes = Math.min(level + 1, 8);
+      for (let i = 0; i < numBoxes; i++) {
+        const bx = rand(40, b.w - 90);
+        const by = rand(b.top + 60, b.bottom - 100);
+        const box = createMysteryBox(bx, by);
+        // Some boxes move
+        if (Math.random() > 0.6) {
+          box.speedX = (Math.random() > 0.5 ? 1 : -1) * (0.3 + level * 0.1);
+          box.speedY = (Math.random() > 0.5 ? 1 : -1) * (0.2 + level * 0.08);
+        }
+      }
+    }
+
+    // Moving target from level 2+
+    if (level >= 2) {
+      createMovingTarget();
+    }
+
+    // Player emoji based on deaths
+    if (deaths > 20) playerEl.textContent = '😭';
+    else if (deaths > 10) playerEl.textContent = '😡';
+    else if (deaths > 5) playerEl.textContent = '😤';
+    else playerEl.textContent = '🫡';
+
+    gameActive = true;
+  }
+
+  function moveObstacles() {
+    const b = getCanvasBounds();
+    obstacles.forEach(ob => {
+      if (ob.speedX === 0 && ob.speedY === 0) return;
+      ob.x += ob.speedX;
+      ob.y += ob.speedY;
+      if (ob.x <= 0 || ob.x >= b.w - ob.size) ob.speedX *= -1;
+      if (ob.y <= b.top || ob.y >= b.bottom - ob.size) ob.speedY *= -1;
+      ob.el.style.left = ob.x + 'px';
+      ob.el.style.top = ob.y + 'px';
+    });
+    updateMysteryBoxes();
+  }
+
+  function checkCollisions() {
+    if (!gameActive) return;
+    const ps = 36;
+
+    // Check if score reached 150 for friend helper
+    if (score >= 150 && !friendHelperActivated) {
+      startFriendHelper();
+      return;
+    }
+
+    // Moving target collision
+    if (movingTarget) {
+      const dx = (px + ps/2) - (movingTarget.x + 25);
+      const dy = (py + ps/2) - (movingTarget.y + 25);
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 40) {
+        score += 20;
+        document.getElementById('score').textContent = score;
+        const popup = document.createElement('div');
+        popup.className = 'reward-popup';
+        popup.style.left = movingTarget.x + 'px';
+        popup.style.top = movingTarget.y + 'px';
+        popup.style.background = '#ff69b4';
+        popup.style.color = '#0f0f23';
+        popup.textContent = '👰 +20 نقطة! شلت العروس!';
+        document.body.appendChild(popup);
+        
+        setTimeout(() => {
+          popup.style.animation = 'rewardFade 0.5s ease forwards';
+          setTimeout(() => popup.remove(), 500);
+        }, 1200);
+        
+        showTroll('💒 اخذت العروس!', 1000);
+        movingTarget.el.remove();
+        clearInterval(movingTargetInterval);
+        movingTargetInterval = null;
+        movingTarget = null;
+        document.getElementById('target-indicator').style.display = 'none';
+        
+        // Start father chase after catching bride
+        setTimeout(() => {
+          startFatherChase();
+        }, 500);
+      }
+    }
+
+    // Obstacles - تخطي عند تفعيل المدمّر
+    if (!destroyerActive) {
+      for (const ob of obstacles) {
+        const dx = (px + ps/2) - (ob.x + ob.size/2);
+        const dy = (py + ps/2) - (ob.y + ob.size/2);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < (ps/2 + ob.size/2) * 0.7) {
+          die();
+          return;
+        }
+      }
+    }
+
+    // Mystery boxes collision
+    for (const box of mysteryBoxes) {
+      const dx = (px + ps/2) - (box.x + 25);
+      const dy = (py + ps/2) - (box.y + 25);
+      if (Math.sqrt(dx*dx + dy*dy) < 35) {
+        activateMysteryBox(box);
+        return;
+      }
+    }
+
+    // Fake goals
+    for (const fg of fakeGoals) {
+      const dx = (px + ps/2) - (fg.x + 20);
+      const dy = (py + ps/2) - (fg.y + 20);
+      if (Math.sqrt(dx*dx + dy*dy) < 30) {
+        fg.el.remove();
+        fakeGoals = fakeGoals.filter(f => f !== fg);
+        showTroll(trollMessages[rand(0, trollMessages.length - 1)]);
+        shakeScreen();
+        // Teleport player back
+        placePlayer();
+        return;
+      }
+    }
+
+    // Real goal
+    const dx = (px + ps/2) - (gx + 20);
+    const dy = (py + ps/2) - (gy + 20);
+    if (Math.sqrt(dx*dx + dy*dy) < 28) {
+      // Troll: 30% chance goal dodges last second on levels 3+
+      if (level >= 3 && Math.random() < 0.3) {
+        const b = getCanvasBounds();
+        gx = rand(40, b.w - 80);
+        gy = rand(b.top + 20, b.bottom - 150);
+        goalEl.style.left = gx + 'px';
+        goalEl.style.top = gy + 'px';
+        showTroll('🫣 تقريباً... بس لأ!', 1200);
+        shakeScreen();
+        return;
+      }
+      win();
+    }
+
+    // Boundary check
+    const b = getCanvasBounds();
+    if (px < 0) px = 0;
+    if (py < b.top) py = b.top;
+    if (px > b.w - ps) px = b.w - ps;
+    if (py > b.bottom) py = b.bottom;
+    updatePlayerPos();
+  }
+
+  function die() {
+    if (shieldActive) {
+      shieldActive = false;
+      playerEl.classList.remove('shield-glow');
+      showTroll('🛡️ الدرع حماك!', 1200);
+      return;
+    }
+    
+    gameActive = false;
+    deaths++;
+    attempts++;
+    document.getElementById('deaths').textContent = deaths;
+    shakeScreen();
+    playerEl.textContent = '💀';
+
+    const msg = deathMessages[rand(0, deathMessages.length - 1)];
+    showTroll(msg, 1500);
+
+    setTimeout(() => {
+      if (gameEnded) return;
+      if (deaths % 5 === 0) {
+        showOverlay('😈', `محاولات: ${attempts}`, trollMessages[rand(0, trollMessages.length -1)]);
+      } else {
+        setupLevel();
+      }
+    }, 1000);
+  }
+
+  function win() {
+    gameActive = false;
+    const msg = winMessages[rand(0, winMessages.length - 1)];
+    spawnConfetti();
+    score += level * 10 + (supportCards * 5);
+    document.getElementById('score').textContent = score;
+    showOverlay('🏆', msg, `المستوى ${level} - بـ ${attempts} محاولة | 💪 كروت دعم: ${supportCards} | ❄️ مرات تجميد: ${frozenCount}`);
+    level++;
+  }
+
+  function updateTimer() {
+    const mins = Math.floor(timeRemaining / 60);
+    const secs = timeRemaining % 60;
+    const secStr = secs < 10 ? '0' + secs : secs;
+    document.getElementById('timer-display').textContent = `⏱️ ${mins}:${secStr}`;
+    
+    // First protection chase at 15 seconds remaining
+    if (timeRemaining === 15 && protectionChases < 1) {
+      startProtectionChase();
+    }
+    
+    // Second protection chase at last 10 seconds
+    if (timeRemaining === 10 && protectionChases < 2) {
+      startProtectionChase();
+    }
+    
+    // Activate reversed controls in last 30 seconds
+    if (timeRemaining <= 30 && !reversed) {
+      reversed = true;
+      reverseInd.style.display = 'block';
+      showTroll('⚠️ 30 ثانية الأخيرة! الاتجاهات معكوسة!', 1500);
+    }
+    
+    if (timeRemaining <= 0) {
+      endGame();
+    } else {
+      timeRemaining--;
+    }
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  function endGame() {
+    gameActive = false;
+    gameEnded = true;
+    clearInterval(timerInterval);
+    clearInterval(moveInterval);
+    clearInterval(goalMoveInterval);
+    
+    spawnConfetti();
+    showOverlay('⏰', 'انتهت اللعبة!', `🎯 النتيجة النهائية: ${score} نقطة | المستويات: ${level - 1} | 💪 كروت دعم: ${supportCards} | ❄️ تجميدات: ${frozenCount}`);
+  }
+
+  function showOverlay(emoji, text, sub) {
+    overlay.style.display = 'flex';
+    document.getElementById('overlay-emoji').textContent = emoji;
+    document.getElementById('overlay-text').textContent = text;
+    document.getElementById('overlay-sub').textContent = sub;
+  }
+
+  document.getElementById('overlay-btn').addEventListener('click', () => {
+    if (gameEnded) {
+      location.reload();
+    } else {
+      overlay.style.display = 'none';
+      setupLevel();
+    }
+  });
+
+  function spawnConfetti() {
+    const emojis = ['🎉', '🎊', '✨', '💫', '⭐', '🌟', '🥳'];
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.textContent = emojis[rand(0, emojis.length - 1)];
+      el.style.left = rand(10, 90) + '%';
+      el.style.top = rand(-10, 30) + '%';
+      el.style.animationDelay = (i * 0.1) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2500);
+    }
+  }
+
+  // ============ CONTROLS - SMOOTH MOVEMENT ============
+  const keysPressed = {};
+  let velocityX = 0;
+  let velocityY = 0;
+  const acceleration = 0.4;  // أبطأ تسارع = سلاسة أكثر
+  const maxSpeed = 5;        // سرعة أقل = تحكم أفضل
+  const friction = 0.92;     // احتكاك أعلى = توقف أسلس
+
+  const keyMap = { 
+    ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', 
+    w: 'up', s: 'down', a: 'left', d: 'right' 
+  };
+
+  document.addEventListener('keydown', (e) => {
+    const dir = keyMap[e.key];
+    if (dir) {
+      keysPressed[dir] = true;
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('keyup', (e) => {
+    const dir = keyMap[e.key];
+    if (dir) {
+      keysPressed[dir] = false;
+      e.preventDefault();
+    }
+  });
+
+  // حركة سلسة متدرجة
+  function updateMovement() {
+    if (!gameActive) {
+      velocityX *= friction;
+      velocityY *= friction;
+      px += velocityX;
+      py += velocityY;
+      updatePlayerPos();
+      return;
+    }
+
+    let targetVelX = 0;
+    let targetVelY = 0;
+
+    // احسب السرعة المستهدفة
+    if (keysPressed['left']) targetVelX -= maxSpeed;
+    if (keysPressed['right']) targetVelX += maxSpeed;
+    if (keysPressed['up']) targetVelY -= maxSpeed;
+    if (keysPressed['down']) targetVelY += maxSpeed;
+
+    // اعكس الاتجاهات إذا لزم
+    if (reversed) {
+      targetVelX *= -1;
+      targetVelY *= -1;
+    }
+
+    // تسارع سلس نحو السرعة المستهدفة
+    velocityX += (targetVelX - velocityX) * acceleration;
+    velocityY += (targetVelY - velocityY) * acceleration;
+
+    // احتكاك عند التوقف
+    if (!keysPressed['left'] && !keysPressed['right']) {
+      velocityX *= friction;
+    }
+    if (!keysPressed['up'] && !keysPressed['down']) {
+      velocityY *= friction;
+    }
+
+    // حدّث الموضع
+    px += velocityX;
+    py += velocityY;
+
+    // تحقق من الحدود
+    const b = getCanvasBounds();
+    const ps = 36;
+    if (px < 0) px = 0;
+    if (py < b.top) py = b.top;
+    if (px > b.w - ps) px = b.w - ps;
+    if (py > b.bottom) py = b.bottom;
+
+    updatePlayerPos();
+    checkCollisions();
+  }
+
+  // لمس وحركة
+  let touchStartX = 0, touchStartY = 0;
+  canvas.addEventListener('touchstart', (e) => {
+    if (e.target.classList.contains('arrow-btn')) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  canvas.addEventListener('touchmove', (e) => {
+    if (e.target.classList.contains('arrow-btn')) return;
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    
+    // تحديد اتجاه الحركة
+    if (Math.abs(dx) > Math.abs(dy)) {
+      keysPressed['left'] = dx < -30;
+      keysPressed['right'] = dx > 30;
+      keysPressed['up'] = false;
+      keysPressed['down'] = false;
+    } else {
+      keysPressed['up'] = dy < -30;
+      keysPressed['down'] = dy > 30;
+      keysPressed['left'] = false;
+      keysPressed['right'] = false;
+    }
+    
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  canvas.addEventListener('touchend', () => {
+    keysPressed['up'] = false;
+    keysPressed['down'] = false;
+    keysPressed['left'] = false;
+    keysPressed['right'] = false;
+  }, { passive: true });
+
+  // Game loop
+  function gameLoop() {
+    updateMovement();
+    if (gameActive) {
+      moveObstacles();
+      checkCollisions();
+    }
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Start
+  setupLevel();
+  startTimer();
+  gameLoop();
+  // Show game title screen
+  function showTitleScreen() {
+    const titleOverlay = document.createElement('div');
+    titleOverlay.id = 'title-screen';
+    titleOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      animation: fadeIn 0.8s ease;
+    `;
+    
+    const titleText = document.createElement('div');
+    titleText.style.cssText = `
+      font-size: 72px;
+      font-weight: 900;
+      text-align: center;
+      color: #ff6b6b;
+      text-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+      animation: titleBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    `;
+    titleText.textContent = '😱 فرار من الحفلة 😱';
+    
+    const subtitleText = document.createElement('div');
+    subtitleText.style.cssText = `
+      font-size: 28px;
+      color: #ffd93d;
+      text-align: center;
+      font-weight: 700;
+      animation: fadeInDelay 0.8s ease 0.3s forwards;
+      opacity: 0;
+    `;
+    subtitleText.textContent = 'اهرب من أهل العريس قبل لا يقبضوا عليك!';
+    
+    const instructionsText = document.createElement('div');
+    instructionsText.style.cssText = `
+      font-size: 18px;
+      color: #6bcb77;
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.8;
+      animation: fadeInDelay 0.8s ease 0.5s forwards;
+      opacity: 0;
+    `;
+    instructionsText.innerHTML = `
+      ⭐ لحق النجمة الذهبية<br>
+      ⏱️ عندك 2 دقيقة بس<br>
+      😤 احذر من الموانع والفخاخ<br>
+      💪 اجمع الهدايا والكروت<br>
+      👨‍🦱 أبو العروس وحماتك جايين يلحقوك!
+    `;
+    
+    const startBtn = document.createElement('button');
+    startBtn.style.cssText = `
+      margin-top: 30px;
+      padding: 16px 50px;
+      background: #ff6b6b;
+      color: #0f0f23;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      animation: fadeInDelay 0.8s ease 0.7s forwards;
+      opacity: 0;
+    `;
+    startBtn.textContent = '🚀 يلا ابدأ اللعبة! 🚀';
+    
+    startBtn.addEventListener('mouseover', () => {
+      startBtn.style.transform = 'scale(1.1)';
+      startBtn.style.boxShadow = '0 0 20px #ff6b6b';
+    });
+    
+    startBtn.addEventListener('mouseout', () => {
+      startBtn.style.transform = 'scale(1)';
+      startBtn.style.boxShadow = 'none';
+    });
+    
+    startBtn.addEventListener('click', () => {
+      titleOverlay.style.animation = 'fadeOut 0.5s ease';
+      setTimeout(() => titleOverlay.remove(), 500);
+      showTroll('😈 يلا حاول توصل للنجمة! عندك 120 ثانية فقط!', 2000);
+    });
+    
+    titleOverlay.appendChild(titleText);
+    titleOverlay.appendChild(subtitleText);
+    titleOverlay.appendChild(instructionsText);
+    titleOverlay.appendChild(startBtn);
+    
+    document.body.appendChild(titleOverlay);
+  }
+  
+  // Add animations to style
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    @keyframes titleBounce {
+      0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes fadeInDelay {
+      to { opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Show title screen instead of immediately starting
+  showTitleScreen();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dffadbde707b13f',t:'MTc3NDEyNDY1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

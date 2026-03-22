@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Hub Pyramid Game</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+    html { overflow: hidden; }
+    body { overflow: hidden; }
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(300px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes pyramidBuild {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes blockGlow {
+      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    @keyframes correctPing {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .animate-fadeInUp { animation: fadeInUp 0.5s ease forwards; }
+    .animate-scaleIn { animation: scaleIn 0.4s ease forwards; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    
+    .shimmer-text {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 2s linear infinite;
+    }
+    
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      animation: confetti-fall 2s ease-in forwards;
+    }
+    
+    .glow-box {
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.3), 0 0 50px rgba(245, 158, 11, 0.1);
+    }
+    
+    .pyramid-block {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border: 2px solid #b45309;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      animation: pyramidBuild 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .pyramid-block.built {
+      animation: blockGlow 0.5s ease;
+    }
+
+    .timer-pulse {
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .answer-button {
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e5e7eb;
+    }
+
+    .answer-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .answer-button.correct {
+      background: rgba(34, 197, 94, 0.3);
+      border-color: #22c55e;
+      color: #22c55e;
+      animation: correctPing 0.4s ease;
+    }
+
+    .answer-button.wrong {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: #ef4444;
+      color: #ef4444;
+      animation: shake 0.4s ease;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gray-950 text-white overflow-auto">
+  <div id="app" class="w-full h-full flex flex-col items-center" style="background: radial-gradient(ellipse at top, #1a1a3e 0%, #0a0a1a 60%, #050510 100%);">
+   <!-- Start Screen -->
+   <div id="startScreen" class="w-full h-full flex flex-col items-center justify-center p-6">
+    <div class="text-center animate-fadeInUp max-w-lg">
+     <div class="mb-6 animate-float">
+      <svg width="100" height="100" viewbox="0 0 100 100" class="mx-auto">
+       <defs>
+        <lineargradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+         <stop offset="0%" stop-color="#f59e0b" />
+         <stop offset="100%" stop-color="#ef4444" />
+        </lineargradient>
+       </defs> <polygon points="50,10 90,80 10,80" fill="url(#g1)" /> <polygon points="50,30 80,70 20,70" fill="url(#g1)" opacity="0.7" /> <polygon points="50,50 70,60 30,60" fill="url(#g1)" opacity="0.5" /> <text x="50" y="65" text-anchor="middle" fill="white" font-size="24" font-weight="bold">
+        🏛️
+       </text>
+      </svg>
+     </div>
+     <h1 id="gameTitle" class="text-4xl font-black mb-3 shimmer-text">لعبة هرم كوماند هاب</h1>
+     <p class="text-gray-400 text-lg mb-8 leading-relaxed">أجب على أسئلة عن كوماند هاب وابن الهرم الذهبي!<br>
+       كل إجابة صحيحة = حجر جديد في الهرم 🪨✨</p>
+     <div class="flex flex-wrap justify-center gap-3 mb-8">
+      <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm"><span class="text-amber-400 font-bold">40</span> أسئلة
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm"><i data-lucide="target" class="inline w-4 h-4 text-amber-400"></i> هرم كامل
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm"><i data-lucide="star" class="inline w-4 h-4 text-amber-400"></i> 100 نقطة
+      </div>
+     </div><button onclick="startGame()" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xl px-10 py-4 rounded-2xl transition-all transform hover:scale-105 shadow-lg shadow-amber-500/25"> ابدأ اللعبة <i data-lucide="play" class="inline w-5 h-5 mr-1"></i> </button>
+    </div>
+   </div><!-- Game Screen -->
+   <div id="gameScreen" class="w-full h-full flex-col items-center p-4 hidden overflow-auto" style="max-width: 900px;">
+    <!-- Header -->
+    <div class="w-full flex items-center justify-between mb-4 flex-wrap gap-2">
+     <div class="flex items-center gap-3">
+      <div class="bg-amber-500/20 border border-amber-500/30 rounded-xl px-3 py-1.5 text-sm font-bold text-amber-400">
+       السؤال <span id="questionNum">1</span>/7
+      </div>
+      <div id="timerBox" class="bg-red-500/20 border border-red-500/30 rounded-xl px-3 py-1.5 text-sm font-bold text-red-400 flex items-center gap-1">
+       <i data-lucide="clock" class="w-4 h-4"></i> <span id="timerDisplay">02:00</span>
+      </div>
+     </div>
+     <div class="flex items-center gap-2">
+      <div class="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-sm flex items-center gap-1">
+       <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span id="scoreDisplay" class="font-bold text-amber-400">0</span>/100
+      </div>
+     </div>
+    </div><!-- Progress Bar -->
+    <div class="w-full bg-white/5 rounded-full h-2 mb-6 overflow-hidden">
+     <div id="progressBar" class="bg-gradient-to-r from-amber-500 to-orange-500 h-full rounded-full transition-all" style="width: 0%; transition: width 0.5s ease;"></div>
+    </div><!-- Pyramid Display -->
+    <div class="flex-1 flex flex-col items-center justify-center mb-6 w-full">
+     <div id="pyramidContainer" class="flex flex-col items-center gap-0" style="max-width: 500px;">
+      <!-- Pyramid will be built here -->
+     </div>
+    </div><!-- Question Section -->
+    <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-6 mb-4">
+     <h2 id="questionText" class="text-xl font-bold text-center mb-6 text-amber-300"></h2>
+     <div id="answersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </div>
+   </div><!-- Final Screen -->
+   <div id="finalScreen" class="w-full h-full flex-col items-center justify-center p-6 hidden overflow-auto">
+    <div id="confettiContainer" class="fixed inset-0 pointer-events-none overflow-hidden z-40"></div>
+    <div class="text-center animate-fadeInUp max-w-md relative z-50">
+     <div class="text-6xl mb-4">
+      🏆
+     </div>
+     <h2 class="text-3xl font-black shimmer-text mb-2">مبروك!</h2>
+     <p class="text-gray-400 text-lg mb-6">لقد بنيت الهرم الذهبي بنجاح! 🏛️</p>
+     <div class="bg-white/5 border border-amber-500/30 rounded-2xl p-5 mb-4 glow-box">
+      <div class="text-5xl font-black text-amber-400 mb-1"><span id="finalScore">0</span>
+      </div>
+      <div class="text-gray-400">
+       نقطة من 100
+      </div>
+     </div>
+     <div class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-white/5 rounded-xl p-3">
+       <div id="finalCorrect" class="text-2xl font-bold text-emerald-400 mb-1"></div>
+       <div class="text-xs text-gray-500">
+        إجابات صحيحة
+       </div>
+      </div>
+      <div class="bg-white/5 rounded-xl p-3">
+       <div id="finalTime" class="text-2xl font-bold text-blue-400 mb-1"></div>
+       <div class="text-xs text-gray-500">
+        الوقت المستخدم
+       </div>
+      </div>
+     </div>
+     <div id="resultMessage" class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-6 w-full">
+      <p class="text-white font-bold text-sm whitespace-pre-line leading-relaxed" id="resultText"></p>
+     </div>
+     <div id="rewardCard" class="bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-600 rounded-2xl p-6 mb-6 w-full max-w-sm border-2 border-yellow-300/50 shadow-2xl shadow-yellow-500/40 transform hover:scale-105 transition-all">
+      <div class="flex items-center justify-between mb-3">
+       <div class="text-5xl" id="rewardEmoji">
+        🎁
+       </div>
+       <div class="text-right">
+        <div class="text-xs text-yellow-900 font-black uppercase tracking-wider">
+         كرت دعم ذهبي
+        </div>
+        <div class="text-3xl font-black text-white drop-shadow-lg" id="rewardStatus">
+         محجوز ✓
+        </div>
+       </div>
+      </div>
+      <div class="border-t-2 border-yellow-300/50 pt-3">
+       <p class="text-sm text-yellow-50 text-center font-bold" id="rewardMessage">هدية خاصة لك!</p>
+      </div>
+     </div><button onclick="restartGame()" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-lg px-8 py-3 rounded-2xl transition-all transform hover:scale-105"> أعد اللعب <i data-lucide="rotate-ccw" class="inline w-5 h-5 mr-1"></i> </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // ============ CONFIG & SDK ============
+    const defaultConfig = {
+      game_title: 'لعبة هرم كوماند هاب',
+      background_color: '#0a0a1a',
+      surface_color: '#111827',
+      text_color: '#ffffff',
+      primary_action: '#f59e0b',
+      secondary_action: '#ea580c',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const bg = config.background_color || defaultConfig.background_color;
+      const surface = config.surface_color || defaultConfig.surface_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_action || defaultConfig.primary_action;
+      const secondary = config.secondary_action || defaultConfig.secondary_action;
+      const font = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      const app = document.getElementById('app');
+      app.style.background = `radial-gradient(ellipse at top, ${bg}ee 0%, ${bg} 60%)`;
+
+      document.body.style.fontFamily = `${font}, Tajawal, sans-serif`;
+      document.body.style.fontSize = `${fontSize}px`;
+      document.body.style.color = text;
+
+      const titleEl = document.getElementById('gameTitle');
+      if (titleEl) titleEl.textContent = config.game_title || defaultConfig.game_title;
+    }
+
+ 
+
+    // ============ GAME DATA ============
+    const questions = [
+      // أساسيات كوماند هاب
+      {
+        question: 'ما هو الدور الأساسي لـ Command Hub؟',
+        answers: ['إدارة الأوامر والعمليات المركزية', 'تصميم الواجهات الرسومية', 'تخزين الملفات فقط', 'تصفح الإنترنت'],
+        correct: 0
+      },
+      {
+        question: 'أي من التالي ليس من مميزات Command Hub؟',
+        answers: ['المراقبة الفعلية', 'الأتمتة المتقدمة', 'تشغيل جميع الألعاب', 'إدارة الأنظمة'],
+        correct: 2
+      },
+      {
+        question: 'كم عدد مستويات الوصول في نظام إدارة Command Hub؟',
+        answers: ['2 فقط', '3 مستويات', '5 مستويات', 'مستويات غير محدودة'],
+        correct: 2
+      },
+      {
+        question: 'ما هي سرعة معالجة الأوامر في Command Hub؟',
+        answers: ['بطيئة جداً', 'فورية تقريباً', 'بطيئة', 'تعتمد على الشبكة فقط'],
+        correct: 1
+      },
+      {
+        question: 'هل يمكن دمج Command Hub مع أنظمة أخرى؟',
+        answers: ['لا إطلاقاً', 'فقط مع Windows', 'نعم، متوافق مع معظم الأنظمة', 'فقط مع Linux'],
+        correct: 2
+      },
+      {
+        question: 'ما هي أفضل ميزة أمان في Command Hub؟',
+        answers: ['التشفير من الدرجة العسكرية', 'كلمات المرور القوية', 'التحقق متعدد المستويات', 'لا يوجد أمان'],
+        correct: 2
+      },
+      {
+        question: 'كم عدد المستخدمين الذين يمكنهم استخدام Command Hub في نفس الوقت؟',
+        answers: ['مستخدم واحد فقط', 'حتى 10 مستخدمين', 'مئات المستخدمين المتزامنين', 'محدود حسب الخادم'],
+        correct: 2
+      },
+      // مميزات Command Hub
+      {
+        question: 'ما أبرز مميزات لوحة تحكم Command Hub؟',
+        answers: ['معقدة وصعبة الاستخدام', 'واضحة وسهلة وشاملة', 'تحتاج تدريب سنوي', 'بطيئة جداً'],
+        correct: 1
+      },
+      {
+        question: 'هل Command Hub يدعم الأتمتة الذكية للعمليات؟',
+        answers: ['لا نهائياً', 'نعم، مع قوة تحكم كاملة', 'فقط العمليات البسيطة', 'يحتاج برنامج إضافي'],
+        correct: 1
+      },
+      {
+        question: 'ما الذي يميز نظام الإشعارات في Command Hub؟',
+        answers: ['لا توجد إشعارات', 'فوري وذكي ومخصص', 'بطيء وغير دقيق', 'يرسل رسائل عشوائية'],
+        correct: 1
+      },
+      // الجوائز والمسابقات
+      {
+        question: 'كم عدد كروت الدعم التي يمكنك الفوز بها في المسابقة؟',
+        answers: ['كرت واحد فقط', 'حتى 5 كروت', 'كروت غير محدودة', 'لا توجد جوائز'],
+        correct: 1
+      },
+      {
+        question: 'ما هي أفضل جائزة يمكنك الحصول عليها من Command Hub؟',
+        answers: ['نقاط افتراضية فقط', 'كروت دعم للمشاريع', 'شهادات لا قيمة لها', 'لا توجد جوائز'],
+        correct: 1
+      },
+      {
+        question: 'هل يمكن تراكم الكروت والجوائز من عدة مسابقات؟',
+        answers: ['لا، كرت واحد فقط', 'نعم، يمكن تجميع الكروت', 'فقط في الشهر الأول', 'غير ممكن تقنياً'],
+        correct: 1
+      },
+      {
+        question: 'ما هو الحد الأقصى للنقاط في لعبة المسابقة؟',
+        answers: ['50 نقطة', '75 نقطة', '100 نقطة', 'نقاط غير محدودة'],
+        correct: 2
+      },
+      {
+        question: 'كم مرة يمكنك المشاركة في مسابقة Command Hub يومياً؟',
+        answers: ['مرة واحدة فقط', 'مرتين', 'ثلاث مرات', 'غير محدود'],
+        correct: 1
+      },
+      // دعم المشاريع
+      {
+        question: 'ما الفائدة الأساسية من كرت الدعم في المشاريع؟',
+        answers: ['تصميم جميل فقط', 'ميزات إضافية وتطوير ممتد', 'أموال مباشرة', 'لا فائدة'],
+        correct: 1
+      },
+      {
+        question: 'هل يمكن استخدام كرت الدعم لأي مشروع؟',
+        answers: ['لا، فقط المشاريع الصغيرة', 'نعم، لأي مشروع تختاره', 'فقط المشاريع الحكومية', 'يحتاج موافقة خاصة'],
+        correct: 1
+      },
+      {
+        question: 'كم عدد الكروت المطلوبة لدعم مشروع كامل؟',
+        answers: ['كرت واحد كافي', '2-3 كروت', '5 كروت على الأقل', 'كروت غير محدودة'],
+        correct: 1
+      },
+      {
+        question: 'هل دعم المشاريع يشمل الدعم الفني المباشر؟',
+        answers: ['لا، فقط التمويل', 'نعم، مع فريق دعم كامل', 'فقط عبر البريد', 'يعتمد على المشروع'],
+        correct: 1
+      },
+      {
+        question: 'ما أنواع المشاريع التي يمكن دعمها؟',
+        answers: ['فقط المشاريع التقنية', 'مختلفة: تقنية وثقافية واجتماعية', 'فقط المشاريع التجارية', 'لا يوجد تنويع'],
+        correct: 1
+      },
+      // الهدايا والمكافآت
+      {
+        question: 'ما هي الهدايا الحصرية في Command Hub؟',
+        answers: ['لا توجد هدايا', 'كروت دعم وشهادات وإكسسوارات', 'مال فقط', 'لعب فقط'],
+        correct: 1
+      },
+      {
+        question: 'هل توجد هدايا خاصة للناجحين؟',
+        answers: ['لا توجد', 'نعم، كرت دعم محجوز وجوائز حصرية', 'فقط شهادة', 'فقط تصفيق'],
+        correct: 1
+      },
+      {
+        question: 'كم عدد مستويات الهدايا في النظام؟',
+        answers: ['مستوى واحد', 'ثلاث مستويات: مبتدئ ومثابر وناجح', 'خمس مستويات', 'عشر مستويات'],
+        correct: 1
+      },
+      {
+        question: 'هل يمكن استبدال الهدايا؟',
+        answers: ['لا بتاتاً', 'نعم، مع مرونة عالية', 'فقط مرة واحدة', 'بموافقة إدارية'],
+        correct: 1
+      },
+      {
+        question: 'ما أفضل طريقة للحصول على الهدايا الكثيرة؟',
+        answers: ['الانتظار فقط', 'المشاركة المنتظمة والاستمرار', 'دفع أموال', 'لا توجد طريقة'],
+        correct: 1
+      },
+      // معلومات متقدمة عن Command Hub
+      {
+        question: 'هل Command Hub يستخدم الذكاء الاصطناعي؟',
+        answers: ['لا يستخدمه', 'نعم، في التحليل والتنبؤ', 'فقط للترجمة', 'غير معروف'],
+        correct: 1
+      },
+      {
+        question: 'ما أسرع طريقة للبدء في Command Hub؟',
+        answers: ['قراءة كتب طويلة', 'المشاركة المباشرة والتعلم أثناء الفعل', 'دورة تدريبية سنوية', 'لا توجد طريقة'],
+        correct: 1
+      },
+      {
+        question: 'هل يدعم Command Hub التعاون بين الفريق؟',
+        answers: ['لا يدعم التعاون', 'نعم، مع أدوات تعاون متقدمة', 'فقط الجلسات الفردية', 'محدود جداً'],
+        correct: 1
+      },
+      {
+        question: 'ما الفرق بين كرت الدعم العادي والمميز؟',
+        answers: ['لا فرق', 'المميز يشمل مميزات إضافية وأولوية', 'العادي أفضل', 'لا يوجد فرق كبير'],
+        correct: 1
+      },
+      // أسئلة عن الحوافز والتحديات
+      {
+        question: 'كم عدد التحديات الشهرية في Command Hub؟',
+        answers: ['لا توجد تحديات', '2-4 تحديات متنوعة', '10 تحديات', '20 تحدي'],
+        correct: 1
+      },
+      {
+        question: 'هل الحصول على 100 نقطة ضروري للفوز بالجوائز؟',
+        answers: ['نعم، إلزامي تماماً', 'لا، هناك مسارات متعددة للفوز', 'فقط في مايو', 'غير واضح'],
+        correct: 1
+      },
+      {
+        question: 'ما الفائدة من المشاركة المستمرة في المسابقات؟',
+        answers: ['لا فائدة', 'تراكم خبرة وجوائز وشهرة', 'تضييع الوقت فقط', 'غير معروف'],
+        correct: 1
+      },
+      {
+        question: 'هل يمكن الفوز بكرت دعم في أول مرة؟',
+        answers: ['لا إطلاقاً', 'نعم، إذا حققت النتائج المطلوبة', 'فقط بعد سنة', 'نادر جداً'],
+        correct: 1
+      },
+      // أسئلة عن المجتمع والتأثير
+      {
+        question: 'ما تأثير دعم المشاريع على المجتمع؟',
+        answers: ['لا تأثير', 'إيجابي جداً - تنمية واستدامة', 'تأثير سلبي', 'محدود جداً'],
+        correct: 1
+      },
+      {
+        question: 'هل Command Hub يركز على التنمية المستدامة؟',
+        answers: ['لا على الإطلاق', 'نعم، بقوة وبشكل أساسي', 'فقط في الكلام', 'غير واضح'],
+        correct: 1
+      },
+      {
+        question: 'كيف يساهم كرت الدعم في تطوير المشروع؟',
+        answers: ['لا يساهم بشيء', 'يوفر موارد وخبرات وشراكات', 'فقط دعم معنوي', 'محدود جداً'],
+        correct: 1
+      },
+      {
+        question: 'هل هناك شفافية كاملة في نظام الجوائز؟',
+        answers: ['لا توجد شفافية', 'نعم، معايير واضحة ومحددة', 'جزئياً فقط', 'غير معروف'],
+        correct: 1
+      },
+      // أسئلة عن المستقبل والرؤية
+      {
+        question: 'ما رؤية Command Hub المستقبلية؟',
+        answers: ['لا توجد رؤية واضحة', 'بناء حلم مشترك وتمكين المشاريع', 'فقط الربح', 'غير واضحة'],
+        correct: 1
+      },
+      {
+        question: 'هل ستكون هناك مستويات أعلى من الجوائز قريباً؟',
+        answers: ['لا تخطيط لهذا', 'نعم، خطط توسعية قيد الإعداد', 'فقط الحالي', 'مستحيل'],
+        correct: 1
+      },
+      {
+        question: 'كيف يمكن التطور داخل Command Hub؟',
+        answers: ['لا طريقة للتطور', 'مسارات واضحة: تعلم-مشاركة-قيادة', 'فقط الانتظار', 'عشوائي'],
+        correct: 1
+      },
+      {
+        question: 'هل Command Hub يتقبل الأفكار الجديدة من الأعضاء؟',
+        answers: ['لا يتقبل أي أفكار', 'نعم، بل يشجع الابتكار والمشاركة', 'فقط الأفكار الرسمية', 'محدود'],
+        correct: 1
+      },
+      // أسئلة تفاعلية وممتعة
+      {
+        question: 'ما السر وراء نجاح Command Hub؟',
+        answers: ['لا سر معين', 'الشفافية والأمانة والتركيز على الجودة', 'فقط الحظ', 'التمويل الضخم'],
+        correct: 1
+      },
+      {
+        question: 'لماذا يختار الناس Command Hub بالذات؟',
+        answers: ['بالصدفة', 'الجودة والموثوقية والقيمة الحقيقية', 'الإعلانات فقط', 'لا سبب محدد'],
+        correct: 1
+      },
+      {
+        question: 'هل التعلم من Command Hub ممتع فعلاً؟',
+        answers: ['ممل جداً', 'نعم! تجربة تفاعلية وشيقة وجذابة', 'عادي', 'يعتمد'],
+        correct: 1
+      },
+      {
+        question: 'ما أكبر إنجاز يمكنك تحقيقه في Command Hub؟',
+        answers: ['لا إنجازات', 'بناء مشروع ناجح مع دعم حقيقي', 'جمع أموال فقط', 'الشهرة'],
+        correct: 1
+      }
+    ];
+
+    // ============ GAME STATE ============
+    let currentQuestion = 0;
+    let score = 0;
+    let correctAnswers = 0;
+    let timer = null;
+    let timeLeft = 120;
+    let totalTimeUsed = 0;
+    let answeredQuestions = [];
+    function startGame() {
+      currentQuestion = 0;
+      score = 0;
+      correctAnswers = 0;
+      totalTimeUsed = 0;
+      answeredQuestions = [];
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('gameScreen').style.display = 'flex';
+      document.getElementById('finalScreen').classList.add('hidden');
+      buildPyramid();
+      loadQuestion();
+    }
+
+    function restartGame() {
+      document.getElementById('finalScreen').classList.add('hidden');
+      document.getElementById('finalScreen').style.display = 'none';
+      document.getElementById('startScreen').classList.remove('hidden');
+      document.getElementById('confettiContainer').innerHTML = '';
+    }
+
+    function buildPyramid() {
+      const container = document.getElementById('pyramidContainer');
+      container.innerHTML = '';
+      
+      // 40 questions = 9 layers (1+2+3+4+5+6+7+8+4 = 40)
+      let blockNumber = 1;
+      const layers = [1, 2, 3, 4, 5, 6, 7, 8, 4];
+      const blockSize = 50;
+      
+      layers.forEach((count, layerIndex) => {
+        const layerDiv = document.createElement('div');
+        layerDiv.className = 'flex gap-1';
+        
+        for (let i = 0; i < count; i++) {
+          const block = document.createElement('div');
+          block.className = 'pyramid-block';
+          block.id = `block-${blockNumber}`;
+          block.style.width = `${blockSize}px`;
+          block.style.height = `${blockSize}px`;
+          block.style.opacity = '0.3';
+          block.style.fontSize = '11px';
+          block.textContent = blockNumber;
+          block.style.animationDelay = `${blockNumber * 0.03}s`;
+          layerDiv.appendChild(block);
+          blockNumber++;
+        }
+        
+        container.appendChild(layerDiv);
+      });
+      
+      lucide.createIcons();
+    }
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('questionNum').textContent = currentQuestion + 1;
+      document.getElementById('questionText').textContent = q.question;
+      document.getElementById('progressBar').style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+      const container = document.getElementById('answersContainer');
+      container.innerHTML = '';
+
+      // Shuffle answers for randomization
+      const answers = q.answers.map((ans, i) => ({ text: ans, original: i }));
+      for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+      }
+
+      answers.forEach((ans) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-button py-3 px-4 rounded-xl font-bold text-sm';
+        btn.textContent = ans.text;
+        btn.onclick = () => checkAnswer(ans.original, btn);
+        container.appendChild(btn);
+      });
+
+      startTimer();
+      lucide.createIcons();
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timeLeft = 120;
+      updateTimerDisplay();
+      timer = setInterval(() => {
+        timeLeft--;
+        totalTimeUsed++;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          nextQuestion();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timeLeft / 60);
+      const s = timeLeft % 60;
+      document.getElementById('timerDisplay').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const box = document.getElementById('timerBox');
+      if (timeLeft <= 15) {
+        box.classList.add('timer-pulse');
+        box.style.borderColor = 'rgba(239,68,68,0.6)';
+      } else {
+        box.classList.remove('timer-pulse');
+        box.style.borderColor = '';
+      }
+    }
+
+    function checkAnswer(index, btn) {
+      clearInterval(timer);
+      const q = questions[currentQuestion];
+      const buttons = document.querySelectorAll('.answer-button');
+      
+      buttons.forEach(b => { b.onclick = null; });
+
+      if (index === q.correct) {
+        btn.classList.add('correct');
+        score += 10 + Math.max(0, Math.floor(timeLeft / 10));
+        correctAnswers++;
+        
+        // Build pyramid block
+        const blockId = `block-${currentQuestion + 1}`;
+        const block = document.getElementById(blockId);
+        if (block) {
+          block.style.opacity = '1';
+          block.classList.add('built');
+        }
+      } else {
+        btn.classList.add('wrong');
+        buttons[q.correct].classList.add('correct');
+      }
+
+      document.getElementById('scoreDisplay').textContent = Math.min(score, 100);
+
+      setTimeout(() => nextQuestion(), 1500);
+    }
+
+    function nextQuestion() {
+      clearInterval(timer);
+      currentQuestion++;
+      if (currentQuestion >= questions.length) {
+        showFinalScreen();
+      } else {
+        loadQuestion();
+      }
+    }
+
+    function showFinalScreen() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('gameScreen').style.display = 'none';
+      const finalScreen = document.getElementById('finalScreen');
+      finalScreen.classList.remove('hidden');
+      finalScreen.style.display = 'flex';
+
+      const finalScore = Math.min(score, 100);
+      document.getElementById('finalScore').textContent = finalScore;
+      document.getElementById('finalCorrect').textContent = `${correctAnswers}/40`;
+      
+      const tm = Math.floor(totalTimeUsed / 60);
+      const ts = totalTimeUsed % 60;
+      document.getElementById('finalTime').textContent = `${tm}:${String(ts).padStart(2, '0')}`;
+
+      let resultText = '';
+      let resultLevel = '';
+      let rewardEmoji = '';
+      let rewardStatus = '';
+      let rewardMessage = '';
+      let rewardBoxBg = '';
+      let rewardBoxBorder = '';
+      let resultBoxBorder = '';
+      let resultBoxBg = '';
+      
+      // Three-tier system based on correct answers out of 40
+      if (correctAnswers < 10) {
+        // مبتدئ - Beginner (under 10 correct)
+        resultLevel = '🌱 مبتدئ';
+        resultText = `🌱 ممتاز على المحاولة! أنت الآن في مستوى المبتدئ (${correctAnswers}/40)!\n\nبدايات قوية يا بطل! 💪 ادرس أكثر عن كوماند هاب وارجع مرة أخرى. الطريق إلى الـ "المثابر" قريب جداً!\n\n⚡ تذكر: كل إجابة صحيحة = خطوة نحو الفوز بـ كرت الدعم المحجوز!`;
+        rewardEmoji = '🌱';
+        rewardStatus = 'في الطريق';
+        rewardMessage = 'استمر في التعلم! الفوز بكرت الدعم قريب جداً منك!';
+        rewardBoxBg = 'from-orange-600 to-yellow-600';
+        rewardBoxBorder = 'border-orange-400/30';
+        resultBoxBorder = 'rgba(249, 115, 22, 0.6)';
+        resultBoxBg = 'rgba(249, 115, 22, 0.1)';
+      } else if (correctAnswers <= 20) {
+        // المثابر - Persevere (10-20 correct)
+        resultLevel = '💪 المثابر';
+        resultText = `💪 محترف جداً! أنت الآن في مستوى المثابر (${correctAnswers}/40)!\n\nيا له من أداء ممتاز! 🔥 أنت قريب جداً من النجاح!\n\n🎯 تلميح ذهبي: إذا وصلت إلى 21 إجابة صحيحة أو أكثر في المحاولة القادمة، ستصير "ناجح ⭐" وتربح كرت الدعم المحجوز! 🎁\n\nأنت على بُعد خطوات قليلة فقط!`;
+        rewardEmoji = '💪';
+        rewardStatus = 'قريب جداً!';
+        rewardMessage = 'أنت قريب من الفوز بكرت الدعم! 21 إجابة فقط تفصلك عن النجاح!';
+        rewardBoxBg = 'from-blue-600 to-cyan-600';
+        rewardBoxBorder = 'border-blue-400/30';
+        resultBoxBorder = 'rgba(59, 130, 246, 0.6)';
+        resultBoxBg = 'rgba(59, 130, 246, 0.1)';
+      } else {
+        // الناجح - Successful (21+ correct)
+        resultLevel = '⭐ الناجح';
+        resultText = `🏆 أنت الناجح! لقد حققت النجاح الكامل (${correctAnswers}/40)!\n\nمبروك يا بطل! 🎉 أنت أثبت أنك تفهم كوماند هاب بعمق!\n\n🎁 هدية خاصة لك: كرت دعم محجوز مباشرة في حسابك!\n\nهذا الكرت يمكنك استخدامه في أي وقت لدعم مشروعك الخاص أو مشروع آخر!`;
+        rewardEmoji = '🎁';
+        rewardStatus = 'محجوز ✓';
+        rewardMessage = 'كرت دعم حصري كهدية لك! استخدمه الآن وطور مشروعك! 🚀';
+        rewardBoxBg = 'from-emerald-600 to-green-600';
+        rewardBoxBorder = 'border-emerald-400/30';
+        resultBoxBorder = 'rgba(34, 197, 94, 0.6)';
+        resultBoxBg = 'rgba(34, 197, 94, 0.1)';
+      }
+      
+      document.getElementById('resultText').textContent = resultText;
+      
+      // Update reward card
+      document.getElementById('rewardEmoji').textContent = rewardEmoji;
+      document.getElementById('rewardStatus').textContent = rewardStatus;
+      document.getElementById('rewardMessage').textContent = rewardMessage;
+      
+      const rewardCard = document.getElementById('rewardCard');
+      rewardCard.className = `bg-gradient-to-br ${rewardBoxBg} rounded-2xl p-6 mb-6 w-full max-w-sm border ${rewardBoxBorder} shadow-lg transform hover:scale-105 transition-all`;
+      
+      // Update result box
+      const resultBox = document.getElementById('resultMessage');
+      resultBox.style.borderColor = resultBoxBorder;
+      resultBox.style.background = resultBoxBg;
+
+      spawnConfetti();
+      lucide.createIcons();
+    }
+
+    function spawnConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const colors = ['#f59e0b', '#ef4444', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4'];
+      for (let i = 0; i < 50; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.top = '-10px';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (6 + Math.random() * 8) + 'px';
+        piece.style.height = (6 + Math.random() * 8) + 'px';
+        piece.style.animationDelay = Math.random() * 1.5 + 's';
+        piece.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+        container.appendChild(piece);
+      }
+    }
+
+    // Init on load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dffab43d509b13f',t:'MTc3NDEyNDU0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

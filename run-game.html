@@ -1,0 +1,1544 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الهروب من المصيدة</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Tajawal', sans-serif; }
+    
+    #game-canvas {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      z-index: 20;
+      transition: none;
+    }
+
+    .trap {
+      position: absolute;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .coin-box {
+      position: absolute;
+      z-index: 18;
+      pointer-events: none;
+      animation: coinPop 0.3s ease-out;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .powerup-box {
+      position: absolute;
+      z-index: 18;
+      pointer-events: none;
+      animation: coinPop 0.3s ease-out;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 24px;
+      width: 50px;
+      height: 50px;
+    }
+
+    .score-popup {
+      position: absolute;
+      z-index: 50;
+      font-weight: 900;
+      font-size: 22px;
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    @keyframes coinPop {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.3); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-60px); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(255,200,0,0.6); }
+      50% { box-shadow: 0 0 30px rgba(255,200,0,1); }
+    }
+
+    @keyframes trap-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .trap-blade {
+      animation: trap-spin 1.5s linear infinite;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .screen-shake {
+      animation: shake 0.4s ease-out;
+    }
+
+    @keyframes trapExplode {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+    }
+
+    .trap-exploding {
+      animation: trapExplode 0.6s ease-out forwards !important;
+      pointer-events: none;
+    }
+
+    @keyframes bombPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    @keyframes nuclearShockwave {
+      0% { width: 0px; height: 0px; opacity: 1; }
+      100% { width: 800px; height: 800px; opacity: 0; }
+    }
+
+    .bomb-pulse {
+      animation: bombPulse 0.5s ease-in-out;
+    }
+
+    .bg-grid {
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .speed-lines {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .progress-bar-inner {
+      transition: width 0.3s linear;
+    }
+
+    .powerup-indicator {
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      z-index: 35;
+      background: rgba(0,0,0,0.7);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .indicator-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      min-width: 80px;
+    }
+
+    .indicator-bar {
+      width: 60px;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .indicator-bar-fill {
+      height: 100%;
+      transition: width 0.1s;
+    }
+  </style>
+  <style>
+    body { box-sizing: border-box; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .star {
+      animation: twinkle var(--duration) infinite;
+      animation-delay: var(--delay);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="game-canvas" class="bg-grid" style="background-color: #0a0e1a;"><!-- Start Screen -->
+   <div id="start-screen" class="absolute inset-0 flex flex-col items-center z-40 overflow-y-auto" style="padding-top: 80px; padding-bottom: 40px;">
+    <!-- Space Background - Full Coverage -->
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; background: #000;">
+     <svg style="position: absolute; width: 100%; height: 100%;" id="stars-svg"></svg>
+     <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 30% 40%, rgba(100,150,255,0.2), transparent 50%), radial-gradient(circle at 70% 60%, rgba(200,100,255,0.15), transparent 50%);"></div>
+    </div>
+    <div style="width: 100%; max-width: 450px; padding: 30px 20px; position: relative; z-index: 1;"><!-- Header -->
+     <div style="text-align: center; margin-bottom: 40px;">
+      <div style="font-size: 80px; margin-bottom: 20px; animation: pulse 2s infinite;">
+       🏃‍♂️
+      </div>
+      <h1 id="title-text" class="text-5xl font-black mb-2" style="color: #ffd700; text-shadow: 0 0 40px rgba(255,215,0,0.6);">الهروب من المصيدة</h1>
+      <p class="text-xl" style="color: #8899bb; margin-top: 10px;">اهرب من المصائد واجمع النقاط! 🎮</p>
+     </div><!-- Controls Section -->
+     <div style="background: rgba(30,20,60,0.5); border-left: 4px solid #ff8c00; border-radius: 12px; padding: 20px; margin-bottom: 30px; backdrop-filter: blur(10px);">
+      <h3 style="color: #ff8c00; font-size: 18px; font-weight: 900; margin-bottom: 12px;">🎮 كيف تلعب</h3>
+      <p style="color: #aabbcc; font-size: 16px; margin: 8px 0;">⬆️⬇️⬅️➡️ استخدم أزرار الأسهم أو <span style="color: #ffd700;">WASD</span></p>
+      <p style="color: #aabbcc; font-size: 16px; margin: 8px 0;">📱 أو اسحب على الشاشة للتحرك</p>
+      <p style="color: #ff4444; font-size: 15px; margin-top: 12px; font-weight: bold;">⚡ السرعة تزيد كل لحظة.. كن سريعاً!</p>
+     </div><!-- Powerups Grid -->
+     <div style="margin-bottom: 30px;">
+      <h3 style="color: #ffd700; font-size: 20px; font-weight: 900; margin-bottom: 16px; text-align: center;">✨ العناصر الخاصة</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"><!-- Shield -->
+       <div style="background: rgba(40,60,100,0.4); border-radius: 10px; padding: 14px; border: 2px solid rgba(255,255,255,0.1);">
+        <div style="color: #fff; font-size: 24px; margin-bottom: 8px;">
+         🛡️
+        </div>
+        <p style="color: #ffd700; font-weight: bold; font-size: 14px; margin-bottom: 4px;">الدرع العادي</p>
+        <p style="color: #aabbcc; font-size: 13px;">حماية من 3 مصائد</p>
+       </div><!-- Slowmotion -->
+       <div style="background: rgba(0,150,200,0.2); border-radius: 10px; padding: 14px; border: 2px solid rgba(0,255,255,0.2);">
+        <div style="color: #00ffff; font-size: 24px; margin-bottom: 8px;">
+         ⏱️
+        </div>
+        <p style="color: #00ffff; font-weight: bold; font-size: 14px; margin-bottom: 4px;">المبطّئ</p>
+        <p style="color: #aabbcc; font-size: 13px;">تبطيء المصائد 10 ثوانٍ</p>
+       </div><!-- Bomb -->
+       <div style="background: rgba(200,50,100,0.2); border-radius: 10px; padding: 14px; border: 2px solid rgba(255,0,100,0.2);">
+        <div style="color: #ff00ff; font-size: 24px; margin-bottom: 8px;">
+         💣
+        </div>
+        <p style="color: #ff00ff; font-weight: bold; font-size: 14px; margin-bottom: 4px;">القنبلة</p>
+        <p style="color: #aabbcc; font-size: 13px;">تفجر كل المصائد!</p>
+       </div><!-- Cherry -->
+       <div style="background: rgba(200,0,50,0.2); border-radius: 10px; padding: 14px; border: 2px solid rgba(255,0,68,0.2);">
+        <div style="color: #ff0044; font-size: 24px; margin-bottom: 8px;">
+         🍒
+        </div>
+        <p style="color: #ff0044; font-weight: bold; font-size: 14px; margin-bottom: 4px;">الكرز</p>
+        <p style="color: #aabbcc; font-size: 13px;">+3 ثوانٍ للمبطّئ</p>
+       </div><!-- Nuclear -->
+       <div style="background: rgba(255,150,0,0.2); border-radius: 10px; padding: 14px; border: 2px solid rgba(255,200,0,0.3);">
+        <div style="color: #ffaa00; font-size: 24px; margin-bottom: 8px;">
+         ☢️
+        </div>
+        <p style="color: #ffaa00; font-weight: bold; font-size: 14px; margin-bottom: 4px;">النووي</p>
+        <p style="color: #aabbcc; font-size: 13px;">فجر الشاشة 5 ثوانٍ (3 مرات)</p>
+       </div><!-- Crown -->
+       <div style="background: rgba(255,215,0,0.15); border-radius: 10px; padding: 14px; border: 2px solid rgba(255,215,0,0.3);">
+        <div style="color: #ffd700; font-size: 24px; margin-bottom: 8px;">
+         👑
+        </div>
+        <p style="color: #ffd700; font-weight: bold; font-size: 14px; margin-bottom: 4px;">الملك</p>
+        <p style="color: #aabbcc; font-size: 13px;">تبطيء قوي (1:20)</p>
+       </div>
+      </div>
+     </div><!-- Ultimate Powerups -->
+     <div style="margin-bottom: 30px;">
+      <h3 style="color: #ff6600; font-size: 20px; font-weight: 900; margin-bottom: 16px; text-align: center;">🔥 العناصر الأسطورية</h3>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 12px;"><!-- Golden Shield -->
+       <div style="background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,170,0,0.15)); border-radius: 10px; padding: 16px; border: 2px solid rgba(255,215,0,0.4);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+         <div style="font-size: 36px;">
+          🛡️✨
+         </div>
+         <div style="flex: 1;">
+          <p style="color: #ffd700; font-weight: bold; font-size: 15px; margin-bottom: 4px;">الدرع الذهبي</p>
+          <p style="color: #aabbcc; font-size: 13px;">يظهر بعد النووي مباشرة • حماية من 5 مصائد</p>
+         </div>
+        </div>
+       </div><!-- Machine Gun -->
+       <div style="background: linear-gradient(135deg, rgba(255,100,0,0.25), rgba(255,50,0,0.15)); border-radius: 10px; padding: 16px; border: 2px solid rgba(255,100,0,0.4);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+         <div style="font-size: 36px;">
+          🔫
+         </div>
+         <div style="flex: 1;">
+          <p style="color: #ff6600; font-weight: bold; font-size: 15px; margin-bottom: 4px;">الرشاش</p>
+          <p style="color: #aabbcc; font-size: 13px;">يظهر بعد 10 ثوانٍ من الدرع • يفجر المصائد لـ 8 ثوانٍ</p>
+         </div>
+        </div>
+       </div><!-- Castle -->
+       <div style="background: linear-gradient(135deg, rgba(139,69,19,0.3), rgba(160,82,45,0.15)); border-radius: 10px; padding: 16px; border: 2px solid rgba(139,69,19,0.5);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+         <div style="font-size: 36px;">
+          🏰
+         </div>
+         <div style="flex: 1;">
+          <p style="color: #CD853F; font-weight: bold; font-size: 15px; margin-bottom: 4px;">القلعة النهائية</p>
+          <p style="color: #aabbcc; font-size: 13px;">تظهر بعد 5 ثوانٍ من الرشاش • التقطها وكن البطل! 🏆</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Start Button --> <button id="start-btn" class="w-full py-5 rounded-xl font-bold text-2xl cursor-pointer border-none" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #0a0e1a; box-shadow: 0 0 40px rgba(255,215,0,0.5); transition: all 0.3s; margin-bottom: 20px;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">ابدأ اللعبة 🚀</button> <!-- Footer -->
+     <p style="text-align: center; color: #667799; font-size: 13px; margin-bottom: 10px;">⏰ لديك 3 دقائق كاملة • هل تستطيع الوصول للقلعة؟</p>
+    </div>
+    <style>
+     @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+     }
+    </style>
+   </div><!-- Game Over Screen -->
+   <div id="gameover-screen" class="absolute inset-0 flex flex-col items-center justify-center z-40 hidden" style="background: rgba(10,14,26,0.95);">
+    <div style="font-size: 60px; margin-bottom: 16px;">
+     💥
+    </div>
+    <h2 class="text-3xl font-black mb-2" style="color: #ff4444;">وقعت بالمصيدة!</h2>
+    <p class="text-lg mb-4" style="color: #8899bb;">حاول مرة ثانية</p>
+    <div id="final-score" class="text-5xl font-black mb-2" style="color: #ffd700;"></div>
+    <p class="mb-1" style="color: #667799;">أعلى نتيجة</p>
+    <div id="high-score-display" class="text-2xl font-bold mb-8" style="color: #ff8c00;"></div>
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; margin-bottom: 16px;"><button id="share-whatsapp-btn" class="px-8 py-3 rounded-xl font-bold text-lg cursor-pointer border-none" style="background: linear-gradient(135deg, #25d366, #20ba5a); color: white; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">📱 شارك على واتساب</button> <button id="report-whatsapp-btn" class="px-8 py-3 rounded-xl font-bold text-lg cursor-pointer border-none" style="background: linear-gradient(135deg, #0084ff, #0073e6); color: white; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">💬 أبلغ الإدارة</button>
+    </div><button id="restart-btn" class="px-10 py-4 rounded-xl font-bold text-xl cursor-pointer border-none" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #0a0e1a;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">العب مرة ثانية 🔄</button>
+   </div><!-- Win Screen -->
+   <div id="win-screen" class="absolute inset-0 flex flex-col items-center justify-center z-40 hidden" style="background: rgba(10,14,26,0.95);">
+    <div style="font-size: 60px; margin-bottom: 16px;">
+     🏆
+    </div>
+    <h2 class="text-3xl font-black mb-2" style="color: #ffd700;">أنت بطل!</h2>
+    <p class="text-lg mb-4" style="color: #8899bb;">نجيت 3 دقائق كاملة!</p>
+    <div id="win-score" class="text-5xl font-black mb-2" style="color: #ffd700;"></div>
+    <p class="mb-1" style="color: #667799;">أعلى نتيجة</p>
+    <div id="win-high-score" class="text-2xl font-bold mb-8" style="color: #ff8c00;"></div>
+    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; margin-bottom: 16px;"><button id="win-share-whatsapp-btn" class="px-8 py-3 rounded-xl font-bold text-lg cursor-pointer border-none" style="background: linear-gradient(135deg, #25d366, #20ba5a); color: white; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">📱 شارك على واتساب</button> <button id="win-report-whatsapp-btn" class="px-8 py-3 rounded-xl font-bold text-lg cursor-pointer border-none" style="background: linear-gradient(135deg, #0084ff, #0073e6); color: white; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">💬 أبلغ الإدارة</button>
+    </div><button id="replay-btn" class="px-10 py-4 rounded-xl font-bold text-xl cursor-pointer border-none" style="background: linear-gradient(135deg, #ffd700, #ff8c00); color: #0a0e1a;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">العب مرة ثانية 🔄</button>
+   </div><!-- HUD -->
+   <div id="hud" class="absolute top-0 left-0 right-0 p-3 flex items-center justify-between z-30 hidden" style="background: linear-gradient(180deg, rgba(10,14,26,0.9), transparent);">
+    <div class="flex items-center gap-3">
+     <div class="text-sm font-bold" style="color: #667799;">
+      النقاط
+     </div>
+     <div id="score-display" class="text-2xl font-black" style="color: #ffd700;">
+      0
+     </div>
+    </div>
+    <div class="flex-1 mx-4">
+     <div class="w-full h-3 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
+      <div id="time-bar" class="progress-bar-inner h-full rounded-full" style="width: 100%; background: linear-gradient(90deg, #ff4444, #ff8c00, #ffd700);"></div>
+     </div>
+     <div class="flex justify-between mt-1"><span id="time-display" class="text-xs font-bold" style="color: #667799;">3:00</span> <span id="speed-label" class="text-xs font-bold" style="color: #ff8c00;">سرعة ×1</span>
+     </div>
+    </div>
+    <div class="flex items-center gap-2"><span class="text-xs" style="color: #667799;">⚡</span>
+     <div id="danger-dots" class="flex gap-1"></div>
+    </div>
+   </div><!-- Powerup Indicator -->
+   <div id="powerup-indicator" class="powerup-indicator hidden">
+    <div id="shield-indicator" class="indicator-item hidden"><span>🛡️</span>
+     <div class="indicator-bar">
+      <div id="shield-bar" class="indicator-bar-fill" style="width: 100%; background: #ffffff;"></div>
+     </div>
+    </div>
+    <div id="slowmotion-indicator" class="indicator-item hidden"><span>⏱️</span>
+     <div class="indicator-bar">
+      <div id="slowmotion-bar" class="indicator-bar-fill" style="width: 100%; background: #00ffff;"></div>
+     </div>
+    </div>
+    <div id="golden-shield-indicator" class="indicator-item hidden"><span>🛡️✨</span>
+     <div class="indicator-bar">
+      <div id="golden-shield-bar" class="indicator-bar-fill" style="width: 100%; background: #ffd700;"></div>
+     </div>
+    </div>
+    <div id="machine-gun-indicator" class="indicator-item hidden"><span>🔫</span>
+     <div class="indicator-bar">
+      <div id="machine-gun-bar" class="indicator-bar-fill" style="width: 100%; background: #ff6600;"></div>
+     </div>
+    </div>
+    <div id="castle-indicator" class="indicator-item hidden"><span>🏰</span>
+     <div class="indicator-bar">
+      <div id="castle-bar" class="indicator-bar-fill" style="width: 100%; background: #8B4513;"></div>
+     </div>
+    </div>
+   </div><!-- Speed Lines Overlay -->
+   <div id="speed-lines" class="speed-lines">
+    <svg width="100%" height="100%" style="position:absolute;"><line x1="0" y1="0" x2="100%" y2="100%" stroke="rgba(255,140,0,0.1)" stroke-width="1" /> <line x1="20%" y1="0" x2="80%" y2="100%" stroke="rgba(255,140,0,0.08)" stroke-width="1" /> <line x1="100%" y1="0" x2="0" y2="100%" stroke="rgba(255,140,0,0.1)" stroke-width="1" /> <line x1="80%" y1="0" x2="20%" y2="100%" stroke="rgba(255,140,0,0.08)" stroke-width="1" />
+    </svg>
+   </div><!-- Player -->
+   <div id="player" class="player hidden" style="background: radial-gradient(circle at 35% 35%, #ffd700, #ff8c00); box-shadow: 0 0 20px rgba(255,215,0,0.6); animation: pulse-glow 1.5s infinite;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:20px;">
+     🏃
+    </div>
+   </div><!-- Containers for dynamic elements -->
+   <div id="traps-container" class="absolute inset-0 pointer-events-none z-15"></div>
+   <div id="coins-container" class="absolute inset-0 pointer-events-none z-18"></div>
+   <div id="powerups-container" class="absolute inset-0 pointer-events-none z-18"></div>
+   <div id="popups-container" class="absolute inset-0 pointer-events-none z-50"></div>
+  </div>
+  <script>
+    // ===== CONFIG & SDK =====
+    const defaultConfig = {
+      game_title: 'الهروب من المصيدة',
+      bg_color: '#0a0e1a',
+      accent_color: '#ffd700',
+      danger_color: '#ff4444',
+      text_color: '#8899bb',
+      surface_color: '#1a1040'
+    };
+
+    let config = { ...defaultConfig };
+
+   
+
+    // ===== GAME STATE =====
+    const GAME_DURATION = 180;
+    const canvas = document.getElementById('game-canvas');
+    let gameRunning = false;
+    let score = 0;
+    let highScore = 0;
+    let timeLeft = GAME_DURATION;
+    let playerX = 0, playerY = 0;
+    let traps = [];
+    let coins = [];
+    let powerups = [];
+    let animFrame = null;
+    let lastTime = 0;
+    let trapSpawnTimer = 0;
+    let coinSpawnTimer = 0;
+    let powerupSpawnTimer = 0;
+    let difficultyMultiplier = 1;
+    let keysDown = {};
+    let touchStartX = 0, touchStartY = 0;
+    let touchDirX = 0, touchDirY = 0;
+    let isTouching = false;
+    let gameTimerInterval = null;
+    let shieldActive = false;
+    let shieldTimeLeft = 0;
+    let shieldHits = 0;
+    let slowmotionActive = false;
+    let slowmotionTimeLeft = 0;
+    let bombActive = false;
+    let nuclearActive = false;
+    let nuclearDuration = 0;
+    let crownActive = false;
+    let crownTimeLeft = 0;
+    let goldenShieldActive = false;
+    let goldenShieldHits = 0;
+    let machineGunActive = false;
+    let machineGunTimeLeft = 0;
+    let castleActive = false;
+    let castleHits = 0;
+    let goldenShieldEndTime = 0;
+    let machineGunCountdown = 20;
+    let nuclearSpawnTimes = [50, 90, 150]; // 50s, 1:30, 2:30 (30 sec before end)
+    let nuclearSpawned = [false, false, false];
+    let crownSpawned = false;
+    let goldenShieldSpawned = false;
+    let machineGunSpawned = false;
+    let castleSpawnTimeout = null;
+
+    const playerEl = document.getElementById('player');
+    const trapsContainer = document.getElementById('traps-container');
+    const coinsContainer = document.getElementById('coins-container');
+    const powerupsContainer = document.getElementById('powerups-container');
+    const popupsContainer = document.getElementById('popups-container');
+
+    // ===== TRAP TYPES =====
+    function createTrapSVG(type, size) {
+      const s = size;
+      if (type === 'blade') {
+        return `<svg width="${s}" height="${s}" viewBox="0 0 40 40" class="trap-blade">
+          <polygon points="20,2 25,15 38,15 27,24 31,38 20,29 9,38 13,24 2,15 15,15" fill="#ff4444" opacity="0.9"/>
+          <circle cx="20" cy="20" r="5" fill="#ff0000"/>
+        </svg>`;
+      } else if (type === 'spike') {
+        return `<svg width="${s}" height="${s}" viewBox="0 0 40 40">
+          <polygon points="20,0 40,40 0,40" fill="#ff3333" opacity="0.85"/>
+          <polygon points="20,8 34,36 6,36" fill="#cc0000" opacity="0.6"/>
+        </svg>`;
+      } else {
+        return `<svg width="${s}" height="${s}" viewBox="0 0 40 40">
+          <rect x="4" y="4" width="32" height="32" rx="4" fill="none" stroke="#ff4444" stroke-width="3" opacity="0.8"/>
+          <line x1="4" y1="4" x2="36" y2="36" stroke="#ff4444" stroke-width="2" opacity="0.6"/>
+          <line x1="36" y1="4" x2="4" y2="36" stroke="#ff4444" stroke-width="2" opacity="0.6"/>
+        </svg>`;
+      }
+    }
+
+    // ===== SPAWN FUNCTIONS =====
+    function spawnTrap() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const types = ['blade', 'spike', 'box'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const size = 34 + Math.random() * 16;
+      
+      let x, y, vx, vy;
+      const side = Math.floor(Math.random() * 4);
+      const baseSpeed = (1.5 + Math.random() * 2) * difficultyMultiplier;
+      
+      if (side === 0) { x = -size; y = Math.random() * h; vx = baseSpeed; vy = (Math.random() - 0.5) * baseSpeed; }
+      else if (side === 1) { x = w + size; y = Math.random() * h; vx = -baseSpeed; vy = (Math.random() - 0.5) * baseSpeed; }
+      else if (side === 2) { x = Math.random() * w; y = -size; vx = (Math.random() - 0.5) * baseSpeed; vy = baseSpeed; }
+      else { x = Math.random() * w; y = h + size; vx = (Math.random() - 0.5) * baseSpeed; vy = -baseSpeed; }
+
+      if (Math.random() < 0.3 * difficultyMultiplier) {
+        const dx = playerX - x;
+        const dy = playerY - y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        vx = (dx / dist) * baseSpeed * 0.8;
+        vy = (dy / dist) * baseSpeed * 0.8;
+      }
+
+      const el = document.createElement('div');
+      el.className = 'trap';
+      el.innerHTML = createTrapSVG(type, size);
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      trapsContainer.appendChild(el);
+
+      traps.push({ el, x, y, vx, vy, size, alive: true });
+    }
+
+    function spawnCoin() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+      const values = [5, 10, 10, 15, 20, 20, 25, 30, 50];
+      const value = values[Math.floor(Math.random() * values.length)];
+
+      const colors = {
+        5: '#44aa44', 10: '#44bb66', 15: '#55cc55',
+        20: '#ddaa00', 25: '#ff8800', 30: '#ff6600', 50: '#ff00ff'
+      };
+
+      const el = document.createElement('div');
+      el.className = 'coin-box';
+      el.style.background = `linear-gradient(135deg, ${colors[value] || '#ffd700'}, ${colors[value] || '#ff8c00'}dd)`;
+      el.style.color = '#fff';
+      el.style.boxShadow = `0 0 12px ${colors[value] || '#ffd700'}88`;
+      el.textContent = '+' + value;
+      coinsContainer.appendChild(el);
+
+      coins.push({ el, x, y, value, size: 40, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnPowerup() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+      
+      const types = ['shield', 'slowmotion', 'bomb', 'cherry'];
+      const type = types[Math.floor(Math.random() * types.length)];
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+
+      if (type === 'shield') {
+        el.style.background = 'linear-gradient(135deg, #ffffff, #e8e8e8dd)';
+        el.textContent = '🛡️';
+        el.style.boxShadow = '0 0 20px rgba(255,255,255,0.9), inset 0 0 10px rgba(255,255,255,0.5)';
+      } else if (type === 'slowmotion') {
+        el.style.background = 'linear-gradient(135deg, #00ffff, #00aaffdd)';
+        el.textContent = '⏱️';
+        el.style.boxShadow = '0 0 20px rgba(0,255,255,0.9)';
+      } else if (type === 'cherry') {
+        el.style.background = 'linear-gradient(135deg, #dd0033, #ff0044dd)';
+        el.textContent = '🍒';
+        el.style.boxShadow = '0 0 20px rgba(255,0,68,0.9)';
+      } else {
+        el.style.background = 'linear-gradient(135deg, #ff00ff, #dd00ffdd)';
+        el.textContent = '💣';
+        el.style.boxShadow = '0 0 20px rgba(255,0,255,0.9)';
+      }
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type, size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnNuclear() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+      el.style.background = 'linear-gradient(135deg, #ffdd00, #ffaa00dd)';
+      el.textContent = '☢️';
+      el.style.boxShadow = '0 0 25px rgba(255,200,0,0.95), 0 0 40px rgba(255,100,0,0.7)';
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type: 'nuclear', size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnCrown() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+      el.style.background = 'linear-gradient(135deg, #ffd700, #ffed4edd)';
+      el.textContent = '👑';
+      el.style.boxShadow = '0 0 30px rgba(255,215,0,1), inset 0 0 15px rgba(255,255,100,0.8)';
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type: 'crown', size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnGoldenShield() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+      el.style.background = 'linear-gradient(135deg, #ffd700, #ffcc00dd)';
+      el.textContent = '🛡️✨';
+      el.style.boxShadow = '0 0 35px rgba(255,215,0,1), inset 0 0 20px rgba(255,255,150,0.9)';
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type: 'golden_shield', size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnMachineGun() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+      el.style.background = 'linear-gradient(135deg, #ff6600, #ff3300dd)';
+      el.textContent = '🔫';
+      el.style.boxShadow = '0 0 30px rgba(255,100,0,1), inset 0 0 15px rgba(255,150,50,0.8)';
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type: 'machine_gun', size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function spawnCastle() {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const padding = 60;
+      const x = padding + Math.random() * (w - padding * 2);
+      const y = padding + Math.random() * (h - padding * 2);
+
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.borderRadius = '8px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontWeight = '900';
+      el.style.fontSize = '24px';
+      el.style.animation = 'coinPop 0.3s ease-out';
+      el.style.background = 'linear-gradient(135deg, #8B4513, #A0522Ddd)';
+      el.textContent = '🏰';
+      el.style.boxShadow = '0 0 30px rgba(139,69,19,1), inset 0 0 15px rgba(160,82,45,0.8)';
+
+      powerupsContainer.appendChild(el);
+      powerups.push({ el, x, y, type: 'castle', size: 50, alive: true, life: 3 + Math.random() * 3 });
+    }
+
+    function showScorePopup(x, y, value) {
+      const el = document.createElement('div');
+      el.className = 'score-popup';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.color = typeof value === 'string' ? '#ffd700' : (value >= 30 ? '#ff00ff' : '#ffd700');
+      el.textContent = typeof value === 'string' ? value : '+' + value;
+      popupsContainer.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
+    // ===== COLLISION =====
+    function circleRect(cx, cy, cr, rx, ry, rw, rh) {
+      const closestX = Math.max(rx, Math.min(cx, rx + rw));
+      const closestY = Math.max(ry, Math.min(cy, ry + rh));
+      const dx = cx - closestX;
+      const dy = cy - closestY;
+      return (dx * dx + dy * dy) < (cr * cr);
+    }
+
+    // ===== GAME LOGIC =====
+    function updatePlayer(dt) {
+      const speed = 280;
+      let dx = 0, dy = 0;
+
+      if (keysDown['ArrowUp'] || keysDown['w'] || keysDown['W']) dy = -1;
+      if (keysDown['ArrowDown'] || keysDown['s'] || keysDown['S']) dy = 1;
+      if (keysDown['ArrowLeft'] || keysDown['a'] || keysDown['A']) dx = -1;
+      if (keysDown['ArrowRight'] || keysDown['d'] || keysDown['D']) dx = 1;
+
+      if (isTouching) {
+        dx = touchDirX;
+        dy = touchDirY;
+      }
+
+      if (dx !== 0 || dy !== 0) {
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        playerX += (dx / len) * speed * dt;
+        playerY += (dy / len) * speed * dt;
+      }
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      playerX = Math.max(18, Math.min(w - 18, playerX));
+      playerY = Math.max(18, Math.min(h - 18, playerY));
+
+      playerEl.style.left = (playerX - 18) + 'px';
+      playerEl.style.top = (playerY - 18) + 'px';
+    }
+
+    function updateTraps(dt) {
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      
+      let trapDt = dt;
+      if (slowmotionActive) trapDt = dt * 0.2;
+      if (crownActive) trapDt = dt * 0.1;  // Crown slows traps 50% more than slowmotion
+
+      for (let i = traps.length - 1; i >= 0; i--) {
+        const t = traps[i];
+        t.x += t.vx * 60 * trapDt;
+        t.y += t.vy * 60 * trapDt;
+
+        t.el.style.left = t.x + 'px';
+        t.el.style.top = t.y + 'px';
+
+        if (t.x < -100 || t.x > w + 100 || t.y < -100 || t.y > h + 100) {
+          t.el.remove();
+          traps.splice(i, 1);
+          continue;
+        }
+
+        const hitRadius = 14;
+        if (circleRect(playerX, playerY, hitRadius, t.x, t.y, t.size, t.size)) {
+          if (castleActive) {
+            castleHits++;
+            t.el.remove();
+            traps.splice(i, 1);
+            if (castleHits >= 8) {
+              castleActive = false;
+              castleHits = 0;
+              document.getElementById('castle-indicator').classList.add('hidden');
+              playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+            }
+            return;
+          } else if (goldenShieldActive) {
+            goldenShieldHits++;
+            t.el.remove();
+            traps.splice(i, 1);
+            if (goldenShieldHits >= 5) {
+              goldenShieldActive = false;
+              goldenShieldHits = 0;
+              document.getElementById('golden-shield-indicator').classList.add('hidden');
+              playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+            }
+            return;
+          } else if (shieldActive) {
+            shieldHits++;
+            t.el.remove();
+            traps.splice(i, 1);
+            if (shieldHits >= 3) {
+              shieldActive = false;
+              shieldHits = 0;
+              document.getElementById('shield-indicator').classList.add('hidden');
+              playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+            }
+          } else {
+            gameOver();
+            return;
+          }
+        }
+      }
+    }
+
+    function updateCoins(dt) {
+      for (let i = coins.length - 1; i >= 0; i--) {
+        const c = coins[i];
+        c.life -= dt;
+
+        c.el.style.left = c.x + 'px';
+        c.el.style.top = c.y + 'px';
+
+        if (c.life < 1.5) {
+          c.el.style.opacity = Math.sin(c.life * 10) > 0 ? '1' : '0.3';
+        }
+
+        if (c.life <= 0) {
+          c.el.remove();
+          coins.splice(i, 1);
+          continue;
+        }
+
+        const dx = playerX - (c.x + 20);
+        const dy = playerY - (c.y + 20);
+        if (Math.sqrt(dx * dx + dy * dy) < 30) {
+          score += c.value;
+          document.getElementById('score-display').textContent = score;
+          showScorePopup(c.x, c.y - 10, c.value);
+          c.el.remove();
+          coins.splice(i, 1);
+        }
+      }
+    }
+
+    function updatePowerups(dt) {
+      for (let i = powerups.length - 1; i >= 0; i--) {
+        const p = powerups[i];
+        p.life -= dt;
+
+        p.el.style.left = p.x + 'px';
+        p.el.style.top = p.y + 'px';
+
+        if (p.life < 1.5) {
+          p.el.style.opacity = Math.sin(p.life * 10) > 0 ? '1' : '0.3';
+        }
+
+        if (p.life <= 0) {
+          p.el.remove();
+          powerups.splice(i, 1);
+          continue;
+        }
+
+        const dx = playerX - (p.x + 25);
+        const dy = playerY - (p.y + 25);
+        if (Math.sqrt(dx * dx + dy * dy) < 35) {
+          if (p.type === 'shield') {
+            shieldActive = true;
+            shieldHits = 0;
+            document.getElementById('shield-indicator').classList.remove('hidden');
+            document.getElementById('shield-bar').style.width = '100%';
+            document.getElementById('powerup-indicator').classList.remove('hidden');
+            playerEl.style.filter = 'drop-shadow(0 0 25px rgba(255,255,255,0.9))';
+            showScorePopup(p.x, p.y - 10, '🛡️');
+          } else if (p.type === 'slowmotion') {
+            slowmotionActive = true;
+            slowmotionTimeLeft = 15;
+            document.getElementById('slowmotion-indicator').classList.remove('hidden');
+            document.getElementById('powerup-indicator').classList.remove('hidden');
+            document.getElementById('speed-lines').style.opacity = 0.8;
+            showScorePopup(p.x, p.y - 10, '⏱️');
+          } else if (p.type === 'bomb') {
+            triggerBomb(p.x + 25, p.y + 25);
+            showScorePopup(p.x, p.y - 10, '💥');
+            bombActive = true;
+          } else if (p.type === 'nuclear') {
+            triggerNuclear();
+            showScorePopup(p.x, p.y - 10, '☢️ نووي!');
+          } else if (p.type === 'crown') {
+            triggerCrown();
+            showScorePopup(p.x, p.y - 10, '👑 ملك!');
+          } else if (p.type === 'golden_shield') {
+            triggerGoldenShield();
+            showScorePopup(p.x, p.y - 10, '🛡️✨ درع ذهبي!');
+          } else if (p.type === 'machine_gun') {
+            triggerMachineGun();
+            showScorePopup(p.x, p.y - 10, '🔫 رشاش!');
+          } else if (p.type === 'castle') {
+            triggerCastle();
+            showScorePopup(p.x, p.y - 10, '🏰 قلعة! أنت فزت! 🎉');
+            winGame(); // انهاء اللعبة بنجاح عند التقاط القلعة
+          } else if (p.type === 'cherry') {
+            slowmotionTimeLeft += 3;
+            showScorePopup(p.x, p.y - 10, '+3 ثوانٍ');
+          }
+          p.el.remove();
+          powerups.splice(i, 1);
+        }
+      }
+    }
+
+    function triggerBomb(bombX, bombY) {
+      bombActive = true;
+      
+      for (let i = traps.length - 1; i >= 0; i--) {
+        const t = traps[i];
+        const dx = t.x + t.size/2 - bombX;
+        const dy = t.y + t.size/2 - bombY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        // تفجر المصائد بنطاق أوسع 300px
+        if (dist < 300) {
+          t.el.classList.add('trap-exploding');
+          t.el.style.setProperty('--tx', (dx > 0 ? 1 : -1) * 150 + 'px');
+          t.el.style.setProperty('--ty', (dy > 0 ? 1 : -1) * 150 + 'px');
+          
+          setTimeout(() => {
+            t.el.remove();
+          }, 600);
+          
+          traps.splice(i, 1);
+        }
+      }
+      
+      // تأثير بصري عملاق عند التفجير (على اللاعب)
+      const bombOverlay = document.createElement('div');
+      bombOverlay.style.position = 'fixed';
+      bombOverlay.style.top = '0';
+      bombOverlay.style.left = '0';
+      bombOverlay.style.width = '100%';
+      bombOverlay.style.height = '100%';
+      bombOverlay.style.background = 'radial-gradient(circle at center, rgba(255,150,0,0.7), rgba(255,50,0,0.3), transparent)';
+      bombOverlay.style.zIndex = '24';
+      bombOverlay.style.pointerEvents = 'none';
+      bombOverlay.style.animation = 'bombPulse 0.8s ease-out forwards';
+      bombOverlay.style.boxShadow = 'inset 0 0 80px rgba(255,100,0,0.9)';
+      popupsContainer.appendChild(bombOverlay);
+      
+      // تأثير بصري في مركز الانفجار
+      const bombEl = document.createElement('div');
+      bombEl.style.position = 'absolute';
+      bombEl.style.left = (bombX - 80) + 'px';
+      bombEl.style.top = (bombY - 80) + 'px';
+      bombEl.style.width = '160px';
+      bombEl.style.height = '160px';
+      bombEl.style.borderRadius = '50%';
+      bombEl.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,200,50,1), rgba(255,100,0,0.8), rgba(255,0,0,0.3))';
+      bombEl.style.zIndex = '25';
+      bombEl.style.pointerEvents = 'none';
+      bombEl.style.animation = 'bombPulse 0.6s ease-out forwards';
+      bombEl.style.boxShadow = '0 0 80px rgba(255,100,0,1), 0 0 150px rgba(255,50,0,0.8)';
+      popupsContainer.appendChild(bombEl);
+      
+      // تأثير شرارات من الانفجار
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2;
+        const spark = document.createElement('div');
+        spark.style.position = 'absolute';
+        spark.style.left = bombX + 'px';
+        spark.style.top = bombY + 'px';
+        spark.style.width = '8px';
+        spark.style.height = '8px';
+        spark.style.borderRadius = '50%';
+        spark.style.background = i % 2 === 0 ? 'rgba(255,200,0,1)' : 'rgba(255,100,0,1)';
+        spark.style.zIndex = '26';
+        spark.style.pointerEvents = 'none';
+        spark.style.boxShadow = '0 0 8px ' + (i % 2 === 0 ? 'rgba(255,200,0,1)' : 'rgba(255,100,0,1)');
+        
+        const distance = 200;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        spark.style.animation = `floatUp 0.6s ease-out forwards`;
+        spark.style.setProperty('--tx', tx + 'px');
+        spark.style.setProperty('--ty', ty + 'px');
+        
+        popupsContainer.appendChild(spark);
+        setTimeout(() => spark.remove(), 600);
+      }
+      
+      setTimeout(() => bombOverlay.remove(), 800);
+      setTimeout(() => bombEl.remove(), 600);
+      
+      // حفظ وقت تفعيل القنبلة
+      const bombActivationTime = performance.now();
+      
+      // رفع اللاعب مع تأثير بصري
+      playerEl.style.filter = 'drop-shadow(0 0 50px rgba(255,150,0,1)) drop-shadow(0 0 100px rgba(255,50,0,0.8))';
+      playerEl.style.transform = 'scale(1.2)';
+      
+      // إبقاء التأثير لمدة 5 ثواني
+      setTimeout(() => {
+        if (gameRunning && bombActive) {
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+          playerEl.style.transform = 'scale(1)';
+          bombActive = false;
+        }
+      }, 5000);
+    }
+
+    function triggerNuclear() {
+      nuclearActive = true;
+      nuclearDuration = 5;
+
+      // تفجير جميع المصائد فوراً
+      for (let i = traps.length - 1; i >= 0; i--) {
+        const t = traps[i];
+        t.el.classList.add('trap-exploding');
+        const dx = Math.random() - 0.5;
+        const dy = Math.random() - 0.5;
+        t.el.style.setProperty('--tx', dx * 200 + 'px');
+        t.el.style.setProperty('--ty', dy * 200 + 'px');
+        
+        setTimeout(() => {
+          t.el.remove();
+        }, 600);
+        
+        traps.splice(i, 1);
+      }
+
+      // تأثير بصري نووي كبير
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      
+      const nuclearFlash = document.createElement('div');
+      nuclearFlash.style.position = 'absolute';
+      nuclearFlash.style.top = '0';
+      nuclearFlash.style.left = '0';
+      nuclearFlash.style.width = '100%';
+      nuclearFlash.style.height = '100%';
+      nuclearFlash.style.background = 'radial-gradient(circle at center, rgba(255,255,0,0.9), rgba(255,200,0,0.5), transparent)';
+      nuclearFlash.style.zIndex = '26';
+      nuclearFlash.style.pointerEvents = 'none';
+      nuclearFlash.style.animation = 'bombPulse 1s ease-out forwards';
+      popupsContainer.appendChild(nuclearFlash);
+
+      const shockwave = document.createElement('div');
+      shockwave.style.position = 'absolute';
+      shockwave.style.top = '50%';
+      shockwave.style.left = '50%';
+      shockwave.style.transform = 'translate(-50%, -50%)';
+      shockwave.style.width = '0px';
+      shockwave.style.height = '0px';
+      shockwave.style.borderRadius = '50%';
+      shockwave.style.border = '3px solid rgba(255,200,0,0.8)';
+      shockwave.style.zIndex = '25';
+      shockwave.style.pointerEvents = 'none';
+      shockwave.style.boxShadow = '0 0 60px rgba(255,200,0,0.9)';
+      shockwave.style.animation = 'nuclearShockwave 0.8s ease-out forwards';
+      popupsContainer.appendChild(shockwave);
+
+      setTimeout(() => {
+        nuclearFlash.remove();
+        shockwave.remove();
+      }, 1000);
+    }
+
+    function triggerCrown() {
+      crownActive = true;
+      crownTimeLeft = 30;
+      showScorePopup(canvas.clientWidth / 2, canvas.clientHeight / 2, '👑 تم تفعيل وضع الملك!');
+    }
+
+    function triggerGoldenShield() {
+      goldenShieldActive = true;
+      goldenShieldHits = 0;
+      goldenShieldEndTime = timeLeft; // حفظ وقت التفعيل
+      document.getElementById('golden-shield-indicator').classList.remove('hidden');
+      document.getElementById('golden-shield-bar').style.width = '100%';
+      document.getElementById('powerup-indicator').classList.remove('hidden');
+      playerEl.style.filter = 'drop-shadow(0 0 30px rgba(255,215,0,1))';
+    }
+
+    function triggerMachineGun() {
+      machineGunActive = true;
+      machineGunTimeLeft = 8;
+      document.getElementById('machine-gun-indicator').classList.remove('hidden');
+      document.getElementById('machine-gun-bar').style.width = '100%';
+      document.getElementById('powerup-indicator').classList.remove('hidden');
+      playerEl.style.filter = 'drop-shadow(0 0 35px rgba(255,100,0,1))';
+
+      // تفجير جميع المصائد حول اللاعب بشكل مستمر
+      const machineGunLoop = setInterval(() => {
+        if (!gameRunning || !machineGunActive) {
+          clearInterval(machineGunLoop);
+          return;
+        }
+
+        // تفجير كل المصائد القريبة
+        for (let i = traps.length - 1; i >= 0; i--) {
+          const t = traps[i];
+          const dx = t.x + t.size/2 - playerX;
+          const dy = t.y + t.size/2 - playerY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          // نطاق الرشاش أوسع - 300px
+          if (dist < 300) {
+            t.el.classList.add('trap-exploding');
+            t.el.style.setProperty('--tx', (dx > 0 ? 1 : -1) * 150 + 'px');
+            t.el.style.setProperty('--ty', (dy > 0 ? 1 : -1) * 150 + 'px');
+            
+            setTimeout(() => {
+              t.el.remove();
+            }, 600);
+            
+            traps.splice(i, 1);
+          }
+        }
+      }, 300);
+    }
+
+    function triggerCastle() {
+      castleActive = true;
+      castleHits = 0;
+      document.getElementById('castle-indicator').classList.remove('hidden');
+      document.getElementById('castle-bar').style.width = '100%';
+      document.getElementById('powerup-indicator').classList.remove('hidden');
+      playerEl.style.filter = 'drop-shadow(0 0 30px rgba(139,69,19,1))';
+    }
+
+    function updateDifficulty() {
+      const elapsed = GAME_DURATION - timeLeft;
+      difficultyMultiplier = 1 + (elapsed / GAME_DURATION) * 3;
+      
+      const speedText = '×' + difficultyMultiplier.toFixed(1);
+      document.getElementById('speed-label').textContent = 'سرعة ' + speedText;
+
+      const intensity = Math.min((difficultyMultiplier - 1) / 3, 1);
+      document.getElementById('speed-lines').style.opacity = intensity * 0.5;
+
+      const dots = document.getElementById('danger-dots');
+      const level = Math.min(Math.floor(difficultyMultiplier), 5);
+      let dotsHTML = '';
+      for (let i = 0; i < 5; i++) {
+        dotsHTML += `<div style="width:8px;height:8px;border-radius:50%;background:${i < level ? '#ff4444' : '#333'};"></div>`;
+      }
+      dots.innerHTML = dotsHTML;
+    }
+
+    function gameLoop(timestamp) {
+      if (!gameRunning) return;
+
+      const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+      lastTime = timestamp;
+
+      // Update powerup timers
+      if (shieldActive) {
+        const pct = ((3 - shieldHits) / 3) * 100;
+        document.getElementById('shield-bar').style.width = pct + '%';
+        if (shieldHits >= 3) {
+          shieldActive = false;
+          document.getElementById('shield-indicator').classList.add('hidden');
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+        }
+      }
+
+      if (goldenShieldActive) {
+        const pct = ((5 - goldenShieldHits) / 5) * 100;
+        document.getElementById('golden-shield-bar').style.width = pct + '%';
+        if (goldenShieldHits >= 5) {
+          goldenShieldActive = false;
+          document.getElementById('golden-shield-indicator').classList.add('hidden');
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+        }
+      }
+
+      if (castleActive) {
+        const pct = ((8 - castleHits) / 8) * 100;
+        document.getElementById('castle-bar').style.width = pct + '%';
+        if (castleHits >= 8) {
+          castleActive = false;
+          document.getElementById('castle-indicator').classList.add('hidden');
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+        }
+      }
+
+      if (slowmotionActive) {
+        slowmotionTimeLeft -= dt;
+        const pct = (slowmotionTimeLeft / 15) * 100;
+        document.getElementById('slowmotion-bar').style.width = pct + '%';
+        if (slowmotionTimeLeft <= 0) {
+          slowmotionActive = false;
+          document.getElementById('slowmotion-indicator').classList.add('hidden');
+          document.getElementById('speed-lines').style.opacity = Math.min(difficultyMultiplier * 0.15, 1);
+        }
+      }
+
+      if (machineGunActive) {
+        machineGunTimeLeft -= dt;
+        const pct = (machineGunTimeLeft / 8) * 100;
+        document.getElementById('machine-gun-bar').style.width = pct + '%';
+        if (machineGunTimeLeft <= 0) {
+          machineGunActive = false;
+          document.getElementById('machine-gun-indicator').classList.add('hidden');
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+        }
+      }
+
+      if (!shieldActive && !goldenShieldActive && !slowmotionActive && !machineGunActive) {
+        document.getElementById('powerup-indicator').classList.add('hidden');
+      }
+
+      // Update nuclear duration
+      if (nuclearActive) {
+        nuclearDuration -= dt;
+        if (nuclearDuration <= 0) {
+          nuclearActive = false;
+        }
+      }
+
+      // Update crown duration
+      if (crownActive) {
+        crownTimeLeft -= dt;
+        if (crownTimeLeft <= 0) {
+          crownActive = false;
+          playerEl.style.filter = 'drop-shadow(0 0 20px rgba(255,215,0,0.6))';
+        }
+      }
+
+      // Check for nuclear spawn times
+      const elapsed = GAME_DURATION - timeLeft;
+      for (let i = 0; i < nuclearSpawnTimes.length; i++) {
+        if (!nuclearSpawned[i] && elapsed >= nuclearSpawnTimes[i]) {
+          nuclearSpawned[i] = true;
+          spawnNuclear();
+          // الدرع الذهبي يظهر فوراً بعد النووي مباشرة
+          setTimeout(() => spawnGoldenShield(), 100);
+          // الرشاش يظهر بعد 10 ثوانٍ من الدرع الذهبي
+          setTimeout(() => {
+            if (gameRunning) spawnMachineGun();
+          }, 10000);
+          // القلعة تظهر بعد 5 ثوانٍ من الرشاش
+          setTimeout(() => {
+            if (gameRunning) spawnCastle();
+          }, 15000);
+        }
+      }
+
+      // Check for crown spawn (1:20 = 80 seconds into game)
+      if (!crownSpawned && elapsed >= 80) {
+        crownSpawned = true;
+        spawnCrown();
+      }
+      trapSpawnTimer -= dt;
+      if (trapSpawnTimer <= 0) {
+        const spawnCount = Math.ceil(difficultyMultiplier * 0.7);
+        for (let i = 0; i < spawnCount; i++) spawnTrap();
+        trapSpawnTimer = Math.max(0.3, 1.2 / difficultyMultiplier);
+      }
+
+      // Spawn coins
+      coinSpawnTimer -= dt;
+      if (coinSpawnTimer <= 0) {
+        spawnCoin();
+        coinSpawnTimer = Math.max(0.8, 2.5 / difficultyMultiplier);
+      }
+
+      // Spawn powerups
+      powerupSpawnTimer -= dt;
+      if (powerupSpawnTimer <= 0 && !nuclearActive) {
+        spawnPowerup();
+        powerupSpawnTimer = Math.max(3.5, 6 / difficultyMultiplier);
+      }
+
+      updatePlayer(dt);
+      updateTraps(dt);
+      updateCoins(dt);
+      updatePowerups(dt);
+      updateDifficulty();
+
+      animFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = GAME_DURATION;
+      difficultyMultiplier = 1;
+      traps = [];
+      coins = [];
+      powerups = [];
+      keysDown = {};
+      trapSpawnTimer = 0.5;
+      coinSpawnTimer = 1;
+      powerupSpawnTimer = 1;
+      shieldActive = false;
+      shieldHits = 0;
+      slowmotionActive = false;
+      slowmotionTimeLeft = 0;
+      bombActive = false;
+      nuclearActive = false;
+      nuclearDuration = 0;
+      crownActive = false;
+      crownTimeLeft = 0;
+      goldenShieldActive = false;
+      goldenShieldHits = 0;
+      castleActive = false;
+      castleHits = 0;
+      nuclearSpawned = [false, false, false];
+      crownSpawned = false;
+      goldenShieldSpawned = false;
+      machineGunSpawned = false;
+      if (castleSpawnTimeout) clearTimeout(castleSpawnTimeout);
+      castleSpawnTimeout = null;
+
+      trapsContainer.innerHTML = '';
+      coinsContainer.innerHTML = '';
+      powerupsContainer.innerHTML = '';
+      popupsContainer.innerHTML = '';
+
+      document.getElementById('score-display').textContent = '0';
+      document.getElementById('time-bar').style.width = '100%';
+      document.getElementById('time-display').textContent = '3:00';
+      document.getElementById('shield-indicator').classList.add('hidden');
+      document.getElementById('slowmotion-indicator').classList.add('hidden');
+      document.getElementById('golden-shield-indicator').classList.add('hidden');
+      document.getElementById('machine-gun-indicator').classList.add('hidden');
+      document.getElementById('castle-indicator').classList.add('hidden');
+      document.getElementById('powerup-indicator').classList.add('hidden');
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      playerX = w / 2;
+      playerY = h / 2;
+
+      playerEl.classList.remove('hidden');
+      document.getElementById('hud').classList.remove('hidden');
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('gameover-screen').classList.add('hidden');
+      document.getElementById('win-screen').classList.add('hidden');
+
+      gameRunning = true;
+      lastTime = performance.now();
+
+      if (gameTimerInterval) clearInterval(gameTimerInterval);
+      gameTimerInterval = setInterval(() => {
+        if (!gameRunning) return;
+        timeLeft -= 0.1;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          winGame();
+          return;
+        }
+        const pct = (timeLeft / GAME_DURATION) * 100;
+        document.getElementById('time-bar').style.width = pct + '%';
+        const mins = Math.floor(timeLeft / 60);
+        const secs = Math.floor(timeLeft % 60);
+        document.getElementById('time-display').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+      }, 100);
+
+      animFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function gameOver() {
+      gameRunning = false;
+      if (animFrame) cancelAnimationFrame(animFrame);
+      if (gameTimerInterval) clearInterval(gameTimerInterval);
+
+      canvas.classList.add('screen-shake');
+      setTimeout(() => canvas.classList.remove('screen-shake'), 400);
+
+      playerEl.classList.add('hidden');
+      document.getElementById('hud').classList.add('hidden');
+
+      if (score > highScore) highScore = score;
+
+      document.getElementById('final-score').textContent = score + ' نقطة';
+      document.getElementById('high-score-display').textContent = highScore + ' نقطة';
+      document.getElementById('gameover-screen').classList.remove('hidden');
+    }
+
+    function winGame() {
+      gameRunning = false;
+      if (animFrame) cancelAnimationFrame(animFrame);
+      if (gameTimerInterval) clearInterval(gameTimerInterval);
+
+      playerEl.classList.add('hidden');
+      document.getElementById('hud').classList.add('hidden');
+
+      if (score > highScore) highScore = score;
+
+      document.getElementById('win-score').textContent = score + ' نقطة';
+      document.getElementById('win-high-score').textContent = highScore + ' نقطة';
+      document.getElementById('win-screen').classList.remove('hidden');
+    }
+
+    // ===== INPUT HANDLERS =====
+    document.addEventListener('keydown', e => {
+      keysDown[e.key] = true;
+      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    });
+    document.addEventListener('keyup', e => { keysDown[e.key] = false; });
+
+    canvas.addEventListener('touchstart', e => {
+      if (!gameRunning) return;
+      isTouching = true;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchDirX = 0;
+      touchDirY = 0;
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+      if (!gameRunning || !isTouching) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > 10) {
+        touchDirX = dx / dist;
+        touchDirY = dy / dist;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => {
+      isTouching = false;
+      touchDirX = 0;
+      touchDirY = 0;
+    });
+
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('restart-btn').addEventListener('click', startGame);
+    document.getElementById('replay-btn').addEventListener('click', startGame);
+
+    // WhatsApp Share Functions
+    function shareScoreOnWhatsApp() {
+      const message = `🎮 لقد لعبت لعبة الهروب من المصيدة!\n\n📊 النتيجة: ${score} نقطة\n⭐ أعلى نتيجة: ${highScore} نقطة\n\n🚀 هل تستطيع تحطيم الرقم القياسي؟`;
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    }
+
+    function reportScoreToAdmin() {
+      const adminPhone = '966501234567'; // استبدل برقم الإدارة
+      const message = `مرحباً الإدارة 👋\n\nأبلغ عن النتيجة:\n📊 النقاط: ${score}\n⭐ أعلى نتيجة: ${highScore}\n🎮 اللعبة: الهروب من المصيدة`;
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/${adminPhone}?text=${encodedMessage}`, '_blank');
+    }
+
+    document.getElementById('share-whatsapp-btn').addEventListener('click', shareScoreOnWhatsApp);
+    document.getElementById('report-whatsapp-btn').addEventListener('click', reportScoreToAdmin);
+    document.getElementById('win-share-whatsapp-btn').addEventListener('click', shareScoreOnWhatsApp);
+    document.getElementById('win-report-whatsapp-btn').addEventListener('click', reportScoreToAdmin);
+
+    // Generate animated space background
+    function generateStars() {
+      const svgElement = document.getElementById('stars-svg');
+      if (!svgElement) return;
+      
+      svgElement.setAttribute('viewBox', '0 0 1000 1000');
+      
+      // Generate random stars
+      for (let i = 0; i < 150; i++) {
+        const x = Math.random() * 1000;
+        const y = Math.random() * 1000;
+        const size = Math.random() * 1.5;
+        const duration = 2 + Math.random() * 3;
+        const delay = Math.random() * 3;
+        
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', size);
+        circle.setAttribute('fill', '#fff');
+        circle.setAttribute('class', 'star');
+        circle.style.setProperty('--duration', duration + 's');
+        circle.style.setProperty('--delay', delay + 's');
+        circle.style.filter = 'drop-shadow(0 0 2px rgba(255,255,255,0.8))';
+        
+        svgElement.appendChild(circle);
+      }
+      
+      // Add some larger glowing stars
+      for (let i = 0; i < 30; i++) {
+        const x = Math.random() * 1000;
+        const y = Math.random() * 1000;
+        const size = Math.random() * 2 + 0.5;
+        const duration = 3 + Math.random() * 4;
+        const delay = Math.random() * 3;
+        
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', size);
+        circle.setAttribute('fill', '#88ccff');
+        circle.setAttribute('class', 'star');
+        circle.style.setProperty('--duration', duration + 's');
+        circle.style.setProperty('--delay', delay + 's');
+        circle.style.filter = 'drop-shadow(0 0 4px rgba(136,204,255,0.9))';
+        
+        svgElement.appendChild(circle);
+      }
+    }
+
+    // Initialize stars on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', generateStars);
+    } else {
+      generateStars();
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dfee3fed6c4b13f',t:'MTc3NDExNjM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
