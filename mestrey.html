@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة الألغاز</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Noto Kufi Arabic', sans-serif; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-120px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.6); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes progressFill {
+      from { width: 0; }
+    }
+    .animate-slide { animation: slideIn 0.5s ease-out; }
+    .animate-pop { animation: popIn 0.4s ease-out; }
+    .animate-shake { animation: shake 0.5s ease-out; }
+    .animate-glow { animation: glow 2s ease-in-out infinite; }
+    .animate-float { animation: float 3s ease-in-out infinite; }
+
+    .star-burst {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      animation: confetti 0.8s ease-out forwards;
+    }
+
+    .progress-segment {
+      transition: all 0.5s ease;
+    }
+    .progress-segment.completed {
+      transform: scale(1.05);
+    }
+
+    .option-btn {
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-btn:hover {
+      transform: translateY(-2px);
+    }
+    .option-btn:active {
+      transform: scale(0.97);
+    }
+    .option-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      pointer-events: none;
+    }
+
+    .hint-reveal {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .hint-reveal.show {
+      max-height: 80px;
+      opacity: 1;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app-wrapper" class="h-full w-full overflow-auto" style="background: #0f172a;"><!-- Decorative BG -->
+   <div style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;">
+    <div style="position:absolute;top:-50%;right:-30%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,0.08),transparent 70%);"></div>
+    <div style="position:absolute;bottom:-40%;left:-20%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,0.08),transparent 70%);"></div>
+   </div>
+   <div class="relative z-10 max-w-lg mx-auto px-4 py-6" style="min-height:100%;"><!-- Header -->
+    <header class="text-center mb-6 animate-slide">
+     <div class="inline-flex items-center gap-2 mb-2 px-4 py-1 rounded-full" style="background:rgba(251,191,36,0.15);"><i data-lucide="sparkles" style="width:16px;height:16px;color:#fbbf24;"></i> <span style="color:#fbbf24;font-size:13px;font-weight:600;" id="level-badge">المستوى 1</span>
+     </div>
+     <h1 id="game-title" class="text-3xl font-black mb-1" style="color:#f8fafc;letter-spacing:-0.5px;">لعبة الألغاز</h1>
+     <div id="score-display" class="flex items-center justify-center gap-3 mt-3">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl" style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.2);"><i data-lucide="trophy" style="width:16px;height:16px;color:#fbbf24;"></i> <span style="color:#fbbf24;font-weight:700;font-size:15px;" id="points-text">0</span> <span style="color:rgba(251,191,36,0.7);font-size:12px;">نقطة</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.2);"><i data-lucide="zap" style="width:16px;height:16px;color:#818cf8;"></i> <span style="color:#818cf8;font-weight:700;font-size:15px;" id="streak-text">0</span> <span style="color:rgba(129,140,248,0.7);font-size:12px;">متتالية</span>
+      </div>
+     </div>
+    </header><!-- Progress Bar -->
+    <div class="mb-6 px-1">
+     <div class="flex items-center justify-between mb-2"><span style="color:rgba(248,250,252,0.5);font-size:12px;">التقدم</span> <span style="color:rgba(248,250,252,0.5);font-size:12px;" id="progress-label">0 / 10</span>
+     </div>
+     <div class="flex gap-1.5" id="progress-bar"></div>
+    </div><!-- Game Area -->
+    <main id="game-area"></main><!-- Results Screen -->
+    <div id="results-screen" class="hidden"></div>
+   </div>
+  </div>
+  <script>
+    // ===== GAME DATA =====
+    const puzzles = [
+      {
+        question: "ما هو الشيء الذي يمشي بلا أرجل ويبكي بلا عيون؟",
+        options: ["السحابة", "الساعة", "الريح", "النهر"],
+        correct: 0,
+        hint: "تراها في السماء وتجلب المطر",
+        emoji: "☁️"
+      },
+      {
+        question: "شيء له رقبة وليس له رأس، ما هو؟",
+        options: ["الإبريق", "القميص", "الزجاجة", "القلم"],
+        correct: 2,
+        hint: "تشرب منها الماء",
+        emoji: "🍶"
+      },
+      {
+        question: "ما هو الشيء الذي كلما أخذت منه كبر؟",
+        options: ["الحفرة", "البحر", "الجبل", "الشجرة"],
+        correct: 0,
+        hint: "تحفرها في الأرض",
+        emoji: "🕳️"
+      },
+      {
+        question: "أنا لي أوراق ولكنني لست شجرة، من أنا؟",
+        options: ["الجريدة", "الكتاب", "الدفتر", "الخريطة"],
+        correct: 1,
+        hint: "فيه علم وقصص وحكايات",
+        emoji: "📖"
+      },
+      {
+        question: "ما هو الشيء الذي يسمع بلا أذنين ويتكلم بلا لسان؟",
+        options: ["الراديو", "الهاتف", "التلفاز", "الكمبيوتر"],
+        correct: 1,
+        hint: "تستخدمه للتواصل كل يوم",
+        emoji: "📱"
+      },
+      {
+        question: "شيء تراه في الليل ثلاث مرات وفي النهار مرة واحدة؟",
+        options: ["القمر", "النجمة", "حرف اللام", "الظلام"],
+        correct: 2,
+        hint: "فكر في الحروف وليس الأشياء",
+        emoji: "✏️"
+      },
+      {
+        question: "ما هو البيت الذي ليس فيه أبواب ولا نوافذ؟",
+        options: ["بيت الشعر", "بيت العنكبوت", "بيت الثلج", "بيت النمل"],
+        correct: 0,
+        hint: "نوع من الأدب العربي القديم",
+        emoji: "🏠"
+      },
+      {
+        question: "ما هو الشيء الذي يقرصك ولا تراه؟",
+        options: ["البعوضة", "الجوع", "البرد", "الحسد"],
+        correct: 1,
+        hint: "تشعر به في معدتك",
+        emoji: "😋"
+      },
+      {
+        question: "أنا ابن الماء ولكن إذا وضعوني فيه أموت، من أنا؟",
+        options: ["الملح", "السكر", "الثلج", "الجليد"],
+        correct: 2,
+        hint: "يتحول إلى ماء بالحرارة",
+        emoji: "🧊"
+      },
+      {
+        question: "ما هو الشيء الذي له عين واحدة ولا يستطيع الرؤية؟",
+        options: ["الإبرة", "الكاميرا", "المفتاح", "الخاتم"],
+        correct: 0,
+        hint: "تستخدمها في الخياطة",
+        emoji: "🪡"
+      }
+    ];
+
+    // ===== GAME STATE =====
+    let currentPuzzle = 0;
+    let points = 0;
+    let streak = 0;
+    let maxStreak = 0;
+    let answered = new Array(10).fill(null); // null = unanswered, true = correct, false = wrong
+    let hintUsed = new Array(10).fill(false);
+    let isAnimating = false;
+
+    // ===== DEFAULT CONFIG =====
+    const defaultConfig = {
+      game_title: "لعبة الألغاز",
+      background_color: "#0f172a",
+      surface_color: "#1e293b",
+      text_color: "#f8fafc",
+      primary_action_color: "#fbbf24",
+      secondary_action_color: "#818cf8",
+      font_family: "Noto Kufi Arabic",
+      font_size: 16
+    };
+
+    // ===== ELEMENT SDK =====
+
+
+    // ===== BUILD PROGRESS BAR =====
+    function buildProgressBar() {
+      const bar = document.getElementById('progress-bar');
+      bar.innerHTML = '';
+      for (let i = 0; i < 10; i++) {
+        const seg = document.createElement('div');
+        seg.className = 'progress-segment rounded-full';
+        seg.style.cssText = `height:8px;flex:1;transition:all 0.4s ease;cursor:pointer;`;
+        seg.dataset.index = i;
+        seg.addEventListener('click', () => {
+          if (answered[i] !== null || i === currentPuzzle) return;
+        });
+        updateSegment(seg, i);
+        bar.appendChild(seg);
+      }
+    }
+
+    function updateSegment(seg, i) {
+      if (answered[i] === true) {
+        seg.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
+        seg.style.boxShadow = '0 0 8px rgba(34,197,94,0.4)';
+      } else if (answered[i] === false) {
+        seg.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+        seg.style.boxShadow = '0 0 8px rgba(239,68,68,0.3)';
+      } else if (i === currentPuzzle) {
+        seg.style.background = 'linear-gradient(90deg, #fbbf24, #f59e0b)';
+        seg.style.boxShadow = '0 0 8px rgba(251,191,36,0.4)';
+      } else {
+        seg.style.background = 'rgba(248,250,252,0.1)';
+        seg.style.boxShadow = 'none';
+      }
+    }
+
+    function refreshProgress() {
+      const segs = document.querySelectorAll('.progress-segment');
+      segs.forEach((seg, i) => updateSegment(seg, i));
+      const done = answered.filter(a => a !== null).length;
+      document.getElementById('progress-label').textContent = `${done} / 10`;
+      const level = Math.floor(done / 3) + 1;
+      document.getElementById('level-badge').textContent = `المستوى ${Math.min(level, 4)}`;
+    }
+
+    // ===== RENDER PUZZLE =====
+    function renderPuzzle() {
+      const area = document.getElementById('game-area');
+      const p = puzzles[currentPuzzle];
+      const isAnswered = answered[currentPuzzle] !== null;
+
+      area.innerHTML = `
+        <div class="surface-card rounded-2xl p-5 mb-4 animate-slide" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+          <div class="flex items-center justify-between mb-4">
+            <span style="color:rgba(248,250,252,0.4);font-size:13px;">اللغز ${currentPuzzle + 1} من 10</span>
+            <span class="text-3xl animate-float">${p.emoji}</span>
+          </div>
+          <p class="puzzle-question text-lg font-bold leading-relaxed mb-1" style="color:#f8fafc;">${p.question}</p>
+        </div>
+
+        <div id="hint-area" class="mb-4 px-1">
+          ${!isAnswered && !hintUsed[currentPuzzle] ? `
+            <button id="hint-btn" class="flex items-center gap-2 px-3 py-2 rounded-xl transition-all" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);color:#fbbf24;font-size:13px;">
+              <i data-lucide="lightbulb" style="width:14px;height:14px;"></i>
+              تلميح (-5 نقاط)
+            </button>
+          ` : ''}
+          <div id="hint-text" class="hint-reveal ${hintUsed[currentPuzzle] ? 'show' : ''} mt-2 px-3 py-2 rounded-xl" style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);">
+            <div class="flex items-center gap-2">
+              <i data-lucide="lightbulb" style="width:14px;height:14px;color:#fbbf24;"></i>
+              <span style="color:#fbbf24;font-size:13px;">${p.hint}</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="options-container" class="grid grid-cols-1 gap-3 mb-5">
+          ${p.options.map((opt, i) => {
+            let btnStyle = 'background:rgba(248,250,252,0.05);border:1px solid rgba(248,250,252,0.1);color:#f8fafc;';
+            let icon = '';
+            if (isAnswered) {
+              if (i === p.correct) {
+                btnStyle = 'background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.5);color:#22c55e;';
+                icon = '<i data-lucide="check-circle" style="width:18px;height:18px;color:#22c55e;"></i>';
+              } else if (answered[currentPuzzle] === false && i !== p.correct) {
+                btnStyle = 'background:rgba(248,250,252,0.03);border:1px solid rgba(248,250,252,0.05);color:rgba(248,250,252,0.3);';
+              }
+            }
+            return `
+              <button class="option-btn rounded-xl px-4 py-3.5 text-right font-semibold flex items-center justify-between" 
+                style="${btnStyle}" 
+                data-option="${i}" 
+                ${isAnswered ? 'disabled' : ''}>
+                <span>${opt}</span>
+                ${icon}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        ${isAnswered ? `
+          <div class="animate-slide">
+            <div class="rounded-xl px-4 py-3 mb-4 flex items-center gap-3" style="background:${answered[currentPuzzle] ? 'rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)'};">
+              <span class="text-2xl">${answered[currentPuzzle] ? '🎉' : '😅'}</span>
+              <div>
+                <p style="color:${answered[currentPuzzle] ? '#22c55e' : '#ef4444'};font-weight:700;font-size:15px;">
+                  ${answered[currentPuzzle] ? 'أحسنت! إجابة صحيحة' : 'إجابة خاطئة'}
+                </p>
+                <p style="color:rgba(248,250,252,0.4);font-size:12px;">
+                  ${answered[currentPuzzle] ? `+${hintUsed[currentPuzzle] ? 5 : 10} نقاط` : `الإجابة: ${p.options[p.correct]}`}
+                </p>
+              </div>
+            </div>
+            <button id="next-btn" class="w-full rounded-xl px-4 py-3.5 font-bold text-base transition-all animate-glow" 
+              style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a;">
+              ${currentPuzzle < 9 ? 'اللغز التالي ←' : 'عرض النتائج 🏆'}
+            </button>
+          </div>
+        ` : ''}
+      `;
+
+      // Re-init icons
+      lucide.createIcons();
+
+      // Bind events
+      if (!isAnswered) {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+          btn.addEventListener('click', () => handleAnswer(parseInt(btn.dataset.option)));
+        });
+        const hintBtn = document.getElementById('hint-btn');
+        if (hintBtn) {
+          hintBtn.addEventListener('click', showHint);
+        }
+      }
+
+      const nextBtn = document.getElementById('next-btn');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextPuzzle);
+      }
+    }
+
+    // ===== HANDLE ANSWER =====
+    function handleAnswer(selected) {
+      if (isAnimating || answered[currentPuzzle] !== null) return;
+      isAnimating = true;
+
+      const p = puzzles[currentPuzzle];
+      const isCorrect = selected === p.correct;
+
+      if (isCorrect) {
+        const earnedPoints = hintUsed[currentPuzzle] ? 5 : 10;
+        points += earnedPoints;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+        answered[currentPuzzle] = true;
+        spawnStars(document.querySelectorAll('.option-btn')[selected]);
+      } else {
+        streak = 0;
+        answered[currentPuzzle] = false;
+        const btn = document.querySelectorAll('.option-btn')[selected];
+        btn.classList.add('animate-shake');
+        btn.style.background = 'rgba(239,68,68,0.2)';
+        btn.style.borderColor = 'rgba(239,68,68,0.5)';
+        btn.style.color = '#ef4444';
+      }
+
+      updateDisplays();
+      refreshProgress();
+
+      setTimeout(() => {
+        renderPuzzle();
+        isAnimating = false;
+      }, 400);
+    }
+
+    // ===== SHOW HINT =====
+    function showHint() {
+      hintUsed[currentPuzzle] = true;
+      const hintText = document.getElementById('hint-text');
+      hintText.classList.add('show');
+      const hintBtn = document.getElementById('hint-btn');
+      if (hintBtn) hintBtn.remove();
+    }
+
+    // ===== NEXT PUZZLE =====
+    function nextPuzzle() {
+      if (currentPuzzle < 9) {
+        currentPuzzle++;
+        refreshProgress();
+        renderPuzzle();
+      } else {
+        showResults();
+      }
+    }
+
+    // ===== UPDATE DISPLAYS =====
+    function updateDisplays() {
+      document.getElementById('points-text').textContent = points;
+      document.getElementById('streak-text').textContent = streak;
+    }
+
+    // ===== SPAWN STARS =====
+    function spawnStars(el) {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const colors = ['#fbbf24', '#22c55e', '#818cf8', '#f472b6', '#fb923c'];
+      for (let i = 0; i < 8; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-burst';
+        star.style.left = `${rect.left + rect.width * Math.random()}px`;
+        star.style.top = `${rect.top + rect.height / 2}px`;
+        star.style.background = colors[Math.floor(Math.random() * colors.length)];
+        star.style.position = 'fixed';
+        star.style.zIndex = '9999';
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 800);
+      }
+    }
+
+    // ===== SHOW RESULTS =====
+    function showResults() {
+      const correctCount = answered.filter(a => a === true).length;
+      const maxPoints = 100;
+      const percentage = Math.round((points / maxPoints) * 100);
+
+      let grade, gradeEmoji, gradeColor, message;
+      if (correctCount >= 9) {
+        grade = 'عبقري!'; gradeEmoji = '🧠'; gradeColor = '#fbbf24'; message = 'أداء مذهل! أنت حقًا ذكي';
+      } else if (correctCount >= 7) {
+        grade = 'ممتاز!'; gradeEmoji = '🌟'; gradeColor = '#22c55e'; message = 'أداء رائع، استمر!';
+      } else if (correctCount >= 5) {
+        grade = 'جيد'; gradeEmoji = '👍'; gradeColor = '#818cf8'; message = 'نتيجة جيدة، يمكنك التحسن!';
+      } else {
+        grade = 'حاول مرة أخرى'; gradeEmoji = '💪'; gradeColor = '#fb923c'; message = 'لا تستسلم، حاول مرة أخرى!';
+      }
+
+      document.getElementById('game-area').innerHTML = '';
+      const results = document.getElementById('results-screen');
+      results.classList.remove('hidden');
+      results.innerHTML = `
+        <div class="animate-slide text-center">
+          <div class="text-6xl mb-4 animate-float">${gradeEmoji}</div>
+          <h2 class="text-2xl font-black mb-2" style="color:${gradeColor};">${grade}</h2>
+          <p style="color:rgba(248,250,252,0.6);font-size:14px;margin-bottom:24px;">${message}</p>
+
+          <div class="surface-card rounded-2xl p-5 mb-5" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+            <div class="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div class="text-3xl font-black" style="color:#fbbf24;">${points}</div>
+                <div style="color:rgba(248,250,252,0.4);font-size:12px;margin-top:2px;">النقاط</div>
+              </div>
+              <div>
+                <div class="text-3xl font-black" style="color:#22c55e;">${correctCount}/10</div>
+                <div style="color:rgba(248,250,252,0.4);font-size:12px;margin-top:2px;">صحيحة</div>
+              </div>
+              <div>
+                <div class="text-3xl font-black" style="color:#818cf8;">${maxStreak}</div>
+                <div style="color:rgba(248,250,252,0.4);font-size:12px;margin-top:2px;">أفضل تتابع</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="surface-card rounded-2xl p-4 mb-5" style="background:#1e293b;border:1px solid rgba(248,250,252,0.06);">
+            <p style="color:rgba(248,250,252,0.5);font-size:13px;margin-bottom:12px;">ملخص الإجابات</p>
+            <div class="grid grid-cols-5 gap-2">
+              ${answered.map((a, i) => `
+                <div class="flex flex-col items-center gap-1 p-2 rounded-lg" style="background:${a ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'};">
+                  <span style="font-size:16px;">${puzzles[i].emoji}</span>
+                  <i data-lucide="${a ? 'check' : 'x'}" style="width:14px;height:14px;color:${a ? '#22c55e' : '#ef4444'};"></i>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <button id="restart-btn" class="w-full rounded-xl px-4 py-3.5 font-bold text-base transition-all animate-glow" 
+            style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f172a;">
+            إعادة اللعب 🔄
+          </button>
+        </div>
+      `;
+
+      lucide.createIcons();
+      document.getElementById('restart-btn').addEventListener('click', restartGame);
+    }
+
+    // ===== RESTART =====
+    function restartGame() {
+      currentPuzzle = 0;
+      points = 0;
+      streak = 0;
+      maxStreak = 0;
+      answered = new Array(10).fill(null);
+      hintUsed = new Array(10).fill(false);
+      updateDisplays();
+      document.getElementById('results-screen').classList.add('hidden');
+      document.getElementById('results-screen').innerHTML = '';
+      refreshProgress();
+      renderPuzzle();
+    }
+
+    // ===== INIT =====
+    buildProgressBar();
+    refreshProgress();
+    renderPuzzle();
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9deee50d60f0b13f',t:'MTc3Mzk0ODY1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
