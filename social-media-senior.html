@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(3deg); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,107,53,0.3); }
+      50% { box-shadow: 0 0 40px rgba(255,107,53,0.6); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes card-reveal {
+      0% { transform: perspective(800px) rotateY(90deg) scale(0.5); opacity: 0; }
+      60% { transform: perspective(800px) rotateY(-10deg) scale(1.05); opacity: 1; }
+      100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(-100%) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100%) rotate(720deg); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-2deg); }
+      40% { transform: translateX(8px) rotate(2deg); }
+      60% { transform: translateX(-5px) rotate(-1deg); }
+      80% { transform: translateX(5px) rotate(1deg); }
+    }
+    @keyframes progress-fill {
+      from { width: 0%; }
+    }
+    @keyframes star-burst {
+      0% { transform: scale(0) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.3) rotate(180deg); opacity: 1; }
+      100% { transform: scale(1) rotate(360deg); opacity: 1; }
+    }
+    @keyframes bounce-in {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.15); }
+      70% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    .float-anim { animation: float 3s ease-in-out infinite; }
+    .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+    .shimmer-bg {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+    .slide-up { animation: slide-up 0.5s ease-out forwards; }
+    .card-reveal { animation: card-reveal 0.8s ease-out forwards; }
+    .shake { animation: shake 0.5s ease-in-out; }
+    .bounce-in { animation: bounce-in 0.5s ease-out forwards; }
+
+    .option-btn {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+    }
+    .option-btn:active {
+      transform: scale(0.97);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #000000 0%, #1a0a2e 40%, #0a0a0a 70%, #1a0a2e 100%);">
+   <!-- Floating BG decorations -->
+   <div class="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div class="absolute top-10 right-10 w-32 h-32 rounded-full opacity-10" style="background: #d4af37; filter: blur(60px);"></div>
+    <div class="absolute bottom-20 left-10 w-40 h-40 rounded-full opacity-10" style="background: #ff1493; filter: blur(80px);"></div>
+    <div class="absolute top-1/2 right-1/4 w-24 h-24 rounded-full opacity-8" style="background: #d4af37; filter: blur(50px);"></div>
+   </div>
+   <div class="relative z-10 max-w-xl mx-auto px-4 py-8">
+    <!-- START SCREEN -->
+    <div id="screen-start" class="text-center">
+     <div class="float-anim mb-6">
+      <div class="inline-flex items-center justify-center w-28 h-28 rounded-3xl" style="background: linear-gradient(135deg, #ff6b35, #ff8c42); box-shadow: 0 10px 40px rgba(255,107,53,0.3);">
+       <span class="text-5xl">📱</span>
+      </div>
+     </div>
+     <h1 id="main-title" class="text-4xl font-black text-white mb-3" style="text-shadow: 0 2px 20px rgba(212,175,55,0.3);">مسابقة خبير السوشال ميديا</h1>
+     <p class="text-gray-400 text-lg mb-8">اختبر معلوماتك واكسب <span id="prize-display" class="font-bold" style="color: #d4af37;">كرت الحظ</span> 🎫</p>
+     <div class="grid grid-cols-3 gap-3 mb-8">
+      <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+       <div class="text-2xl mb-1">
+        🧠
+       </div>
+       <div class="text-xs text-gray-400">
+        15 سؤال
+       </div>
+      </div>
+      <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+       <div class="text-2xl mb-1">
+        ⭐
+       </div>
+       <div class="text-xs text-gray-400">
+        3 مستويات
+       </div>
+      </div>
+      <div class="rounded-2xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+       <div class="text-2xl mb-1">
+        🎫
+       </div>
+       <div class="text-xs text-gray-400">
+        جائزة كبرى
+       </div>
+      </div>
+     </div><button id="btn-start" onclick="startQuiz()" class="pulse-glow w-full py-4 rounded-2xl text-xl font-bold text-white transition-all hover:scale-105 active:scale-95" style="background: linear-gradient(135deg, #d4af37, #ffd700);"> ابدأ المسابقة 🚀 </button>
+    </div><!-- QUIZ SCREEN -->
+    <div id="screen-quiz" class="hidden">
+     <!-- Top bar -->
+     <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2 rounded-full px-4 py-2" style="background: rgba(255,255,255,0.08);">
+       <span style="color: #ff6b35;">⭐</span> <span id="score-display" class="text-white font-bold">0</span>
+      </div>
+      <div id="level-badge" class="rounded-full px-4 py-2 text-sm font-bold" style="background: linear-gradient(135deg, #06d6a0, #0ac593); color: #0f0c29;">
+       المستوى 1 - مبتدئ
+      </div>
+      <div class="flex items-center gap-2 rounded-full px-4 py-2" style="background: rgba(255,255,255,0.08);">
+       <span class="text-white font-bold"><span id="q-current">1</span>/<span id="q-total">15</span></span>
+      </div>
+     </div><!-- Progress bar -->
+     <div class="w-full h-2 rounded-full mb-6" style="background: rgba(255,255,255,0.1);">
+      <div id="progress-bar" class="h-full rounded-full transition-all duration-500" style="width: 0%; background: linear-gradient(90deg, #d4af37, #ffd700);"></div>
+     </div><!-- Question Card -->
+     <div id="question-card" class="rounded-3xl p-6 mb-6 slide-up" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+      <div class="flex items-center gap-2 mb-4">
+       <span id="q-emoji" class="text-2xl">📱</span> <span id="q-level-text" class="text-sm font-medium" style="color: #06d6a0;">سهل</span>
+      </div>
+      <h2 id="q-text" class="text-xl font-bold text-white leading-relaxed"></h2>
+     </div><!-- Options -->
+     <div id="options-container" class="space-y-3"></div><!-- Next button (hidden until answered) --> <button id="btn-next" class="hidden w-full mt-6 py-4 rounded-2xl text-lg font-bold text-white transition-all hover:scale-105 active:scale-95" style="background: linear-gradient(135deg, #ff1493, #ff69b4);" onclick="nextQuestion()"> السؤال التالي ← </button>
+    </div><!-- RESULT SCREEN -->
+    <div id="screen-result" class="hidden text-center">
+     <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50"></div>
+     <div id="result-content">
+      <!-- Filled dynamically -->
+     </div><button onclick="resetQuiz()" class="w-full mt-6 py-4 rounded-2xl text-lg font-bold text-white transition-all hover:scale-105 active:scale-95" style="background: linear-gradient(135deg, #d4af37, #ffd700);"> أعد المحاولة 🔄 </button>
+    </div>
+   </div>
+  </div>
+  <script>
+    // ========== QUIZ DATA ==========
+    const allQuestions = [
+      // Level 1 - Easy (15 questions)
+      { q: "ما هو أكثر تطبيق تواصل اجتماعي استخداماً في العالم؟", options: ["فيسبوك", "تيك توك", "إنستغرام", "تويتر"], correct: 0, emoji: "🌍", level: 1 },
+      { q: "ما هو الحد الأقصى لعدد الأحرف في تغريدة تويتر (X)؟", options: ["140 حرف", "280 حرف", "500 حرف", "160 حرف"], correct: 1, emoji: "🐦", level: 1 },
+      { q: "أي منصة تشتهر بالفيديوهات القصيرة؟", options: ["لينكد إن", "تيك توك", "بينترست", "ريديت"], correct: 1, emoji: "🎬", level: 1 },
+      { q: "ما اسم زر الإعجاب الأصلي في فيسبوك؟", options: ["Heart", "Star", "Like", "Love"], correct: 2, emoji: "👍", level: 1 },
+      { q: "ما هي منصة مشاركة الصور المملوكة لشركة Meta؟", options: ["سناب شات", "إنستغرام", "بينترست", "فليكر"], correct: 1, emoji: "📸", level: 1 },
+      { q: "كم عدد المنصات الكبرى للتواصل الاجتماعي تقريباً؟", options: ["5", "10", "20", "50"], correct: 2, emoji: "🌐", level: 1 },
+      { q: "أي منصة متخصصة في الوظائف والتطور الوظيفي؟", options: ["سناب شات", "تيك توك", "لينكد إن", "ريديت"], correct: 2, emoji: "💼", level: 1 },
+      { q: "ما هي منصة مشاركة الفيديوهات الطويلة الشهيرة؟", options: ["تيك توك", "يوتيوب", "إنستغرام ريلز", "سناب شات"], correct: 1, emoji: "📺", level: 1 },
+      { q: "أي منصة معروفة بمشاركة الصور والتصاميم؟", options: ["فيسبوك", "بينترست", "تويتر", "ريديت"], correct: 1, emoji: "🎨", level: 1 },
+      { q: "كم سنة تقريباً تم إطلاق فيسبوك؟", options: ["2005", "2006", "2004", "2007"], correct: 2, emoji: "📱", level: 1 },
+      { q: "أي من هذه تطبيق للمراسلة الفورية؟", options: ["سناب شات", "بينترست", "لينكد إن", "ريديت"], correct: 0, emoji: "💬", level: 1 },
+      { q: "ما هي شركة الأم لإنستغرام وواتس آب؟", options: ["جوجل", "أمازون", "Meta", "أبل"], correct: 2, emoji: "🔗", level: 1 },
+      { q: "أي منصة تركز على محتوى أكثر من 15 ثانية؟", options: ["تيك توك", "إنستغرام", "يوتيوب شورتز", "تويتر"], correct: 2, emoji: "⏱️", level: 1 },
+      { q: "ما هي أشهر منصة لمشاركة الأخبار والنقاشات؟", options: ["إنستغرام", "ريديت", "بينترست", "لينكد إن"], correct: 1, emoji: "📰", level: 1 },
+      { q: "أي منصة متخصصة في الفيديوهات المباشرة والبث؟", options: ["تويتر", "تيك توك", "تويتش", "لينكد إن"], correct: 2, emoji: "🔴", level: 1 },
+      // Level 2 - Medium (15 questions)
+      { q: "ما هو مصطلح 'الريتش' (Reach) في السوشال ميديا؟", options: ["عدد التعليقات", "عدد الأشخاص الذين شاهدوا المحتوى", "عدد المتابعين", "عدد الإعجابات"], correct: 1, emoji: "📊", level: 2 },
+      { q: "ما هو أفضل وقت للنشر على إنستغرام عادةً؟", options: ["الفجر", "منتصف الليل", "بين 9-11 صباحاً", "بعد منتصف الليل"], correct: 2, emoji: "⏰", level: 2 },
+      { q: "ما معنى 'الإنغيجمنت ريت' (Engagement Rate)؟", options: ["سرعة الإنترنت", "نسبة التفاعل مع المحتوى", "عدد المنشورات", "حجم الحساب"], correct: 1, emoji: "📈", level: 2 },
+      { q: "أي نوع محتوى يحصل على أعلى تفاعل عادةً؟", options: ["النصوص الطويلة", "الفيديو القصير", "الروابط الخارجية", "المنشورات بدون صور"], correct: 1, emoji: "🎯", level: 2 },
+      { q: "ما هو 'الهاشتاق' (#)؟", options: ["رمز للإشارة لشخص", "أداة لتصنيف المحتوى", "طريقة للحظر", "رمز للإعجاب"], correct: 1, emoji: "#️⃣", level: 2 },
+      { q: "ما هي أهمية كتابة وصف جيد (Caption) للمنشور؟", options: ["لا أهمية لها", "لجذب الانتباه وزيادة التفاعل", "لملء المساحة فقط", "لتقليل التفاعل"], correct: 1, emoji: "✍️", level: 2 },
+      { q: "كم عدد الهاشتاجات المثالي لإنستغرام؟", options: ["5", "10", "30", "50"], correct: 2, emoji: "🏷️", level: 2 },
+      { q: "ما هو 'الفيديو الفايرل' (Viral Video)؟", options: ["فيديو حزين", "فيديو ينتشر بسرعة كبيرة", "فيديو طويل", "فيديو ممل"], correct: 1, emoji: "🚀", level: 2 },
+      { q: "ما هي أفضل طريقة لزيادة المتابعين؟", options: ["شراء متابعين", "محتوى جودة والتفاعل مع الجمهور", "نشر كثير", "استخدام بوتات"], correct: 1, emoji: "📣", level: 2 },
+      { q: "ما معنى 'الستوري' (Story)؟", options: ["قصة حقيقية", "منشور يختفي بعد 24 ساعة", "تعليق", "صورة دائمة"], correct: 1, emoji: "📖", level: 2 },
+      { q: "كم مرة يفضل النشر يومياً على السوشال ميديا؟", options: ["مرة واحدة", "3-5 مرات", "10 مرات", "30 مرة"], correct: 1, emoji: "📅", level: 2 },
+      { q: "ما هو 'الكنتنت كالندر' (Content Calendar)؟", options: ["تقويم عادي", "خطة لنشر المحتوى", "فيديو", "صورة"], correct: 1, emoji: "📋", level: 2 },
+      { q: "ما هي أهمية التفاعل مع تعليقات الجمهور؟", options: ["لا فائدة", "بناء علاقة وزيادة الولاء", "مضيعة وقت", "للحظر فقط"], correct: 1, emoji: "💬", level: 2 },
+      { q: "ما هو أفضل حجم للصورة على إنستغرام؟", options: ["200x200", "1080x1080", "500x500", "2000x2000"], correct: 1, emoji: "📐", level: 2 },
+      { q: "ما معنى 'الكولاب' (Collaboration)؟", options: ["كسر", "التعاون مع حسابات أخرى", "حذف", "نقل"], correct: 1, emoji: "🤝", level: 2 },
+      // Level 3 - Hard (15 questions)
+      { q: "ما هو 'السوشال ليسنينغ' (Social Listening)؟", options: ["الاستماع للموسيقى", "مراقبة ما يُقال عن علامتك التجارية", "بث مباشر صوتي", "تسجيل بودكاست"], correct: 1, emoji: "👂", level: 3 },
+      { q: "ما هو مصطلح 'UGC' في التسويق الرقمي؟", options: ["United Global Content", "User Generated Content", "Ultra Graphics Card", "Universal Game Console"], correct: 1, emoji: "🏷️", level: 3 },
+      { q: "ما هي نسبة التفاعل الجيدة على إنستغرام؟", options: ["0.1%", "1-3%", "50%", "25%"], correct: 1, emoji: "💎", level: 3 },
+      { q: "ما هو 'الألغوريثم' في السوشال ميديا؟", options: ["نوع من الإعلانات", "نظام ترتيب وعرض المحتوى", "أداة تصميم", "تطبيق جديد"], correct: 1, emoji: "🤖", level: 3 },
+      { q: "ما معنى 'CPM' في الإعلانات الرقمية؟", options: ["Cost Per Message", "Clicks Per Minute", "Cost Per Mille (ألف ظهور)", "Content Per Month"], correct: 2, emoji: "💰", level: 3 },
+      { q: "ما هو 'البرند أوارنس' (Brand Awareness)؟", options: ["شراء سلع", "مدى معرفة الناس بالعلامة التجارية", "عدد الإعلانات", "السعر المنخفض"], correct: 1, emoji: "🎯", level: 3 },
+      { q: "ما هو 'الإنفلوينسر' (Influencer)؟", options: ["شخص غني", "شخص له تأثير وجمهور كبير", "شخص قديم", "شخص بدون متابعين"], correct: 1, emoji: "⭐", level: 3 },
+      { q: "ما هو 'الميكروانفلوينسر'؟", options: ["إنفلوينسر قوي", "إنفلوينسر له متابعين أقل لكن تفاعل أعلى", "إنفلوينسر جديد", "إنفلوينسر كاذب"], correct: 1, emoji: "🔍", level: 3 },
+      { q: "ما معنى 'ROI' في التسويق الرقمي؟", options: ["Return on Investment", "Rate of Interest", "Rotation of Ideas", "Relevant Information"], correct: 0, emoji: "💹", level: 3 },
+      { q: "ما هو 'السيو' (SEO) في السوشال ميديا؟", options: ["بدء شركة", "تحسين ظهور المحتوى في البحث", "حذف المنشورات", "شراء متابعين"], correct: 1, emoji: "🔎", level: 3 },
+      { q: "ما هي 'أوتينتيسيتي' (Authenticity)؟", options: ["الكذب", "الصدق والأصالة", "الإعلان الكاذب", "الغش"], correct: 1, emoji: "✅", level: 3 },
+      { q: "ما هو 'الكرايسيس ম্যানেজمنت' في السوشال ميديا؟", options: ["إنشاء أزمات", "إدارة الأزمات والتعليقات السلبية", "تجاهل المشاكل", "حذف الحسابات"], correct: 1, emoji: "⚠️", level: 3 },
+      { q: "ما هي 'الكسنفورات' (Conversions)؟", options: ["محادثات", "تحويل الزائر إلى عميل أو متابع مهتم", "تحويل اللون", "تحويل الوقت"], correct: 1, emoji: "🔄", level: 3 },
+      { q: "ما هو 'الريتارجتينج' (Retargeting)؟", options: ["إعادة التصوير", "استهداف من زاروا موقعك سابقاً", "إعادة التسمية", "حذف البيانات"], correct: 1, emoji: "🎪", level: 3 },
+      { q: "ما معنى 'البوست آنالتكس' (Post Analytics)؟", options: ["تحليل الفيديو فقط", "تحليل أداء المنشورات وإحصائياتها", "إنشاء منشور", "حذف البيانات"], correct: 1, emoji: "📊", level: 3 }
+    ];
+
+    let questions = [];
+
+    function shuffleQuestions() {
+      // Shuffle and select 15 random questions (5 from each level)
+      const easy = allQuestions.filter(q => q.level === 1).sort(() => Math.random() - 0.5).slice(0, 5);
+      const medium = allQuestions.filter(q => q.level === 2).sort(() => Math.random() - 0.5).slice(0, 5);
+      const hard = allQuestions.filter(q => q.level === 3).sort(() => Math.random() - 0.5).slice(0, 5);
+      questions = [...easy, ...medium, ...hard].sort(() => Math.random() - 0.5);
+    }
+
+    // ========== STATE ==========
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    const levelNames = { 1: "مبتدئ 🌱", 2: "متوسط 🔥", 3: "خبير 💎" };
+    const levelColors = { 1: "#06d6a0", 2: "#ffd166", 3: "#ef476f" };
+
+    // ========== DEFAULT CONFIG ==========
+    const defaultConfig = {
+      quiz_title: "مسابقة خبير السوشال ميديا",
+      prize_name: "كرت الحظ",
+      start_button_text: "ابدأ المسابقة 🚀",
+      background_color: "#000000",
+      surface_color: "#1a0a2e",
+      text_color: "#ffffff",
+      primary_action_color: "#d4af37",
+      secondary_action_color: "#ff1493"
+    };
+
+    // ========== ELEMENT SDK ==========
+
+    function adjustColor(hex, amount) {
+      hex = hex.replace('#', '');
+      let r = Math.min(255, parseInt(hex.substr(0, 2), 16) + amount);
+      let g = Math.min(255, parseInt(hex.substr(2, 2), 16) + amount);
+      let b = Math.min(255, parseInt(hex.substr(4, 2), 16) + amount);
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    // ========== GAME FUNCTIONS ==========
+    function startQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      answered = false;
+      shuffleQuestions();
+      document.getElementById('screen-start').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.remove('hidden');
+      updateScore();
+      showQuestion();
+    }
+
+    function showQuestion() {
+      answered = false;
+      const q = questions[currentQuestion];
+      const level = q.level;
+
+      document.getElementById('q-current').textContent = currentQuestion + 1;
+      document.getElementById('q-total').textContent = questions.length;
+      document.getElementById('q-text').textContent = q.q;
+      document.getElementById('q-emoji').textContent = q.emoji;
+      document.getElementById('q-level-text').textContent = level === 1 ? "سهل" : level === 2 ? "متوسط" : "صعب";
+      document.getElementById('q-level-text').style.color = levelColors[level];
+
+      // Level badge
+      const badge = document.getElementById('level-badge');
+      badge.textContent = `المستوى ${level} - ${levelNames[level]}`;
+      badge.style.background = `linear-gradient(135deg, ${levelColors[level]}, ${adjustColor(levelColors[level], -30)})`;
+
+      // Progress
+      const progress = ((currentQuestion) / questions.length) * 100;
+      document.getElementById('progress-bar').style.width = `${progress}%`;
+
+      // Animate question card
+      const card = document.getElementById('question-card');
+      card.classList.remove('slide-up');
+      void card.offsetWidth;
+      card.classList.add('slide-up');
+
+      // Options
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn w-full text-right py-4 px-5 rounded-2xl font-medium text-white flex items-center gap-3';
+        btn.style.cssText = 'background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);';
+        const letters = ['أ', 'ب', 'ج', 'د'];
+        btn.innerHTML = `
+          <span class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold" style="background: rgba(255,255,255,0.1);">${letters[i]}</span>
+          <span>${opt}</span>
+        `;
+        btn.onclick = () => selectAnswer(i, btn);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('btn-next').classList.add('hidden');
+    }
+
+    function selectAnswer(index, btn) {
+      if (answered) return;
+      answered = true;
+
+      const q = questions[currentQuestion];
+      const isCorrect = index === q.correct;
+      const container = document.getElementById('options-container');
+      const buttons = container.querySelectorAll('.option-btn');
+
+      // Points based on level
+      if (isCorrect) {
+        score += q.level * 10;
+        updateScore();
+      }
+
+      buttons.forEach((b, i) => {
+        b.style.pointerEvents = 'none';
+        if (i === q.correct) {
+          b.style.background = 'linear-gradient(135deg, #06d6a0, #0ac593)';
+          b.style.border = '1px solid #06d6a0';
+          b.style.boxShadow = '0 4px 20px rgba(6,214,160,0.3)';
+        } else if (i === index && !isCorrect) {
+          b.style.background = 'linear-gradient(135deg, #ef476f, #d63860)';
+          b.style.border = '1px solid #ef476f';
+          b.classList.add('shake');
+        } else {
+          b.style.opacity = '0.4';
+        }
+      });
+
+      // Show next button or result
+      const nextBtn = document.getElementById('btn-next');
+      if (currentQuestion < questions.length - 1) {
+        nextBtn.textContent = "السؤال التالي ←";
+      } else {
+        nextBtn.textContent = "اعرف النتيجة 🏆";
+      }
+      nextBtn.classList.remove('hidden');
+      nextBtn.classList.add('bounce-in');
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion >= questions.length) {
+        showResult();
+      } else {
+        showQuestion();
+      }
+    }
+
+    function updateScore() {
+      document.getElementById('score-display').textContent = score;
+    }
+
+    function showResult() {
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const maxScore = questions.reduce((sum, q) => sum + q.level * 10, 0);
+      const percentage = Math.round((score / maxScore) * 100);
+      const won = percentage >= 70;
+      const config = window.elementSdk.config || {};
+      const prizeName = config.prize_name || defaultConfig.prize_name;
+
+      let title, subtitle, cardClass;
+      if (percentage >= 90) {
+        title = "🏆 أنت خبير السوشال ميديا!";
+        subtitle = `ربحت ${prizeName} الذهبي!`;
+        cardClass = "gold";
+      } else if (percentage >= 70) {
+        title = "🎉 ممتاز! أداء رائع";
+        subtitle = `ربحت ${prizeName}!`;
+        cardClass = "silver";
+      } else if (percentage >= 50) {
+        title = "💪 أداء جيد!";
+        subtitle = "قريب من الفوز، حاول مرة أخرى";
+        cardClass = "none";
+      } else {
+        title = "😅 لا بأس، حاول مرة أخرى!";
+        subtitle = "تحتاج مزيد من الممارسة";
+        cardClass = "none";
+      }
+
+      const resultContent = document.getElementById('result-content');
+      resultContent.innerHTML = `
+        <div class="slide-up">
+          <div class="text-6xl mb-4">${percentage >= 70 ? '🎊' : '📱'}</div>
+          <h2 class="text-3xl font-black text-white mb-2">${title}</h2>
+          <p class="text-lg mb-6" style="color: rgba(255,255,255,0.7);">${subtitle}</p>
+
+          <!-- Score display -->
+          <div class="rounded-3xl p-6 mb-6" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);">
+            <div class="text-5xl font-black mb-1" style="color: #ff6b35;">${score}</div>
+            <div class="text-sm text-gray-400 mb-4">نقطة من ${maxScore}</div>
+            <div class="w-full h-3 rounded-full mb-2" style="background: rgba(255,255,255,0.1);">
+              <div class="h-full rounded-full" style="width: ${percentage}%; background: linear-gradient(90deg, #ff6b35, #ff8c42); animation: progress-fill 1s ease-out;"></div>
+            </div>
+            <div class="text-sm font-bold" style="color: ${percentage >= 70 ? '#06d6a0' : '#ffd166'};">${percentage}%</div>
+          </div>
+
+          ${won ? `
+          <!-- Luck Card -->
+          <div class="card-reveal rounded-3xl p-6 mb-6 relative overflow-hidden" style="background: linear-gradient(135deg, ${cardClass === 'gold' ? '#f59e0b, #d97706' : '#9ca3af, #6b7280'}); box-shadow: 0 10px 40px rgba(${cardClass === 'gold' ? '245,158,11' : '156,163,175'},0.3);">
+            <div class="shimmer-bg absolute inset-0 rounded-3xl"></div>
+            <div class="relative z-10">
+              <div class="text-4xl mb-2">🎫</div>
+              <div class="text-2xl font-black text-white mb-1">${prizeName}</div>
+              <div class="text-sm" style="color: rgba(255,255,255,0.8);">${cardClass === 'gold' ? 'الذهبي ✨' : 'الفضي ⭐'}</div>
+              <div class="mt-3 inline-block rounded-full px-4 py-1 text-xs font-bold" style="background: rgba(255,255,255,0.2); color: white;">
+                ${new Date().toLocaleDateString('ar-EG')}
+              </div>
+            </div>
+          </div>
+          ` : ''}
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="rounded-2xl p-3" style="background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.2);">
+              <div class="text-xl font-bold" style="color: #06d6a0;">${questions.filter((q, i) => wasCorrect(i)).length}</div>
+              <div class="text-xs text-gray-400">صحيح ✅</div>
+            </div>
+            <div class="rounded-2xl p-3" style="background: rgba(239,71,111,0.1); border: 1px solid rgba(239,71,111,0.2);">
+              <div class="text-xl font-bold" style="color: #ef476f;">${questions.length - questions.filter((q, i) => wasCorrect(i)).length}</div>
+              <div class="text-xs text-gray-400">خطأ ❌</div>
+            </div>
+            <div class="rounded-2xl p-3" style="background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.2);">
+              <div class="text-xl font-bold" style="color: #ffd166;">${percentage}%</div>
+              <div class="text-xs text-gray-400">النسبة 📊</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (won) {
+        createConfetti();
+      }
+    }
+
+    // Track correct answers
+    let correctAnswers = new Set();
+    const origSelectAnswer = selectAnswer;
+    // Override to track
+    const _origSelect = window.selectAnswer;
+
+    // Simple tracking via overriding
+    (function() {
+      const origFn = selectAnswer;
+      window.selectAnswer = function(index, btn) {
+        const q = questions[currentQuestion];
+        if (index === q.correct) correctAnswers.add(currentQuestion);
+        else correctAnswers.delete(currentQuestion);
+        origFn(index, btn);
+      };
+    })();
+
+    function wasCorrect(qIndex) {
+      return correctAnswers.has(qIndex);
+    }
+
+    function createConfetti() {
+      const container = document.getElementById('confetti-container');
+      container.innerHTML = '';
+      const colors = ['#d4af37', '#ff1493', '#ffd700', '#c0c0c0', '#ef476f'];
+      const emojis = ['🎉', '⭐', '🎊', '✨', '🏆', '🎫'];
+
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        const isEmoji = Math.random() > 0.6;
+        piece.style.cssText = `
+          position: fixed;
+          top: -20px;
+          left: ${Math.random() * 100}%;
+          font-size: ${isEmoji ? '20px' : '0'};
+          width: ${isEmoji ? 'auto' : '10px'};
+          height: ${isEmoji ? 'auto' : '10px'};
+          background: ${isEmoji ? 'none' : colors[Math.floor(Math.random() * colors.length)]};
+          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+          animation: confetti-fall ${1.5 + Math.random() * 2}s ease-in ${Math.random() * 1}s forwards;
+          z-index: 100;
+        `;
+        if (isEmoji) piece.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        container.appendChild(piece);
+      }
+
+      setTimeout(() => { container.innerHTML = ''; }, 4000);
+    }
+
+    function resetQuiz() {
+      correctAnswers.clear();
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-start').classList.remove('hidden');
+    }
+
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dff5871568078a6',t:'MTc3NDEyMTE1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

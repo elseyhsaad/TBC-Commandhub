@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة البداية - كوماند هاب</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Tajawal', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(234, 179, 8, 0.6); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-200px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes borderPulse {
+      0%, 100% { border-color: rgba(234, 179, 8, 0.3); }
+      50% { border-color: rgba(234, 179, 8, 0.8); }
+    }
+
+    .animate-float { animation: float 3s ease-in-out infinite; }
+    .animate-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    .animate-slideUp { animation: slideUp 0.6s ease-out forwards; }
+    .animate-scaleIn { animation: scaleIn 0.5s ease-out forwards; }
+
+    .step-card {
+      animation: slideUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    .option-btn {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 2px solid rgba(234, 179, 8, 0.2);
+    }
+    .option-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(234, 179, 8, 0.6);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .option-btn.selected {
+      border-color: #eab308;
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(234, 179, 8, 0.05));
+      box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+    }
+
+    .progress-fill {
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 3px solid #eab308;
+      animation: borderPulse 2s ease-in-out infinite;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confetti 1.5s ease-out forwards;
+    }
+
+    .hex-avatar {
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a1a; }
+    ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 3px; }
+
+    textarea:focus, input:focus { outline: none; box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.5); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-[#0a0a1a] text-white overflow-auto">
+  <div id="app" class="w-full min-h-full flex flex-col items-center justify-start pb-12"><!-- Header -->
+   <header class="w-full py-6 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
+    <div class="relative z-10">
+     <div class="animate-float inline-block mb-3">
+      <div class="w-16 h-16 mx-auto bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-yellow-500/30">
+       ⚡
+      </div>
+     </div>
+     <h1 id="mainTitle" class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-500">لعبة البداية</h1>
+     <p class="text-yellow-500/60 mt-1 text-sm font-medium tracking-wide">المرحلة الأولى من رحلة كوماند هاب ديف</p>
+    </div>
+   </header><!-- Progress Bar -->
+   <div class="w-full max-w-lg px-6 mb-6">
+    <div class="flex justify-between items-center mb-2"><span class="text-xs text-yellow-500/70 font-medium">التقدّم</span> <span id="progressText" class="text-xs text-yellow-400 font-bold">0%</span>
+    </div>
+    <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+     <div id="progressBar" class="progress-fill h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full" style="width: 0%"></div>
+    </div>
+    <div id="stepIndicator" class="flex justify-between mt-2"></div>
+   </div><!-- Steps Container -->
+   <div id="stepsContainer" class="w-full max-w-lg px-4"></div>
+  </div>
+  <script>
+    const defaultConfig = {
+      game_title: 'لعبة البداية',
+      whatsapp_number: '96170000000',
+      bg_color: '#0a0a1a',
+      accent_color: '#eab308',
+      card_color: '#111827',
+      text_color: '#ffffff',
+      muted_color: '#9ca3af',
+      font_family: 'Tajawal'
+    };
+
+    let config = { ...defaultConfig };
+    let currentStep = 0;
+    let answers = {};
+    let hiddenScore = 0;
+    const totalSteps = 9;
+
+    // Questions data
+    const steps = [
+      {
+        id: 'name',
+        title: 'بناء الشخصية 🧬',
+        subtitle: 'ما اسم شخصيتك في كوماند هاب؟',
+        type: 'text',
+        placeholder: 'أدخل اسم الشخصية...'
+      },
+      {
+        id: 'field',
+        title: 'المجال المفضّل 🎯',
+        subtitle: 'اختر المجال الذي يثير اهتمامك',
+        type: 'select',
+        options: ['التقنية والبرمجة', 'التسويق الرقمي', 'التجارة الإلكترونية', 'التصميم والإبداع', 'ريادة الأعمال', 'المبيعات والتفاوض']
+      },
+      {
+        id: 'challenges',
+        title: 'نوع التحديات 🔥',
+        subtitle: 'ما نوع التحديات التي تفضّلها؟',
+        type: 'select',
+        options: ['تحديات فردية', 'تحديات جماعية', 'تحديات سرعة', 'تحديات ذكاء', 'تحديات استراتيجية']
+      },
+      {
+        id: 'puzzles',
+        title: 'نوع الألغاز 🧩',
+        subtitle: 'ما نوع الألغاز التي تستمتع بها؟',
+        type: 'select',
+        options: ['ألغاز منطقية', 'ألغاز رياضية', 'ألغاز كلمات', 'ألغاز بصرية', 'ألغاز تشفير']
+      },
+      {
+        id: 'competitions',
+        title: 'نوع المسابقات 🏆',
+        subtitle: 'ما نوع المسابقات المفضّلة لديك؟',
+        type: 'select',
+        options: ['مسابقات معلومات عامة', 'مسابقات إبداعية', 'مسابقات تنافسية مباشرة', 'مسابقات تعاونية', 'مسابقات بناء مشاريع']
+      },
+      {
+        id: 'skills',
+        title: 'المهارات الشخصية 💪',
+        subtitle: 'اختر المهارات التي تملكها',
+        type: 'multi',
+        options: ['مهارات التواصل', 'مهارات الإقناع', 'مهارات البيع', 'مهارات القيادة', 'مهارات التحليل']
+      },
+      {
+        id: 'experience',
+        title: 'الخبرة السابقة 📋',
+        subtitle: 'هل لديك تجربة مبيعات أو توظيف سابقة؟',
+        type: 'experience'
+      },
+      {
+        id: 'luck_or_ambition',
+        title: 'سؤال المصير ⚖️',
+        subtitle: 'ما الذي يقود للنجاح الحقيقي؟',
+        type: 'binary',
+        optionA: { text: 'الحظ هو الحل 🍀', value: 'luck' },
+        optionB: { text: 'الطموح هو الحل 🚀', value: 'ambition' }
+      },
+      {
+        id: 'patience',
+        title: 'اختبار الصبر ⏳',
+        subtitle: 'هل عندك القدرة على الصبر شهر كامل بالمسابقات والألعاب وستستمتع؟',
+        type: 'yesno'
+      },
+      {
+        id: 'invite',
+        title: 'سؤال المفاجأة 🎁',
+        subtitle: 'إذا النظام أعطاك كرت حظ لتقدّم فيه لسحب جائزة، هل تقبل تدعو أشخاص آخرين للنظام؟',
+        type: 'yesno'
+      }
+    ];
+
+    function renderStep(index) {
+      const container = document.getElementById('stepsContainer');
+      const step = steps[index];
+      const progress = Math.round(((index) / totalSteps) * 100);
+
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('progressText').textContent = progress + '%';
+
+      let content = '';
+
+      if (step.type === 'text') {
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm" style="color: ${config.muted_color}">${step.subtitle}</p>
+            </div>
+            <input type="text" id="inputField" placeholder="${step.placeholder}" 
+              class="w-full p-4 rounded-xl border-2 border-yellow-500/20 text-lg text-center font-bold" 
+              style="background: rgba(255,255,255,0.03); color: ${config.text_color}"
+              value="${answers[step.id] || ''}" />
+            <button onclick="submitText('${step.id}')" 
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              التالي ←
+            </button>
+          </div>`;
+      }
+
+      else if (step.type === 'select') {
+        const optionsHtml = step.options.map((opt, i) => `
+          <button onclick="selectOption('${step.id}', '${opt}', this)" 
+            class="option-btn w-full p-4 rounded-xl text-right flex items-center gap-3 ${answers[step.id] === opt ? 'selected' : ''}"
+            style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+              style="background: ${config.accent_color}20; color: ${config.accent_color}">${i + 1}</span>
+            <span class="font-medium">${opt}</span>
+          </button>
+        `).join('');
+
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm" style="color: ${config.muted_color}">${step.subtitle}</p>
+            </div>
+            <div class="space-y-3" id="optionsContainer">${optionsHtml}</div>
+            <button onclick="nextStep()" id="nextBtn"
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 ${!answers[step.id] ? 'opacity-40 pointer-events-none' : ''}"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              التالي ←
+            </button>
+          </div>`;
+      }
+
+      else if (step.type === 'multi') {
+        const selected = answers[step.id] || [];
+        const optionsHtml = step.options.map((opt, i) => `
+          <button onclick="toggleMulti('${step.id}', '${opt}', this)" 
+            class="option-btn w-full p-4 rounded-xl text-right flex items-center gap-3 ${selected.includes(opt) ? 'selected' : ''}"
+            style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0"
+              style="background: ${config.accent_color}20; color: ${config.accent_color}">
+              ${selected.includes(opt) ? '✓' : (i + 1)}
+            </span>
+            <span class="font-medium">${opt}</span>
+          </button>
+        `).join('');
+
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm" style="color: ${config.muted_color}">${step.subtitle}</p>
+              <p class="text-xs mt-1" style="color: ${config.muted_color}">يمكنك اختيار أكثر من مهارة</p>
+            </div>
+            <div class="space-y-3" id="optionsContainer">${optionsHtml}</div>
+            <button onclick="nextStep()" id="nextBtn"
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 ${selected.length === 0 ? 'opacity-40 pointer-events-none' : ''}"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              التالي ←
+            </button>
+          </div>`;
+      }
+
+      else if (step.type === 'experience') {
+        const exp = answers[step.id] || {};
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm" style="color: ${config.muted_color}">${step.subtitle}</p>
+            </div>
+            <div class="space-y-4">
+              <div class="flex gap-3">
+                <button onclick="setExpType('sales', this)" 
+                  class="option-btn flex-1 p-4 rounded-xl text-center font-medium ${exp.type === 'sales' ? 'selected' : ''}"
+                  style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                  تجربة مبيعات 💼
+                </button>
+                <button onclick="setExpType('hiring', this)" 
+                  class="option-btn flex-1 p-4 rounded-xl text-center font-medium ${exp.type === 'hiring' ? 'selected' : ''}"
+                  style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                  تجربة توظيف 🏢
+                </button>
+              </div>
+              <button onclick="setExpType('none', this)" 
+                class="option-btn w-full p-4 rounded-xl text-center font-medium ${exp.type === 'none' ? 'selected' : ''}"
+                style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                لا يوجد تجربة سابقة 🆕
+              </button>
+              <div id="expDetail" class="${!exp.type || exp.type === 'none' ? 'hidden' : ''}">
+                <label class="block text-sm font-medium mb-2" style="color: ${config.muted_color}">أخبرنا عن تجربتك</label>
+                <textarea id="expText" rows="4" placeholder="اكتب عن تجربتك هنا..."
+                  class="w-full p-4 rounded-xl border-2 border-yellow-500/20 resize-none text-sm"
+                  style="background: rgba(255,255,255,0.03); color: ${config.text_color}">${exp.detail || ''}</textarea>
+              </div>
+            </div>
+            <button onclick="submitExperience()" id="nextBtn"
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 ${!exp.type ? 'opacity-40 pointer-events-none' : ''}"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              التالي ←
+            </button>
+          </div>`;
+      }
+
+      else if (step.type === 'binary') {
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm" style="color: ${config.muted_color}">${step.subtitle}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <button onclick="selectBinary('${step.id}', '${step.optionA.value}', this)" 
+                class="option-btn p-6 rounded-xl text-center ${answers[step.id] === step.optionA.value ? 'selected' : ''}"
+                style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                <div class="text-3xl mb-3">🍀</div>
+                <div class="font-bold text-sm">${step.optionA.text}</div>
+              </button>
+              <button onclick="selectBinary('${step.id}', '${step.optionB.value}', this)" 
+                class="option-btn p-6 rounded-xl text-center ${answers[step.id] === step.optionB.value ? 'selected' : ''}"
+                style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                <div class="text-3xl mb-3">🚀</div>
+                <div class="font-bold text-sm">${step.optionB.text}</div>
+              </button>
+            </div>
+            <button onclick="nextStep()" id="nextBtn"
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 ${!answers[step.id] ? 'opacity-40 pointer-events-none' : ''}"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              التالي ←
+            </button>
+          </div>`;
+      }
+
+      else if (step.type === 'yesno') {
+        content = `
+          <div class="step-card rounded-2xl p-6 border border-yellow-500/10" style="background: ${config.card_color}">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-black mb-2" style="color: ${config.accent_color}">${step.title}</h2>
+              <p class="text-sm leading-relaxed" style="color: ${config.muted_color}">${step.subtitle}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <button onclick="selectYesNo('${step.id}', 'yes', this)" 
+                class="option-btn p-6 rounded-xl text-center ${answers[step.id] === 'yes' ? 'selected' : ''}"
+                style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                <div class="text-4xl mb-3">✅</div>
+                <div class="font-bold">نعم</div>
+              </button>
+              <button onclick="selectYesNo('${step.id}', 'no', this)" 
+                class="option-btn p-6 rounded-xl text-center ${answers[step.id] === 'no' ? 'selected' : ''}"
+                style="background: rgba(255,255,255,0.03); color: ${config.text_color}">
+                <div class="text-4xl mb-3">❌</div>
+                <div class="font-bold">لا</div>
+              </button>
+            </div>
+            <button onclick="nextStep()" id="nextBtn"
+              class="w-full mt-5 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 ${!answers[step.id] ? 'opacity-40 pointer-events-none' : ''}"
+              style="background: linear-gradient(135deg, ${config.accent_color}, #ca8a04); color: #000">
+              ${index === steps.length - 1 ? 'عرض النتيجة 🎉' : 'التالي ←'}
+            </button>
+          </div>`;
+      }
+
+      container.innerHTML = content;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function submitText(id) {
+      const val = document.getElementById('inputField').value.trim();
+      if (!val) return;
+      answers[id] = val;
+      nextStep();
+    }
+
+    function selectOption(id, value, el) {
+      answers[id] = value;
+      document.querySelectorAll('#optionsContainer .option-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      const btn = document.getElementById('nextBtn');
+      if (btn) { btn.classList.remove('opacity-40', 'pointer-events-none'); }
+    }
+
+    function toggleMulti(id, value, el) {
+      if (!answers[id]) answers[id] = [];
+      const idx = answers[id].indexOf(value);
+      if (idx > -1) {
+        answers[id].splice(idx, 1);
+        el.classList.remove('selected');
+        const numSpan = el.querySelector('span');
+        numSpan.textContent = Array.from(document.querySelectorAll('#optionsContainer .option-btn')).indexOf(el) + 1;
+      } else {
+        answers[id].push(value);
+        el.classList.add('selected');
+        const numSpan = el.querySelector('span');
+        numSpan.textContent = '✓';
+      }
+      const btn = document.getElementById('nextBtn');
+      if (btn) {
+        if (answers[id].length > 0) btn.classList.remove('opacity-40', 'pointer-events-none');
+        else btn.classList.add('opacity-40', 'pointer-events-none');
+      }
+    }
+
+    function setExpType(type, el) {
+      if (!answers['experience']) answers['experience'] = {};
+      answers['experience'].type = type;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      const detail = document.getElementById('expDetail');
+      if (type === 'none') { detail.classList.add('hidden'); }
+      else { detail.classList.remove('hidden'); }
+      const btn = document.getElementById('nextBtn');
+      if (btn) btn.classList.remove('opacity-40', 'pointer-events-none');
+    }
+
+    function submitExperience() {
+      if (!answers['experience'] || !answers['experience'].type) return;
+      const textarea = document.getElementById('expText');
+      if (textarea) answers['experience'].detail = textarea.value;
+      nextStep();
+    }
+
+    function selectBinary(id, value, el) {
+      answers[id] = value;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      const btn = document.getElementById('nextBtn');
+      if (btn) btn.classList.remove('opacity-40', 'pointer-events-none');
+    }
+
+    function selectYesNo(id, value, el) {
+      answers[id] = value;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      const btn = document.getElementById('nextBtn');
+      if (btn) btn.classList.remove('opacity-40', 'pointer-events-none');
+    }
+
+    function nextStep() {
+      currentStep++;
+      if (currentStep >= steps.length) {
+        showResults();
+      } else {
+        renderStep(currentStep);
+      }
+    }
+
+    function calculateScore() {
+      let score = 0;
+      // Luck vs Ambition
+      if (answers['luck_or_ambition'] === 'ambition') score += 1;
+      else if (answers['luck_or_ambition'] === 'luck') score -= 1;
+      // Patience
+      if (answers['patience'] === 'yes') score += 1;
+      else score -= 1;
+      // Invite
+      if (answers['invite'] === 'yes') score += 1;
+      else score -= 1;
+      return score;
+    }
+
+    function showResults() {
+      const score = calculateScore();
+      const passed = score > 0;
+      const maxScore = 3;
+      const progress = 100;
+
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('progressText').textContent = '100%';
+
+      const name = answers['name'] || 'المشترك';
+      const field = answers['field'] || '';
+      const skills = answers['skills'] || [];
+
+      const fieldEmojis = {
+        'التقنية والبرمجة': '💻',
+        'التسويق الرقمي': '📱',
+        'التجارة الإلكترونية': '🛒',
+        'التصميم والإبداع': '🎨',
+        'ريادة الأعمال': '🚀',
+        'المبيعات والتفاوض': '🤝'
+      };
+      const fieldEmoji = fieldEmojis[field] || '⚡';
+
+      const whatsappNum = config.whatsapp_number || defaultConfig.whatsapp_number;
+      const resultText = passed ? 'ناجح ✅' : 'راسب ❌';
+      const whatsappMsg = encodeURIComponent(
+        `🎮 نتيجة لعبة البداية - كوماند هاب\n\n👤 الاسم: ${name}\n📊 النتيجة: ${resultText}\n⭐ النقاط: ${score}/${maxScore}\n🎯 المجال: ${field}\n💪 المهارات: ${skills.join('، ')}`
+      );
+      const whatsappLink = `https://wa.me/${whatsappNum}?text=${whatsappMsg}`;
+
+      const container = document.getElementById('stepsContainer');
+      container.innerHTML = `
+        <div class="step-card rounded-2xl p-6 border border-yellow-500/10 text-center relative overflow-hidden" style="background: ${config.card_color}">
+          
+          <!-- Confetti -->
+          ${passed ? `
+          <div id="confettiBox" class="absolute inset-0 pointer-events-none">
+            ${Array.from({length: 20}, (_, i) => {
+              const colors = ['#eab308','#22c55e','#3b82f6','#ef4444','#a855f7','#f97316'];
+              const c = colors[i % colors.length];
+              const left = Math.random() * 100;
+              const delay = Math.random() * 1;
+              const size = 6 + Math.random() * 8;
+              return `<div class="confetti-piece" style="background:${c};left:${left}%;top:60%;width:${size}px;height:${size}px;animation-delay:${delay}s;"></div>`;
+            }).join('')}
+          </div>` : ''}
+
+          <!-- Avatar Badge -->
+          <div class="relative inline-block mb-4">
+            <div class="badge w-28 h-28 mx-auto rounded-full flex items-center justify-center animate-glow">
+              <div class="hex-avatar w-24 h-24 flex items-center justify-center text-5xl" 
+                style="background: linear-gradient(135deg, ${passed ? '#166534' : '#7f1d1d'}, ${passed ? '#14532d' : '#450a0a'})">
+                ${passed ? '🏆' : '💔'}
+              </div>
+            </div>
+            <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold"
+              style="background: ${passed ? '#22c55e' : '#ef4444'}; color: #000">
+              ${passed ? 'ناجح' : 'راسب'}
+            </div>
+          </div>
+
+          <h2 class="text-2xl font-black mb-1" style="color: ${config.text_color}">${name}</h2>
+          <p class="text-sm mb-5" style="color: ${config.muted_color}">مشترك كوماند هاب ديف ${fieldEmoji}</p>
+
+          <!-- Score Display -->
+          <div class="rounded-xl p-4 mb-5" style="background: rgba(255,255,255,0.03); border: 1px solid ${passed ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}">
+            <div class="text-4xl font-black mb-1" style="color: ${passed ? '#22c55e' : '#ef4444'}">${score} / ${maxScore}</div>
+            <div class="text-xs" style="color: ${config.muted_color}">النقاط المكتسبة</div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-2 gap-3 mb-5 text-right">
+            <div class="rounded-xl p-3" style="background: rgba(255,255,255,0.03)">
+              <div class="text-xs mb-1" style="color: ${config.muted_color}">المجال</div>
+              <div class="text-sm font-bold" style="color: ${config.text_color}">${field}</div>
+            </div>
+            <div class="rounded-xl p-3" style="background: rgba(255,255,255,0.03)">
+              <div class="text-xs mb-1" style="color: ${config.muted_color}">التحديات</div>
+              <div class="text-sm font-bold" style="color: ${config.text_color}">${answers['challenges'] || '-'}</div>
+            </div>
+            <div class="rounded-xl p-3" style="background: rgba(255,255,255,0.03)">
+              <div class="text-xs mb-1" style="color: ${config.muted_color}">الألغاز</div>
+              <div class="text-sm font-bold" style="color: ${config.text_color}">${answers['puzzles'] || '-'}</div>
+            </div>
+            <div class="rounded-xl p-3" style="background: rgba(255,255,255,0.03)">
+              <div class="text-xs mb-1" style="color: ${config.muted_color}">المسابقات</div>
+              <div class="text-sm font-bold" style="color: ${config.text_color}">${answers['competitions'] || '-'}</div>
+            </div>
+          </div>
+
+          <!-- Skills -->
+          <div class="mb-5">
+            <div class="text-xs mb-2 text-right" style="color: ${config.muted_color}">المهارات</div>
+            <div class="flex flex-wrap gap-2 justify-center">
+              ${skills.map(s => `<span class="px-3 py-1 rounded-full text-xs font-medium" style="background: ${config.accent_color}20; color: ${config.accent_color}">${s}</span>`).join('')}
+            </div>
+          </div>
+
+          <!-- Result Message -->
+          <div class="rounded-xl p-4 mb-5" style="background: ${passed ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; border: 1px solid ${passed ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}">
+            <p class="text-sm font-medium leading-relaxed" style="color: ${config.text_color}">
+              ${passed 
+                ? '🎉 مبارك! لقد أثبتّ أنك تملك العقلية الصحيحة للنجاح في كوماند هاب. الطموح والصبر والتعاون هم مفاتيح رحلتك القادمة!'
+                : '💡 لا بأس! النجاح الحقيقي لا يعتمد على الحظ بل على الطموح والمثابرة. راجع إجاباتك وحاول مرة أخرى!'}
+            </p>
+          </div>
+
+          <!-- WhatsApp Button -->
+          <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer"
+            class="block w-full py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 text-center mb-3"
+            style="background: #25D366; color: #fff;">
+            📲 أبلغ النتيجة عبر واتساب
+          </a>
+
+          <!-- Retry Button -->
+          <button onclick="resetGame()" 
+            class="w-full py-3 rounded-xl font-medium text-sm transition-all hover:scale-[1.02] border"
+            style="border-color: ${config.accent_color}40; color: ${config.accent_color}; background: transparent;">
+            🔄 إعادة اللعبة من البداية
+          </button>
+        </div>
+      `;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetGame() {
+      currentStep = 0;
+      answers = {};
+      hiddenScore = 0;
+      renderStep(0);
+    }
+
+    // Element SDK
+
+    // Start
+    renderStep(0);
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dfefbd8241778a6',t:'MTc3NDExNzM2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
