@@ -120,7 +120,16 @@ let state = {
     description: "Girişimciler ve şirketler için açık networking etkinliği.",
     reward: "Connections",
     location: "Online",
-     link: " run-from-party.html"
+     link: "run-from-party.html"
+  },
+    { 
+    name: "سوق التداول",
+    date: "2026-03-01",
+    reg: "open",
+    description: "Girişimciler ve şirketler için açık networking etkinliği.",
+    reward: "Connections",
+    location: "Online",
+     link: "trading-game.html"
   },
 ],
 
