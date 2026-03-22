@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Hub</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 0 60px rgba(212, 175, 55, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.5), 0 0 80px rgba(212, 175, 55, 0.2); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scale-in {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    @keyframes count-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes slide-in-right {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slide-in-left {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes glow-line {
+      0% { width: 0; opacity: 0; }
+      50% { opacity: 1; }
+      100% { width: 120px; opacity: 0.7; }
+    }
+
+    @keyframes rocket-flame {
+      0%, 100% { opacity: 0.6; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.3); }
+    }
+html, body {
+  overflow: hidden;
+}
+
+#app-wrapper {
+    transform: translateX(10%) scale(0.85);
+  transform-origin: top center;
+  width: 118%;
+  height: 118%;
+}
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-pulse-gold { animation: pulse-gold 3s ease-in-out infinite; }
+    .animate-shimmer {
+      background-size: 200% auto;
+      animation: shimmer 3s linear infinite;
+    }
+    .animate-fade-up { animation: fade-up 1s ease-out forwards; }
+    .animate-scale-in { animation: scale-in 0.8s ease-out forwards; }
+    .animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+    .animate-twinkle { animation: twinkle 2s ease-in-out infinite; }
+    .animate-count-pulse { animation: count-pulse 2s ease-in-out infinite; }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #f5d773, #d4af37, #b8860b, #d4af37, #f5d773);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    .gold-border {
+      border: 2px solid transparent;
+      background-image: linear-gradient(#0a0a12, #0a0a12), linear-gradient(135deg, #d4af37, #f5d773, #b8860b);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+    }
+
+    .stat-card {
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.08), rgba(10, 10, 18, 0.9));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      transition: all 0.4s ease;
+    }
+    .stat-card:hover {
+      border-color: rgba(212, 175, 55, 0.6);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #d4af37, #b8860b, #d4af37);
+      background-size: 200% auto;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn:hover {
+      background-position: right center;
+      box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+      transform: translateY(-2px);
+    }
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+      animation: shimmer 3s linear infinite;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #d4af37;
+    }
+
+    .ring-decoration {
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      border-radius: 50%;
+      position: absolute;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full" style="font-family: 'Tajawal', sans-serif;">
+<div id="app-wrapper" class="w-full h-full overflow-hidden" style="background: radial-gradient(ellipse at 50% 20%, #12111f 0%, #0a0a12 50%, #050510 100%);">
+   <!-- Particles -->
+   <div id="particles" class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index: 0;"></div><!-- Decorative rings -->
+   <div class="ring-decoration animate-rotate-slow" style="width: 500px; height: 500px; top: -100px; right: -100px; opacity: 0.3;"></div>
+   <div class="ring-decoration" style="width: 300px; height: 300px; bottom: 10%; left: -80px; opacity: 0.2; animation: rotate-slow 30s linear infinite reverse;"></div>
+   <div class="relative flex flex-col items-center justify-center px-3 py-6" style="min-height: 100%; max-width: 427px; margin: 0 auto; z-index: 1;">
+    <!-- Rocket Section -->
+    <div class="animate-scale-in" style="animation-delay: 0.2s; opacity: 0; animation-fill-mode: forwards;">
+     <div class="relative animate-float">
+      <!-- Glow behind rocket -->
+      <div class="absolute inset-0 rounded-full animate-pulse-gold" style="background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); width: 140px; height: 140px; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div><!-- Rocket Icon Container -->
+      <div class="relative rounded-full flex items-center justify-center" style="width: 100px; height: 100px; background: linear-gradient(145deg, rgba(212,175,55,0.15), rgba(10,10,18,0.8)); border: 2px solid rgba(212,175,55,0.4);">
+       <svg width="50" height="50" viewbox="0 0 24 24" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <defs>
+         <lineargradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f5d773" />
+          <stop offset="50%" style="stop-color:#d4af37" />
+          <stop offset="100%" style="stop-color:#b8860b" />
+         </lineargradient>
+        </defs> <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" /> <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" /> <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 3 0 3 0" /> <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-3 0-3" />
+       </svg><!-- Flame effect -->
+       <div class="absolute" style="bottom: -12px; left: 50%; transform: translateX(-50%);">
+        <div style="width: 14px; height: 18px; background: linear-gradient(to bottom, #d4af37, #ff6b00, transparent); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: rocket-flame 0.5s ease-in-out infinite; opacity: 0.7;"></div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Title Section -->
+    <div class="text-center mt-6 mb-3 animate-fade-up" style="animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards;">
+     <h1 id="main-title" class="gold-gradient-text font-black leading-tight mb-2" style="font-size: 1.8rem; letter-spacing: -0.5px;">منتدى كوماند هاب للمحترفين</h1>
+     <div class="flex items-center justify-center gap-2 mb-3">
+      <div style="height: 1px; width: 40px; background: linear-gradient(to left, #d4af37, transparent);"></div><span id="subtitle" class="text-sm tracking-widest font-light" style="color: #d4af37; letter-spacing: 4px;">قريباً</span>
+      <div style="height: 1px; width: 40px; background: linear-gradient(to right, #d4af37, transparent);"></div>
+     </div>
+    </div><!-- Stats Section -->
+    <div class="grid grid-cols-1 gap-3 w-full mt-4 mb-6 px-2">
+     <!-- Stat 1 -->
+     <div class="stat-card rounded-xl p-4 text-center animate-fade-up" style="animation-delay: 0.8s; opacity: 0; animation-fill-mode: forwards;">
+      <div class="flex justify-center mb-2">
+       <i data-lucide="users" style="width: 20px; height: 20px; color: #d4af37;"></i>
+      </div>
+      <div id="stat-subscribers" class="gold-gradient-text font-black animate-count-pulse" style="font-size: 1.4rem; line-height: 1;">
+       5,000
+      </div>
+      <p class="mt-1 text-xs font-light" style="color: rgba(212,175,55,0.7);">مشترك حول العالم</p>
+     </div><!-- Stat 2 -->
+     <div class="stat-card rounded-xl p-4 text-center animate-fade-up" style="animation-delay: 1s; opacity: 0; animation-fill-mode: forwards;">
+      <div class="flex justify-center mb-2">
+       <i data-lucide="trophy" style="width: 20px; height: 20px; color: #d4af37;"></i>
+      </div>
+      <div id="stat-prizes" class="gold-gradient-text font-black animate-count-pulse" style="font-size: 1.4rem; line-height: 1; animation-delay: 0.5s;">
+       1,300
+      </div>
+      <p class="mt-1 text-xs font-light" style="color: rgba(212,175,55,0.7);">جائزة جديدة</p>
+     </div><!-- Stat 3 -->
+     <div class="stat-card rounded-xl p-4 text-center animate-fade-up" style="animation-delay: 1.2s; opacity: 0; animation-fill-mode: forwards;">
+      <div class="flex justify-center mb-2">
+       <i data-lucide="zap" style="width: 20px; height: 20px; color: #d4af37;"></i>
+      </div>
+      <div class="gold-gradient-text font-black animate-count-pulse" style="font-size: 1.4rem; line-height: 1; animation-delay: 1s;">
+       ∞
+      </div>
+      <p class="mt-1 text-xs font-light" style="color: rgba(212,175,55,0.7);">ملايين النقاط</p>
+     </div>
+    </div><!-- CTA Button -->
+    <div class="animate-fade-up w-full px-2" style="animation-delay: 1.5s; opacity: 0; animation-fill-mode: forwards;">
+     <button id="cta-button" class="cta-btn rounded-full w-full py-3 font-bold text-sm tracking-wide" style="color: #0a0a12;" onclick="handleCTA()"> سجّل لتكون جزءاً من المنتدى </button>
+    </div><!-- Success Message (hidden) -->
+    <div id="success-msg" class="mt-4 text-center hidden animate-fade-up w-full px-2" style="animation-delay: 0s;">
+     <div class="gold-border rounded-lg px-4 py-3 inline-block">
+      <p class="font-bold text-xs" style="color: #d4af37;">🎉 شكراً لاهتمامك!</p>
+     </div>
+    </div><!-- Footer -->
+    <div class="mt-6 text-center animate-fade-up" style="animation-delay: 1.8s; opacity: 0; animation-fill-mode: forwards;">
+     <p class="text-xs" style="color: rgba(212,175,55,0.2);">© 2025 Command Hub</p>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Particle system
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle animate-twinkle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 4 + 's';
+        p.style.animationDuration = (2 + Math.random() * 3) + 's';
+        p.style.width = (1 + Math.random() * 3) + 'px';
+        p.style.height = p.style.width;
+        p.style.opacity = 0.1 + Math.random() * 0.5;
+        container.appendChild(p);
+      }
+    }
+    createParticles();
+
+    // CTA handler
+    function handleCTA() {
+      const btn = document.getElementById('cta-button');
+      const msg = document.getElementById('success-msg');
+      btn.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        btn.style.transform = '';
+        msg.classList.remove('hidden');
+        msg.style.opacity = '0';
+        msg.style.animation = 'fade-up 0.6s ease-out forwards';
+      }, 200);
+    }
+
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Element SDK
+    const defaultConfig = {
+      main_title: 'منتدى كوماند هاب للمحترفين',
+      subtitle_text: 'قريباً',
+      subscribers_count: '5,000',
+      prizes_count: '1,300',
+      cta_text: 'سجّل لتكون جزءاً من المنتدى',
+      background_color: '#0a0a12',
+      gold_color: '#d4af37',
+      text_color: '#f5d773',
+      button_text_color: '#0a0a12',
+      accent_color: '#b8860b',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+
+      document.getElementById('main-title').textContent = c.main_title;
+      document.getElementById('subtitle').textContent = c.subtitle_text;
+      document.getElementById('stat-subscribers').textContent = c.subscribers_count;
+      document.getElementById('stat-prizes').textContent = c.prizes_count;
+      document.getElementById('cta-button').textContent = c.cta_text;
+
+      // Font
+      const fontStack = c.font_family + ', Tajawal, sans-serif';
+      document.body.style.fontFamily = fontStack;
+      document.getElementById('main-title').style.fontFamily = fontStack;
+
+      // Font size scaling
+      const base = c.font_size || 16;
+      document.getElementById('main-title').style.fontSize = (base * 2.8 / 16) + 'rem';
+      document.getElementById('subtitle').style.fontSize = (base * 1.125 / 16) + 'rem';
+      document.getElementById('cta-button').style.fontSize = (base * 1.125 / 16) + 'rem';
+
+      // Colors
+      const wrapper = document.getElementById('app-wrapper');
+      wrapper.style.background = `radial-gradient(ellipse at 50% 20%, ${c.background_color}ee 0%, ${c.background_color} 50%, #050510 100%)`;
+
+      document.getElementById('subtitle').style.color = c.gold_color;
+      document.getElementById('cta-button').style.color = c.button_text_color;
+
+      // Stat card icon colors
+      document.querySelectorAll('.stat-card i[data-lucide]').forEach(icon => {
+        icon.style.color = c.gold_color;
+      });
+      document.querySelectorAll('.stat-card p').forEach(p => {
+        p.style.color = c.gold_color + 'b3';
+      });
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        applyConfig(config);
+      },
+      mapToCapabilities: (config) => {
+        const c = { ...defaultConfig, ...config };
+        return {
+          recolorables: [
+            { get: () => c.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+            { get: () => c.gold_color, set: (v) => { config.gold_color = v; window.elementSdk.setConfig({ gold_color: v }); } },
+            { get: () => c.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+            { get: () => c.button_text_color, set: (v) => { config.button_text_color = v; window.elementSdk.setConfig({ button_text_color: v }); } },
+            { get: () => c.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => c.font_family,
+            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => c.font_size,
+            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        };
+      },
+      mapToEditPanelValues: (config) => {
+        const c = { ...defaultConfig, ...config };
+        return new Map([
+          ['main_title', c.main_title],
+          ['subtitle_text', c.subtitle_text],
+          ['subscribers_count', c.subscribers_count],
+          ['prizes_count', c.prizes_count],
+          ['cta_text', c.cta_text]
+        ]);
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e00d6f2c3edb13f',t:'MTc3NDEzNjgyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
