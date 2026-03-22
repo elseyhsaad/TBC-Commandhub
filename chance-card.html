@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كرت الحظ - كوماند هاب</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+* { font-family: 'Tajawal', sans-serif; }
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0) rotateY(0deg); }
+  25% { transform: translateY(-15px) rotateY(5deg); }
+  75% { transform: translateY(-8px) rotateY(-5deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+  50% { box-shadow: 0 0 40px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.3); }
+}
+
+@keyframes shakeCard {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes flipCard {
+  0% { transform: perspective(600px) rotateY(0deg); }
+  50% { transform: perspective(600px) rotateY(90deg); }
+  100% { transform: perspective(600px) rotateY(0deg); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countdown {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes revealSpin {
+  0% { transform: rotateY(0deg) scale(0.5); opacity: 0; }
+  50% { transform: rotateY(180deg) scale(1.2); }
+  100% { transform: rotateY(360deg) scale(1); opacity: 1; }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(300px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.float-card { animation: floatCard 3s ease-in-out infinite; }
+.pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+.shake-card { animation: shakeCard 0.5s ease-in-out; }
+.flip-card { animation: flipCard 0.8s ease-in-out; }
+.slide-up { animation: slideUp 0.6s ease-out forwards; }
+.reveal-spin { animation: revealSpin 1.5s ease-out forwards; }
+
+.progress-active { animation: progressPulse 1s ease-in-out infinite; }
+
+.sparkle-effect::after {
+  content: '✦';
+  position: absolute;
+  animation: sparkle 1.5s ease-in-out infinite;
+  color: #ffd700;
+  font-size: 20px;
+}
+
+.card-container {
+  perspective: 1000px;
+}
+
+.game-card {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.timer-bar {
+  transition: width 0.1s linear;
+}
+
+.stage-dot {
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245,158,11,0.4);
+}
+
+.option-btn {
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.option-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.option-btn.correct { background: linear-gradient(135deg, #10b981, #059669) !important; }
+.option-btn.wrong { background: linear-gradient(135deg, #ef4444, #dc2626) !important; }
+
+.memory-card-inner {
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+.memory-card-inner.flipped { transform: rotateY(180deg); }
+.memory-card-front, .memory-card-back {
+  backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+.memory-card-front { transform: rotateY(180deg); }
+
+.review-text {
+  overflow: hidden;
+  white-space: nowrap;
+  border-left: 3px solid #ffd700;
+  animation: typewriter 3s steps(40) forwards, blink 0.7s step-end infinite;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #1a1a2e; }
+::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 3px; }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);"><!-- Particles Background -->
+   <div id="particles" class="fixed inset-0 pointer-events-none overflow-hidden" style="z-index:0;"></div><!-- Welcome Screen -->
+   <div id="screen-welcome" class="relative flex flex-col items-center justify-center min-h-full px-4 py-8" style="z-index:1;">
+    <div class="text-center max-w-lg w-full slide-up">
+     <div class="mb-6">
+      <div class="inline-block p-6 rounded-3xl float-card pulse-glow" style="background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);"><span class="text-6xl">🃏</span>
+      </div>
+     </div>
+     <h1 id="el-title" class="text-5xl font-black mb-3" style="color: #fbbf24; text-shadow: 0 0 30px rgba(251,191,36,0.5);">كرت الحظ</h1>
+     <p class="text-xl mb-2" style="color: #94a3b8;">مرحباً بك في مجتمع</p>
+     <h2 id="el-community" class="text-3xl font-bold mb-4" style="color: #38bdf8;">كوماند هاب</h2>
+     <div class="flex items-center justify-center gap-2 mb-6"><i data-lucide="users" style="color: #fbbf24; width:20px; height:20px;"></i> <span id="el-members" class="text-lg font-bold" style="color: #e2e8f0;">5,000 عضو</span>
+     </div>
+     <div class="p-4 rounded-2xl mb-6" style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);">
+      <p class="text-sm leading-relaxed" style="color: #cbd5e1;">🎯 أكمل <strong style="color:#fbbf24;">15 مرحلة</strong> مثيرة من التحديات<br>
+        🧠 اختبر ذاكرتك وسرعتك وذكاءك<br>
+        🃏 واحصل على <strong style="color:#fbbf24;">كرت الحظ</strong> الخاص بك!</p>
+     </div><button onclick="startGame()" class="btn-primary text-xl font-bold py-4 px-10 rounded-2xl text-white shadow-lg w-full max-w-xs mx-auto block"> <span class="flex items-center justify-center gap-2"> ابدأ المغامرة <i data-lucide="play" style="width:22px; height:22px;"></i> </span> </button>
+    </div>
+   </div><!-- Game Screen -->
+   <div id="screen-game" class="relative hidden flex-col min-h-full px-4 py-6" style="z-index:1;"><!-- Top Bar -->
+    <div class="max-w-lg mx-auto w-full mb-4">
+     <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2"><span class="text-2xl">🃏</span> <span class="font-bold" style="color:#fbbf24;">المرحلة <span id="stage-num">1</span>/15</span>
+      </div>
+      <div class="flex items-center gap-2"><i data-lucide="star" style="color:#fbbf24; width:18px; height:18px;"></i> <span id="score-display" class="font-bold" style="color:#e2e8f0;">0</span>
+      </div>
+     </div><!-- Progress Bar -->
+     <div class="w-full h-3 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
+      <div id="progress-bar" class="h-full rounded-full transition-all duration-500" style="background: linear-gradient(90deg, #f59e0b, #fbbf24); width: 0%;"></div>
+     </div><!-- Stage Dots -->
+     <div class="flex justify-between mt-2 px-1">
+      <div id="stage-dots" class="flex gap-1 w-full justify-between"></div>
+     </div>
+    </div><!-- Timer -->
+    <div id="timer-container" class="max-w-lg mx-auto w-full mb-4 hidden">
+     <div class="flex items-center gap-2 mb-1"><i data-lucide="clock" style="color:#ef4444; width:16px; height:16px;"></i> <span id="timer-text" class="text-sm font-bold" style="color:#ef4444;">الوقت المتبقي</span>
+     </div>
+     <div class="w-full h-2 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1);">
+      <div id="timer-bar" class="timer-bar h-full rounded-full" style="background: linear-gradient(90deg, #ef4444, #f59e0b); width: 100%;"></div>
+     </div>
+    </div><!-- Challenge Area -->
+    <div id="challenge-area" class="max-w-lg mx-auto w-full flex-1"></div>
+   </div><!-- Review Screen -->
+   <div id="screen-review" class="relative hidden flex-col items-center justify-center min-h-full px-4 py-8" style="z-index:1;">
+    <div class="text-center max-w-lg w-full">
+     <div class="mb-6">
+      <div class="inline-block p-5 rounded-full" style="background: rgba(251,191,36,0.15);"><span class="text-5xl">📋</span>
+      </div>
+     </div>
+     <h2 class="text-3xl font-black mb-4" style="color: #fbbf24;">جاري مراجعة النتيجة...</h2>
+     <div class="p-5 rounded-2xl mb-6" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+      <p class="text-lg mb-4" style="color:#94a3b8;">سيتم مراجعة أدائك في جميع المراحل</p>
+      <div id="review-stats" class="space-y-3"></div>
+     </div>
+     <div id="review-progress" class="mb-6">
+      <div class="flex items-center justify-center gap-3 mb-3">
+       <div class="w-8 h-8 rounded-full border-4 border-t-transparent animate-spin" style="border-color: #fbbf24; border-top-color: transparent;"></div><span id="review-status" class="font-bold" style="color:#e2e8f0;">جاري التحليل...</span>
+      </div>
+      <div id="review-steps" class="space-y-2 text-right"></div>
+     </div>
+    </div>
+   </div><!-- Result Screen -->
+   <div id="screen-result" class="relative hidden flex-col items-center justify-center min-h-full px-4 py-8" style="z-index:1;">
+    <div id="result-content" class="text-center max-w-lg w-full"></div>
+   </div>
+  </div>
+  <script>
+// Game State
+let currentStage = 0;
+let score = 0;
+let totalStages = 15;
+let timerInterval = null;
+let gameData = {};
+let stageResults = [];
+
+// Config
+const defaultConfig = {
+  game_title: 'كرت الحظ',
+  community_name: 'كوماند هاب',
+  members_count: '5,000',
+  background_color: '#0f0f23',
+  surface_color: '#1e1e3f',
+  text_color: '#e2e8f0',
+  primary_color: '#f59e0b',
+  secondary_color: '#38bdf8'
+};
+
+function applyConfig(config) {
+  const t = config.game_title || defaultConfig.game_title;
+  const c = config.community_name || defaultConfig.community_name;
+  const m = config.members_count || defaultConfig.members_count;
+  const bg = config.background_color || defaultConfig.background_color;
+  const sf = config.surface_color || defaultConfig.surface_color;
+  const tx = config.text_color || defaultConfig.text_color;
+  const pr = config.primary_color || defaultConfig.primary_color;
+  const sc = config.secondary_color || defaultConfig.secondary_color;
+
+  const titleEl = document.getElementById('el-title');
+  const commEl = document.getElementById('el-community');
+  const memEl = document.getElementById('el-members');
+  if (titleEl) titleEl.textContent = t;
+  if (commEl) commEl.textContent = c;
+  if (memEl) memEl.textContent = m + ' عضو';
+
+  const app = document.getElementById('app');
+  if (app) app.style.background = `linear-gradient(135deg, ${bg} 0%, ${sf} 50%, ${bg} 100%)`;
+  if (titleEl) titleEl.style.color = pr;
+  if (commEl) commEl.style.color = sc;
+  document.querySelectorAll('[data-text-color]').forEach(el => el.style.color = tx);
+}
+
+
+
+// Particles
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.style.cssText = `position:absolute; width:${Math.random()*4+2}px; height:${Math.random()*4+2}px; background:rgba(251,191,36,${Math.random()*0.3+0.1}); border-radius:50%; left:${Math.random()*100}%; top:${Math.random()*100}%; animation: floatCard ${Math.random()*5+3}s ease-in-out infinite; animation-delay: ${Math.random()*3}s;`;
+    container.appendChild(p);
+  }
+}
+
+// Utility
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+function pick(arr, n) { return shuffle([...arr]).slice(0, n); }
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function showScreen(id) {
+  ['screen-welcome','screen-game','screen-review','screen-result'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.add('hidden');
+    el.classList.remove('flex');
+  });
+  const target = document.getElementById(id);
+  target.classList.remove('hidden');
+  target.classList.add('flex');
+}
+
+function updateProgress() {
+  document.getElementById('stage-num').textContent = currentStage + 1;
+  document.getElementById('progress-bar').style.width = ((currentStage) / totalStages * 100) + '%';
+  document.getElementById('score-display').textContent = score;
+  renderDots();
+}
+
+function renderDots() {
+  const dotsContainer = document.getElementById('stage-dots');
+  dotsContainer.innerHTML = '';
+  for (let i = 0; i < totalStages; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'stage-dot rounded-full';
+    dot.style.cssText = 'width:12px; height:12px;';
+    if (i < currentStage) {
+      dot.style.background = stageResults[i] ? '#10b981' : '#ef4444';
+    } else if (i === currentStage) {
+      dot.style.background = '#fbbf24';
+      dot.classList.add('progress-active');
+    } else {
+      dot.style.background = 'rgba(255,255,255,0.15)';
+    }
+    dotsContainer.appendChild(dot);
+  }
+}
+
+// Timer system
+function startTimer(seconds, onEnd) {
+  clearInterval(timerInterval);
+  const timerCont = document.getElementById('timer-container');
+  const timerBar = document.getElementById('timer-bar');
+  timerCont.classList.remove('hidden');
+  let remaining = seconds * 10;
+  const total = seconds * 10;
+  timerBar.style.width = '100%';
+  timerInterval = setInterval(() => {
+    remaining--;
+    timerBar.style.width = (remaining / total * 100) + '%';
+    if (remaining <= total * 0.3) {
+      timerBar.style.background = 'linear-gradient(90deg, #ef4444, #ef4444)';
+    }
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      onEnd();
+    }
+  }, 100);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-container').classList.add('hidden');
+}
+
+// Challenge generators - each returns HTML and setup function
+const challengeTypes = [
+  generateQuizChallenge,
+  generateMemoryChallenge,
+  generateSpeedTapChallenge,
+  generateSequenceChallenge,
+  generateMathChallenge,
+  generateWordScrambleChallenge,
+  generateReactionChallenge,
+  generatePatternChallenge,
+  generateColorMatchChallenge,
+  generateEstimateChallenge,
+  generateOddOneOutChallenge,
+  generateRapidFireChallenge,
+  generateSortChallenge,
+  generateTrueFalseChallenge,
+  generateCardFlipChallenge
+];
+
+// Quiz pools (randomized each game)
+const quizPools = {
+  tech: [
+    { q: 'ما هي لغة البرمجة الأكثر استخداماً في تطوير الويب؟', opts: ['JavaScript', 'Python', 'Java', 'C++'], a: 0 },
+    { q: 'ما هو اختصار HTML؟', opts: ['لغة ترميز النص التشعبي', 'لغة نقل النص', 'لغة المعالجة', 'لغة التصميم'], a: 0 },
+    { q: 'أي من هذه ليست قاعدة بيانات؟', opts: ['Photoshop', 'MySQL', 'MongoDB', 'PostgreSQL'], a: 0 },
+    { q: 'ما هو Git؟', opts: ['نظام تحكم بالإصدارات', 'لغة برمجة', 'متصفح ويب', 'نظام تشغيل'], a: 0 },
+    { q: 'ما هو CSS؟', opts: ['لغة تنسيق صفحات الويب', 'لغة برمجة', 'قاعدة بيانات', 'نظام تشغيل'], a: 0 },
+    { q: 'كم بت في البايت الواحد؟', opts: ['8', '4', '16', '32'], a: 0 },
+  ],
+  general: [
+    { q: 'ما هو أكبر كوكب في المجموعة الشمسية؟', opts: ['المشتري', 'زحل', 'الأرض', 'المريخ'], a: 0 },
+    { q: 'كم عدد أيام السنة الكبيسة؟', opts: ['366', '365', '364', '367'], a: 0 },
+    { q: 'ما هي عاصمة اليابان؟', opts: ['طوكيو', 'كيوتو', 'أوساكا', 'هيروشيما'], a: 0 },
+    { q: 'ما هو العنصر الكيميائي للماء؟', opts: ['H₂O', 'CO₂', 'O₂', 'NaCl'], a: 0 },
+    { q: 'كم عدد قارات العالم؟', opts: ['7', '5', '6', '8'], a: 0 },
+    { q: 'ما هو أسرع حيوان بري؟', opts: ['الفهد', 'الأسد', 'الحصان', 'الغزال'], a: 0 },
+  ],
+  fun: [
+    { q: 'ما هو لون السماء الطبيعي؟', opts: ['أزرق', 'أخضر', 'أحمر', 'بنفسجي'], a: 0 },
+    { q: 'كم عين للعنكبوت عادةً؟', opts: ['8', '6', '4', '2'], a: 0 },
+    { q: 'ما هي أطول سلسلة جبال في العالم؟', opts: ['الأنديز', 'الهيمالايا', 'الألب', 'روكي'], a: 0 },
+    { q: 'ما الحيوان الذي لا يشرب الماء أبداً؟', opts: ['الكنغر الجرذ', 'الجمل', 'الثعبان', 'السلحفاة'], a: 0 },
+    { q: 'كم قلب للأخطبوط؟', opts: ['3', '1', '2', '4'], a: 0 },
+    { q: 'ما أصغر دولة في العالم؟', opts: ['الفاتيكان', 'موناكو', 'سنغافورة', 'مالطا'], a: 0 },
+  ]
+};
+
+const emojis = ['🎮','🚀','⭐','🔥','💎','🎯','🏆','👑','🎪','🎭','🦁','🐉','🌟','🎨','🎵','🎲','🃏','💡','⚡','🌈'];
+const funnyMessages = [
+  'ركّز معي يا بطل! 🧠',
+  'سهلة مره صح؟ 😏',
+  'أنت أسرع من النت عندنا! ⚡',
+  'يا سلااام عليك! 🔥',
+  'كوماند هاب فخور فيك! 👑',
+  'الحظ يحبك اليوم! 🍀',
+  'هذي كانت خدعة بس عديتها! 🎭',
+  'دماغك شغال توربو! 🚀',
+  'ما شاء الله لا قوة إلا بالله! 💪',
+  'كأنك حاسب آلي! 🤖'
+];
+
+function getFunnyMsg() { return funnyMessages[rand(0, funnyMessages.length - 1)]; }
+
+function generateQuizChallenge(stageIndex) {
+  const pools = Object.values(quizPools);
+  const pool = pools[rand(0, pools.length - 1)];
+  const question = pool[rand(0, pool.length - 1)];
+  const shuffledOpts = question.opts.map((o, i) => ({ text: o, isCorrect: i === question.a }));
+  shuffle(shuffledOpts);
+
+  return {
+    title: '🧠 سؤال ذكاء',
+    subtitle: getFunnyMsg(),
+    time: 15,
+    html: `
+      <p class="text-xl font-bold mb-6 leading-relaxed" style="color:#e2e8f0;">${question.q}</p>
+      <div class="grid grid-cols-1 gap-3" id="quiz-options">
+        ${shuffledOpts.map((o, i) => `
+          <button class="option-btn p-4 rounded-xl text-right font-bold text-lg" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" data-correct="${o.isCorrect}" onclick="handleQuizAnswer(this, ${o.isCorrect})">
+            ${o.text}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleQuizAnswer(btn, correct) {
+  stopTimer();
+  const btns = document.querySelectorAll('#quiz-options .option-btn');
+  btns.forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === 'true') b.classList.add('correct');
+    else if (b === btn && !correct) b.classList.add('wrong');
+  });
+  setTimeout(() => completeStage(correct), 1000);
+}
+
+function generateMemoryChallenge() {
+  const cardEmojis = pick(emojis, 4);
+  const showTime = 3000;
+  const grid = shuffle([...cardEmojis, ...cardEmojis]);
+
+  return {
+    title: '🧩 تحدي الذاكرة',
+    subtitle: 'احفظ مواقع الأزواج المتشابهة!',
+    time: 25,
+    html: `
+      <div class="text-center mb-4">
+        <p id="mem-status" class="font-bold text-lg" style="color:#fbbf24;">احفظ المواقع... 🧠</p>
+      </div>
+      <div class="grid grid-cols-4 gap-2" id="memory-grid">
+        ${grid.map((emoji, i) => `
+          <div class="card-container cursor-pointer" data-idx="${i}" data-emoji="${emoji}" onclick="handleMemoryClick(this)">
+            <div class="memory-card-inner w-full rounded-xl flipped" style="height:70px; position:relative;" data-idx="${i}">
+              <div class="memory-card-front flex items-center justify-center text-2xl rounded-xl" style="background:linear-gradient(135deg, #1e1e3f, #2a2a5f);">${emoji}</div>
+              <div class="memory-card-back flex items-center justify-center text-2xl rounded-xl" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🃏</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false),
+    setup: () => {
+      gameData.memMatched = 0;
+      gameData.memFlipped = [];
+      gameData.memLocked = true;
+      setTimeout(() => {
+        document.querySelectorAll('.memory-card-inner').forEach(c => c.classList.remove('flipped'));
+        document.getElementById('mem-status').textContent = 'اقلب الكروت وابحث عن الأزواج! 🔍';
+        gameData.memLocked = false;
+      }, showTime);
+    }
+  };
+}
+
+function handleMemoryClick(el) {
+  if (gameData.memLocked) return;
+  const inner = el.querySelector('.memory-card-inner');
+  if (inner.classList.contains('flipped')) return;
+  inner.classList.add('flipped');
+  gameData.memFlipped.push(el);
+
+  if (gameData.memFlipped.length === 2) {
+    gameData.memLocked = true;
+    const [a, b] = gameData.memFlipped;
+    if (a.dataset.emoji === b.dataset.emoji) {
+      gameData.memMatched++;
+      gameData.memFlipped = [];
+      gameData.memLocked = false;
+      if (gameData.memMatched >= 4) {
+        stopTimer();
+        setTimeout(() => completeStage(true), 500);
+      }
+    } else {
+      setTimeout(() => {
+        a.querySelector('.memory-card-inner').classList.remove('flipped');
+        b.querySelector('.memory-card-inner').classList.remove('flipped');
+        gameData.memFlipped = [];
+        gameData.memLocked = false;
+      }, 800);
+    }
+  }
+}
+
+function generateSpeedTapChallenge() {
+  const target = rand(15, 20);
+  return {
+    title: '⚡ تحدي السرعة',
+    subtitle: `اضغط ${target} مرة بأسرع ما يمكنك!`,
+    time: 8,
+    html: `
+      <div class="text-center">
+        <p class="text-6xl font-black mb-4" style="color:#fbbf24;" id="tap-count">0</p>
+        <p class="mb-4 font-bold" style="color:#94a3b8;">الهدف: ${target} ضغطة</p>
+        <button id="tap-btn" class="w-40 h-40 rounded-full text-4xl font-black mx-auto block active:scale-90 transition-transform" style="background:linear-gradient(135deg, #f59e0b, #d97706); color:white; box-shadow: 0 8px 30px rgba(245,158,11,0.4);">
+          👆
+        </button>
+      </div>
+    `,
+    onTimeout: () => {
+      const count = parseInt(document.getElementById('tap-count').textContent);
+      completeStage(count >= target);
+    },
+    setup: () => {
+      gameData.tapTarget = target;
+      gameData.tapCount = 0;
+      gameData.tapComplete = false;
+      const btn = document.getElementById('tap-btn');
+      btn.onclick = handleTap;
+    }
+  };
+}
+
+function handleTap() {
+  if (gameData.tapComplete) return;
+  gameData.tapCount++;
+  const el = document.getElementById('tap-count');
+  el.textContent = gameData.tapCount;
+  el.style.transform = 'scale(1.3)';
+  setTimeout(() => el.style.transform = 'scale(1)', 100);
+  if (gameData.tapCount >= gameData.tapTarget) {
+    gameData.tapComplete = true;
+    document.getElementById('tap-btn').disabled = true;
+    stopTimer();
+    setTimeout(() => completeStage(true), 300);
+  }
+}
+
+function generateSequenceChallenge() {
+  const len = rand(4, 6);
+  const seq = Array.from({ length: len }, () => rand(1, 4));
+  const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b'];
+  const names = ['أحمر', 'أزرق', 'أخضر', 'أصفر'];
+
+  return {
+    title: '🎵 تحدي التسلسل',
+    subtitle: 'احفظ الترتيب وأعد تكراره!',
+    time: 20,
+    html: `
+      <div class="text-center mb-4">
+        <p id="seq-status" class="font-bold text-lg" style="color:#fbbf24;">شاهد التسلسل... 👀</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto" id="seq-grid">
+        ${colors.map((c, i) => `
+          <button class="rounded-xl p-6 text-lg font-bold opacity-50 transition-all" style="background:${c}; color:white;" id="seq-btn-${i+1}" onclick="handleSeqClick(${i+1})" disabled>
+            ${names[i]}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false),
+    setup: () => {
+      gameData.seq = seq;
+      gameData.seqIdx = 0;
+      gameData.seqInput = [];
+      // Play sequence
+      let delay = 500;
+      seq.forEach((s, i) => {
+        setTimeout(() => {
+          const btn = document.getElementById(`seq-btn-${s}`);
+          btn.style.opacity = '1';
+          btn.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            btn.style.opacity = '0.5';
+            btn.style.transform = 'scale(1)';
+          }, 400);
+        }, delay + i * 600);
+      });
+      setTimeout(() => {
+        document.getElementById('seq-status').textContent = 'دورك! أعد التسلسل 🎯';
+        for (let i = 1; i <= 4; i++) {
+          const btn = document.getElementById(`seq-btn-${i}`);
+          btn.disabled = false;
+          btn.style.opacity = '0.8';
+        }
+      }, delay + seq.length * 600 + 300);
+    }
+  };
+}
+
+function handleSeqClick(n) {
+  gameData.seqInput.push(n);
+  const idx = gameData.seqInput.length - 1;
+  const btn = document.getElementById(`seq-btn-${n}`);
+  btn.style.opacity = '1';
+  setTimeout(() => btn.style.opacity = '0.8', 200);
+
+  if (gameData.seq[idx] !== n) {
+    stopTimer();
+    setTimeout(() => completeStage(false), 500);
+    return;
+  }
+  if (gameData.seqInput.length === gameData.seq.length) {
+    stopTimer();
+    setTimeout(() => completeStage(true), 500);
+  }
+}
+
+function generateMathChallenge() {
+  const ops = ['+', '-', '×'];
+  const op = ops[rand(0, 2)];
+  let a, b, answer;
+  if (op === '+') { a = rand(10, 50); b = rand(10, 50); answer = a + b; }
+  else if (op === '-') { a = rand(30, 80); b = rand(10, a); answer = a - b; }
+  else { a = rand(3, 12); b = rand(3, 12); answer = a * b; }
+
+  const wrongAnswers = new Set();
+  while (wrongAnswers.size < 3) {
+    const w = answer + rand(-10, 10);
+    if (w !== answer && w > 0) wrongAnswers.add(w);
+  }
+  const opts = shuffle([answer, ...wrongAnswers]);
+
+  return {
+    title: '🔢 تحدي الرياضيات',
+    subtitle: 'احسب بسرعة! ⏱️',
+    time: 10,
+    html: `
+      <div class="text-center mb-6">
+        <p class="text-5xl font-black mb-2" style="color:#fbbf24;">${a} ${op} ${b} = ?</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="math-options">
+        ${opts.map(o => `
+          <button class="option-btn p-4 rounded-xl text-center font-bold text-2xl" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" onclick="handleMathAnswer(this, ${o === answer})">
+            ${o}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleMathAnswer(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.querySelectorAll('#math-options .option-btn').forEach(b => b.disabled = true);
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateWordScrambleChallenge() {
+  const words = [
+    { word: 'برمجة', hint: 'كتابة الأكواد' },
+    { word: 'تصميم', hint: 'إنشاء واجهات' },
+    { word: 'مجتمع', hint: 'مجموعة أشخاص' },
+    { word: 'تقنية', hint: 'عالم التكنولوجيا' },
+    { word: 'ابداع', hint: 'التفكير خارج الصندوق' },
+    { word: 'نجاح', hint: 'تحقيق الأهداف' },
+  ];
+  const { word, hint } = words[rand(0, words.length - 1)];
+  const scrambled = shuffle(word.split('')).join(' ');
+
+  return {
+    title: '🔤 تحدي الكلمات',
+    subtitle: 'رتب الحروف لتكوين الكلمة!',
+    time: 15,
+    html: `
+      <div class="text-center mb-4">
+        <p class="text-3xl font-black mb-3 tracking-widest" style="color:#fbbf24;">${scrambled}</p>
+        <p class="text-sm mb-4" style="color:#94a3b8;">تلميح: ${hint}</p>
+        <div class="flex gap-2 justify-center mb-4">
+          ${word.split('').map((_, i) => `<input type="text" maxlength="1" class="w-12 h-12 text-center text-xl font-bold rounded-lg word-input" style="background:rgba(255,255,255,0.1); color:#e2e8f0; border:2px solid rgba(251,191,36,0.3);" data-idx="${i}" oninput="handleWordInput(this, ${i}, ${word.length})">`).join('')}
+        </div>
+        <button onclick="checkWord('${word}')" class="btn-primary py-3 px-8 rounded-xl font-bold text-white">تحقق ✓</button>
+      </div>
+    `,
+    onTimeout: () => completeStage(false),
+    setup: () => { setTimeout(() => document.querySelector('.word-input')?.focus(), 100); }
+  };
+}
+
+function handleWordInput(el, idx, total) {
+  if (el.value && idx < total - 1) {
+    const next = document.querySelector(`.word-input[data-idx="${idx + 1}"]`);
+    if (next) next.focus();
+  }
+}
+
+function checkWord(correct) {
+  const inputs = document.querySelectorAll('.word-input');
+  const answer = Array.from(inputs).map(i => i.value).join('');
+  stopTimer();
+  completeStage(answer === correct);
+}
+
+function generateReactionChallenge() {
+  return {
+    title: '🎯 تحدي ردة الفعل',
+    subtitle: 'اضغط عندما يتحول اللون للأخضر!',
+    time: null,
+    html: `
+      <div class="text-center">
+        <p id="react-msg" class="text-lg font-bold mb-4" style="color:#ef4444;">انتظر... 🔴</p>
+        <button id="react-btn" class="w-48 h-48 rounded-full text-2xl font-bold mx-auto block transition-all" style="background:#ef4444; color:white;" onclick="handleReaction()">
+          انتظر!
+        </button>
+        <p id="react-time" class="mt-4 text-lg font-bold hidden" style="color:#fbbf24;"></p>
+      </div>
+    `,
+    setup: () => {
+      gameData.reactReady = false;
+      gameData.reactStart = 0;
+      const delay = rand(2000, 5000);
+      gameData.reactTimeout = setTimeout(() => {
+        const btn = document.getElementById('react-btn');
+        const msg = document.getElementById('react-msg');
+        btn.style.background = '#10b981';
+        btn.textContent = 'اضغط الآن!';
+        msg.textContent = 'الآن! 🟢';
+        msg.style.color = '#10b981';
+        gameData.reactReady = true;
+        gameData.reactStart = Date.now();
+      }, delay);
+    }
+  };
+}
+
+function handleReaction() {
+  if (!gameData.reactReady) {
+    clearTimeout(gameData.reactTimeout);
+    document.getElementById('react-msg').textContent = 'باكر جداً! 😅';
+    setTimeout(() => completeStage(false), 1000);
+    return;
+  }
+  const time = Date.now() - gameData.reactStart;
+  document.getElementById('react-time').textContent = `${time} ميلي ثانية`;
+  document.getElementById('react-time').classList.remove('hidden');
+  setTimeout(() => completeStage(time < 600), 1000);
+}
+
+function generatePatternChallenge() {
+  const patterns = [
+    { seq: [2, 4, 6, 8], next: 10, display: '2, 4, 6, 8, ?' },
+    { seq: [1, 3, 9, 27], next: 81, display: '1, 3, 9, 27, ?' },
+    { seq: [5, 10, 20, 40], next: 80, display: '5, 10, 20, 40, ?' },
+    { seq: [1, 1, 2, 3, 5], next: 8, display: '1, 1, 2, 3, 5, ?' },
+    { seq: [3, 6, 12, 24], next: 48, display: '3, 6, 12, 24, ?' },
+    { seq: [100, 90, 80, 70], next: 60, display: '100, 90, 80, 70, ?' },
+  ];
+  const p = patterns[rand(0, patterns.length - 1)];
+  const wrongs = new Set();
+  while (wrongs.size < 3) {
+    const w = p.next + rand(-5, 10);
+    if (w !== p.next && w > 0) wrongs.add(w);
+  }
+  const opts = shuffle([p.next, ...wrongs]);
+
+  return {
+    title: '🔍 تحدي الأنماط',
+    subtitle: 'أكمل التسلسل الصحيح!',
+    time: 12,
+    html: `
+      <div class="text-center mb-6">
+        <p class="text-3xl font-black" style="color:#fbbf24;">${p.display}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="pattern-options">
+        ${opts.map(o => `
+          <button class="option-btn p-4 rounded-xl text-center font-bold text-2xl" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" onclick="handlePatternAnswer(this, ${o === p.next})">
+            ${o}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handlePatternAnswer(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.querySelectorAll('#pattern-options .option-btn').forEach(b => b.disabled = true);
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateColorMatchChallenge() {
+  const colorData = [
+    { name: 'أحمر', color: '#ef4444' },
+    { name: 'أزرق', color: '#3b82f6' },
+    { name: 'أخضر', color: '#10b981' },
+    { name: 'أصفر', color: '#eab308' },
+    { name: 'بنفسجي', color: '#8b5cf6' },
+  ];
+  const textColor = colorData[rand(0, colorData.length - 1)];
+  const displayColor = colorData.filter(c => c.name !== textColor.name)[rand(0, 3)];
+
+  return {
+    title: '🌈 تحدي الألوان',
+    subtitle: 'ما هو اللون المكتوب (ليس لون النص)؟',
+    time: 7,
+    html: `
+      <div class="text-center mb-6">
+        <p class="text-5xl font-black mb-4" style="color:${displayColor.color};">${textColor.name}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="color-options">
+        ${shuffle(colorData.slice(0, 4).map(c => ({...c, isCorrect: c.name === textColor.name}))).map(c => `
+          <button class="option-btn p-4 rounded-xl text-center font-bold text-lg" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" onclick="handleColorAnswer(this, ${c.isCorrect})">
+            ${c.name}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleColorAnswer(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.querySelectorAll('#color-options .option-btn').forEach(b => b.disabled = true);
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateEstimateChallenge() {
+  const questions = [
+    { q: 'كم عدد أسنان الإنسان البالغ؟', a: 32, range: 4 },
+    { q: 'كم دولة في إفريقيا؟', a: 54, range: 6 },
+    { q: 'كم عظمة في جسم الإنسان؟', a: 206, range: 20 },
+    { q: 'كم ثانية في الساعة؟', a: 3600, range: 400 },
+    { q: 'كم عضلة في جسم الإنسان تقريباً؟', a: 600, range: 100 },
+  ];
+  const question = questions[rand(0, questions.length - 1)];
+  const wrongs = new Set();
+  while (wrongs.size < 3) {
+    const w = question.a + rand(-question.range * 3, question.range * 3);
+    if (Math.abs(w - question.a) > question.range && w > 0) wrongs.add(w);
+  }
+  const opts = shuffle([question.a, ...wrongs]);
+
+  return {
+    title: '🤔 تحدي التقدير',
+    subtitle: 'خمّن الرقم الصحيح!',
+    time: 12,
+    html: `
+      <div class="text-center mb-6">
+        <p class="text-xl font-bold leading-relaxed" style="color:#e2e8f0;">${question.q}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3" id="est-options">
+        ${opts.map(o => `
+          <button class="option-btn p-4 rounded-xl text-center font-bold text-xl" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" onclick="handleEstAnswer(this, ${o === question.a})">
+            ${o}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleEstAnswer(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.querySelectorAll('#est-options .option-btn').forEach(b => b.disabled = true);
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateOddOneOutChallenge() {
+  const sets = [
+    { items: ['🍎', '🍊', '🍋', '🚗'], odd: 3, hint: 'أيهم ليس فاكهة؟' },
+    { items: ['🐱', '🐶', '🐠', '🌵'], odd: 3, hint: 'أيهم ليس حيوان؟' },
+    { items: ['☀️', '🌙', '⭐', '🎸'], odd: 3, hint: 'أيهم ليس في السماء؟' },
+    { items: ['✈️', '🚀', '🚗', '🛸'], odd: 2, hint: 'أيهم لا يطير؟' },
+    { items: ['📱', '💻', '🖥️', '🌻'], odd: 3, hint: 'أيهم ليس جهاز إلكتروني؟' },
+  ];
+  const set = sets[rand(0, sets.length - 1)];
+  const shuffledItems = set.items.map((item, i) => ({ emoji: item, isOdd: i === set.odd }));
+
+  return {
+    title: '🔎 الشاذ من المجموعة',
+    subtitle: set.hint,
+    time: 8,
+    html: `
+      <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto" id="odd-grid">
+        ${shuffledItems.map((item, i) => `
+          <button class="option-btn p-6 rounded-2xl text-5xl text-center" style="background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.1);" onclick="handleOddAnswer(this, ${item.isOdd})">
+            ${item.emoji}
+          </button>
+        `).join('')}
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleOddAnswer(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.querySelectorAll('#odd-grid .option-btn').forEach(b => b.disabled = true);
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateRapidFireChallenge() {
+  const questions = [
+    { q: '2 + 2 = ?', a: '4', opts: ['4', '5', '3'] },
+    { q: 'عاصمة مصر؟', a: 'القاهرة', opts: ['القاهرة', 'الرياض', 'بيروت'] },
+    { q: 'لون الشمس؟', a: 'أصفر', opts: ['أصفر', 'أحمر', 'أزرق'] },
+    { q: '10 × 3 = ?', a: '30', opts: ['30', '33', '13'] },
+    { q: 'أكبر محيط؟', a: 'الهادئ', opts: ['الهادئ', 'الأطلسي', 'الهندي'] },
+  ];
+  const selected = pick(questions, 3);
+
+  return {
+    title: '🔥 أسئلة سريعة',
+    subtitle: 'أجب على 3 أسئلة متتالية!',
+    time: 15,
+    html: `<div id="rapid-container"></div>`,
+    setup: () => {
+      gameData.rapidQuestions = selected;
+      gameData.rapidIdx = 0;
+      gameData.rapidCorrect = 0;
+      showRapidQuestion();
+    },
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function showRapidQuestion() {
+  const q = gameData.rapidQuestions[gameData.rapidIdx];
+  if (!q) {
+    stopTimer();
+    completeStage(gameData.rapidCorrect >= 2);
+    return;
+  }
+  const opts = shuffle([...q.opts]);
+  document.getElementById('rapid-container').innerHTML = `
+    <div class="text-center mb-4">
+      <span class="inline-block px-3 py-1 rounded-full text-sm font-bold mb-3" style="background:rgba(251,191,36,0.2); color:#fbbf24;">${gameData.rapidIdx + 1}/3</span>
+      <p class="text-2xl font-bold" style="color:#e2e8f0;">${q.q}</p>
+    </div>
+    <div class="grid grid-cols-1 gap-2">
+      ${opts.map(o => `
+        <button class="option-btn p-3 rounded-xl font-bold text-lg" style="background:rgba(255,255,255,0.08); color:#e2e8f0; border:2px solid rgba(255,255,255,0.1);" onclick="handleRapidAnswer(this, ${o === q.a})">
+          ${o}
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function handleRapidAnswer(btn, correct) {
+  if (correct) gameData.rapidCorrect++;
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  gameData.rapidIdx++;
+  setTimeout(() => showRapidQuestion(), 500);
+}
+
+function generateSortChallenge() {
+  const sets = [
+    { items: ['ثانية', 'دقيقة', 'ساعة', 'يوم'], title: 'رتب من الأصغر للأكبر (وحدات الزمن)' },
+    { items: ['مليمتر', 'سنتيمتر', 'متر', 'كيلومتر'], title: 'رتب من الأصغر للأكبر (وحدات الطول)' },
+    { items: ['بايت', 'كيلوبايت', 'ميجابايت', 'جيجابايت'], title: 'رتب من الأصغر للأكبر (وحدات البيانات)' },
+  ];
+  const set = sets[rand(0, sets.length - 1)];
+  const correctOrder = [...set.items];
+  const shuffled = shuffle([...set.items]);
+
+  return {
+    title: '📊 تحدي الترتيب',
+    subtitle: set.title,
+    time: 15,
+    html: `
+      <div id="sort-list" class="space-y-2 mb-4">
+        ${shuffled.map((item, i) => `
+          <div class="sort-item flex items-center gap-2 p-3 rounded-xl cursor-pointer transition-all" style="background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.1);" draggable="false" data-value="${item}">
+            <span class="text-lg font-bold" style="color:#94a3b8;">${i + 1}.</span>
+            <span class="text-lg font-bold flex-1" style="color:#e2e8f0;">${item}</span>
+            <div class="flex gap-1">
+              <button onclick="moveSortItem(this, -1)" class="px-2 py-1 rounded" style="background:rgba(255,255,255,0.1); color:#e2e8f0;">▲</button>
+              <button onclick="moveSortItem(this, 1)" class="px-2 py-1 rounded" style="background:rgba(255,255,255,0.1); color:#e2e8f0;">▼</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <button onclick="checkSort()" class="btn-primary w-full py-3 rounded-xl font-bold text-white">تحقق من الترتيب ✓</button>
+    `,
+    onTimeout: () => completeStage(false),
+    setup: () => { gameData.correctOrder = correctOrder; }
+  };
+}
+
+function moveSortItem(btn, direction) {
+  const item = btn.closest('.sort-item');
+  const list = document.getElementById('sort-list');
+  const items = [...list.children];
+  const idx = items.indexOf(item);
+  if (direction === -1 && idx > 0) {
+    list.insertBefore(item, items[idx - 1]);
+  } else if (direction === 1 && idx < items.length - 1) {
+    list.insertBefore(items[idx + 1], item);
+  }
+  // Update numbers
+  [...list.children].forEach((el, i) => {
+    el.querySelector('span').textContent = (i + 1) + '.';
+  });
+}
+
+function checkSort() {
+  stopTimer();
+  const items = [...document.querySelectorAll('.sort-item')].map(el => el.dataset.value);
+  const correct = items.every((item, i) => item === gameData.correctOrder[i]);
+  completeStage(correct);
+}
+
+function generateTrueFalseChallenge() {
+  const statements = [
+    { text: 'الأرض تدور حول الشمس', answer: true },
+    { text: 'الحوت الأزرق هو أكبر حشرة', answer: false },
+    { text: 'الماء يغلي عند 100 درجة مئوية', answer: true },
+    { text: 'القمر يضيء بنوره الخاص', answer: false },
+    { text: 'عدد أيام الأسبوع 7', answer: true },
+    { text: 'الشمس تشرق من الغرب', answer: false },
+    { text: 'JavaScript لغة برمجة', answer: true },
+    { text: 'الذهب أخف من الماء', answer: false },
+  ];
+  const s = statements[rand(0, statements.length - 1)];
+
+  return {
+    title: '✅ صح أم خطأ',
+    subtitle: 'حدد هل العبارة صحيحة أم خاطئة!',
+    time: 8,
+    html: `
+      <div class="text-center mb-6">
+        <div class="p-6 rounded-2xl mb-6" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">
+          <p class="text-2xl font-bold leading-relaxed" style="color:#e2e8f0;">"${s.text}"</p>
+        </div>
+        <div class="flex gap-4 justify-center">
+          <button class="option-btn px-8 py-4 rounded-xl font-bold text-xl" style="background:rgba(16,185,129,0.2); color:#10b981; border:2px solid #10b981;" onclick="handleTF(this, ${s.answer === true})">
+            ✅ صح
+          </button>
+          <button class="option-btn px-8 py-4 rounded-xl font-bold text-xl" style="background:rgba(239,68,68,0.2); color:#ef4444; border:2px solid #ef4444;" onclick="handleTF(this, ${s.answer === false})">
+            ❌ خطأ
+          </button>
+        </div>
+      </div>
+    `,
+    onTimeout: () => completeStage(false)
+  };
+}
+
+function handleTF(btn, correct) {
+  stopTimer();
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  setTimeout(() => completeStage(correct), 800);
+}
+
+function generateCardFlipChallenge() {
+  const prizes = ['🃏', '💎', '🏆', '⭐', '🎯'];
+  const traps = ['💣', '👻', '🕳️'];
+  const cards = shuffle([
+    ...Array(3).fill(null).map(() => ({ type: 'prize', emoji: prizes[rand(0, prizes.length - 1)] })),
+    ...Array(3).fill(null).map(() => ({ type: 'trap', emoji: traps[rand(0, traps.length - 1)] }))
+  ]);
+
+  return {
+    title: '🃏 اقلب الكرت',
+    subtitle: 'اختر 2 كروت واتمنى الحظ يكون معك!',
+    time: null,
+    html: `
+      <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto" id="flip-grid">
+        ${cards.map((c, i) => `
+          <div class="card-container cursor-pointer" onclick="handleFlipCard(this, '${c.type}', '${c.emoji}')">
+            <div class="memory-card-inner w-full rounded-xl" style="height:100px; position:relative;">
+              <div class="memory-card-front flex items-center justify-center text-3xl rounded-xl" style="background:linear-gradient(135deg, ${c.type === 'prize' ? '#1e1e3f' : '#1e1e3f'}, ${c.type === 'prize' ? '#2a2a5f' : '#2a2a5f'});">${c.emoji}</div>
+              <div class="memory-card-back flex items-center justify-center text-3xl rounded-xl" style="background:linear-gradient(135deg, #f59e0b, #d97706);">🃏</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <p id="flip-status" class="text-center mt-4 font-bold" style="color:#94a3b8;">اختر كرتين!</p>
+    `,
+    setup: () => { gameData.flipCount = 0; gameData.flipPrizes = 0; }
+  };
+}
+
+function handleFlipCard(el, type, emoji) {
+  if (gameData.flipCount >= 2) return;
+  const inner = el.querySelector('.memory-card-inner');
+  if (inner.classList.contains('flipped')) return;
+  inner.classList.add('flipped');
+  gameData.flipCount++;
+  if (type === 'prize') gameData.flipPrizes++;
+
+  if (gameData.flipCount >= 2) {
+    const status = document.getElementById('flip-status');
+    if (gameData.flipPrizes >= 1) {
+      status.textContent = 'حظ سعيد! 🍀';
+      status.style.color = '#10b981';
+    } else {
+      status.textContent = 'حظ سيء هالمرة! 😅';
+      status.style.color = '#ef4444';
+    }
+    setTimeout(() => completeStage(gameData.flipPrizes >= 1), 1200);
+  }
+}
+
+// Stage management
+function generateStage(index) {
+  // Use different challenge type per stage, cycling through
+  const typeIndex = index % challengeTypes.length;
+  // Shuffle order for variety
+  if (index === 0) gameData.stageOrder = shuffle([...Array(challengeTypes.length).keys()]);
+  const generator = challengeTypes[gameData.stageOrder[typeIndex]];
+  return generator(index);
+}
+
+function renderStage() {
+  const challenge = generateStage(currentStage);
+  const area = document.getElementById('challenge-area');
+
+  area.innerHTML = `
+    <div class="game-card rounded-2xl p-5 slide-up" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px);">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-2xl">${challenge.title.split(' ')[0]}</span>
+        <h3 class="text-xl font-bold" style="color:#fbbf24;">${challenge.title.split(' ').slice(1).join(' ')}</h3>
+      </div>
+      <p class="text-sm mb-5" style="color:#94a3b8;">${challenge.subtitle}</p>
+      ${challenge.html}
+    </div>
+  `;
+
+  if (challenge.time) {
+    startTimer(challenge.time, challenge.onTimeout);
+  } else {
+    stopTimer();
+  }
+
+  if (challenge.setup) challenge.setup();
+  updateProgress();
+  lucide.createIcons();
+}
+
+function completeStage(success) {
+  stopTimer();
+  stageResults.push(success);
+  if (success) score += rand(50, 100);
+  document.getElementById('score-display').textContent = score;
+
+  const area = document.getElementById('challenge-area');
+  const msgColor = success ? '#10b981' : '#ef4444';
+  const msgEmoji = success ? '✅' : '❌';
+  const msgText = success ? getFunnyMsg() : 'لا تقلق، كمّل! 💪';
+
+  const feedback = document.createElement('div');
+  feedback.className = 'text-center p-4 rounded-xl mt-3 slide-up';
+  feedback.style.cssText = `background:${success ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; border:1px solid ${msgColor}30;`;
+  feedback.innerHTML = `
+    <p class="text-3xl mb-2">${msgEmoji}</p>
+    <p class="font-bold text-lg" style="color:${msgColor};">${success ? 'أحسنت!' : 'خطأ!'}</p>
+    <p class="text-sm" style="color:#94a3b8;">${msgText}</p>
+  `;
+  area.appendChild(feedback);
+
+  setTimeout(() => {
+    currentStage++;
+    if (currentStage >= totalStages) {
+      showReviewScreen();
+    } else {
+      renderStage();
+    }
+  }, 1800);
+}
+
+function showReviewScreen() {
+  showScreen('screen-review');
+  const correctCount = stageResults.filter(r => r).length;
+  const stats = document.getElementById('review-stats');
+  stats.innerHTML = `
+    <div class="flex justify-between items-center p-3 rounded-lg" style="background:rgba(255,255,255,0.05);">
+      <span style="color:#94a3b8;">المراحل الصحيحة</span>
+      <span class="font-bold" style="color:#10b981;">${correctCount}/15</span>
+    </div>
+    <div class="flex justify-between items-center p-3 rounded-lg" style="background:rgba(255,255,255,0.05);">
+      <span style="color:#94a3b8;">النقاط</span>
+      <span class="font-bold" style="color:#fbbf24;">${score}</span>
+    </div>
+    <div class="flex justify-between items-center p-3 rounded-lg" style="background:rgba(255,255,255,0.05);">
+      <span style="color:#94a3b8;">نسبة النجاح</span>
+      <span class="font-bold" style="color:#38bdf8;">${Math.round(correctCount/15*100)}%</span>
+    </div>
+  `;
+
+  // Animated review steps
+  const steps = [
+    'فحص الإجابات الصحيحة...',
+    'تحليل سرعة الاستجابة...',
+    'قياس مستوى الذاكرة...',
+    'حساب نقاط المهارة...',
+    'مراجعة الأداء العام...',
+    'تحديد مستوى الحظ...',
+    'إصدار القرار النهائي...'
+  ];
+
+  const stepsContainer = document.getElementById('review-steps');
+  steps.forEach((step, i) => {
+    setTimeout(() => {
+      const stepEl = document.createElement('div');
+      stepEl.className = 'flex items-center gap-2 slide-up';
+      stepEl.innerHTML = `
+        <span style="color:#fbbf24;">✦</span>
+        <span class="text-sm font-medium" style="color:#cbd5e1;">${step}</span>
+      `;
+      stepsContainer.appendChild(stepEl);
+
+      if (i === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('review-status').textContent = 'اكتملت المراجعة!';
+          setTimeout(() => showResult(correctCount), 1500);
+        }, 1500);
+      }
+    }, (i + 1) * 1200);
+  });
+}
+
+function showResult(correctCount) {
+  showScreen('screen-result');
+  const won = correctCount >= 14; // 14/15 = 93.3% (90% or higher)
+  const content = document.getElementById('result-content');
+
+  if (won) {
+    createConfetti();
+    content.innerHTML = `
+      <div class="reveal-spin mb-6">
+        <div class="inline-block p-8 rounded-3xl pulse-glow" style="background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);">
+          <span class="text-7xl">🃏</span>
+        </div>
+      </div>
+      <h2 class="text-4xl font-black mb-3" style="color: #fbbf24; text-shadow: 0 0 30px rgba(251,191,36,0.5);">مبروووك! 🎉</h2>
+      <p class="text-xl font-bold mb-2" style="color: #10b981;">حصلت على كرت الحظ!</p>
+      <p class="text-lg mb-6" style="color: #94a3b8;">أنت من أبطال كوماند هاب الحقيقيين!</p>
+      <div class="p-5 rounded-2xl mb-6" style="background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.05)); border: 2px solid rgba(251,191,36,0.3);">
+        <div class="text-center">
+          <p class="text-sm mb-2" style="color:#94a3b8;">كرت الحظ الخاص بك</p>
+          <p class="text-3xl font-black mb-1" style="color:#fbbf24;">★ VIP ★</p>
+          <p class="font-bold text-lg" style="color:#e2e8f0;">عضو مميز في كوماند هاب</p>
+          <p class="text-sm mt-2" style="color:#94a3b8;">النقاط: ${score} | المراحل: ${correctCount}/15</p>
+          <p class="text-xs mt-3" style="color:#64748b;">من أصل 5,000 عضو - أنت من النخبة! 👑</p>
+        </div>
+      </div>
+      <button onclick="resetGame()" class="btn-primary text-lg font-bold py-3 px-8 rounded-xl text-white w-full max-w-xs mx-auto block">
+        العب مرة ثانية 🔄
+      </button>
+    `;
+  } else {
+    content.innerHTML = `
+      <div class="slide-up mb-6">
+        <div class="inline-block p-8 rounded-3xl" style="background: rgba(239,68,68,0.15);">
+          <span class="text-7xl">😔</span>
+        </div>
+      </div>
+      <h2 class="text-3xl font-black mb-3" style="color: #ef4444;">للأسف...</h2>
+      <p class="text-xl font-bold mb-2" style="color: #94a3b8;">لم تحصل على كرت الحظ هذه المرة</p>
+      <p class="text-lg mb-6" style="color: #64748b;">لكن لا تيأس! حاول مرة ثانية 💪</p>
+      <div class="p-4 rounded-2xl mb-6" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">
+        <p class="text-sm" style="color:#94a3b8;">النقاط: ${score} | المراحل الصحيحة: ${correctCount}/15</p>
+        <p class="text-sm mt-1" style="color:#94a3b8;">تحتاج 8 مراحل صحيحة على الأقل للفوز!</p>
+      </div>
+      <button onclick="resetGame()" class="btn-primary text-lg font-bold py-3 px-8 rounded-xl text-white w-full max-w-xs mx-auto block">
+        حاول مرة ثانية 🔄
+      </button>
+    `;
+  }
+  lucide.createIcons();
+}
+
+function createConfetti() {
+  const colors = ['#fbbf24', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f43f5e'];
+  for (let i = 0; i < 40; i++) {
+    const conf = document.createElement('div');
+    conf.style.cssText = `position:fixed; width:${rand(8,14)}px; height:${rand(8,14)}px; background:${colors[rand(0,colors.length-1)]}; left:${rand(0,100)}%; top:-20px; z-index:999; border-radius:${rand(0,1) ? '50%' : '2px'}; animation: confetti ${rand(2,4)}s ease-out forwards; animation-delay:${rand(0,1000)}ms;`;
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 5000);
+  }
+}
+
+function startGame() {
+  currentStage = 0;
+  score = 0;
+  stageResults = [];
+  gameData = {};
+  showScreen('screen-game');
+  renderStage();
+}
+
+function resetGame() {
+  showScreen('screen-welcome');
+}
+
+// Init
+createParticles();
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dff6797a12378a6',t:'MTc3NDEyMTc3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
