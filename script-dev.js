@@ -4,20 +4,125 @@ let state = {
   annualAchieved: 640000,
 
   campaigns: [
-    { name: "VIP Dev's World Wild", status: "active" },
-    { name: "Community Partnership Rollout", status: "prep" },
-    { name: "Q1 Influencer Push", status: "ended" },
+    { name: "حملة تحدي المحترفين", status: "active"  ,link: "code8.html" },
+    { name: "انضم الى كوماند هاب", status: "active",link:"membership.html" },
+    { name: "حملة المشاهير و المؤثرين", status: "active", link:"infeluncer.html" },
   ],
 
   eventsPrivate: [
-    { name: "Funding for winning projects", date: "2026-01-18", reg: "Open" },
-    { name: "Award for Highest Sales", date: "2026-02-03", reg: "Waitlist" },
-  ],
-
+  { 
+    name: "ادارة الثروة",
+    date: "2026-01-18",
+    reg: "Open",
+    description: "Kazanan projelere finansal destek sağlanacaktır.",
+    reward: "$50,000",
+    location: "Dubai",
+    link: "code.html"
+  },
+  { 
+    name: "التعرف على شخصيتك",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "caracter-select.html"
+  },
+  { 
+    name: "تحدي الالغاز",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "mestrey.html"
+  },
+   { 
+    name: "مخزن النقاط",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "points-bank.html"
+  },
+   { 
+    name: "لعبة البداية",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "start-game.html"
+  },
+   { 
+    name: "كرت الحظ",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "chance-card.html"
+  },
+     { 
+    name: "كرت الدعم",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "donate-card.html"
+  },
+       { 
+    name: "هرم الكوماند هاب",
+    date: "2026-02-03",
+    reg: "open",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "commandhub-piramit.html"
+  },
+    { 
+    name: "خبير السوشل ميديا ",
+    date: "2026-02-03",
+    reg: "open",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "social-media-senior.html"
+  },
+  
+],
   eventsPublic: [
-    { name: "TBC Gala Night", date: "2026-02-14", reg: "Open" },
-    { name: "Public Networking", date: "2026-03-01", reg: "Closed" },
-  ],
+      { 
+    name: "الة التحكم",
+    date: "2026-02-03",
+    reg: "Waitlist",
+    description: "En yüksek satış yapan firmaya ödül verilecektir.",
+    reward: "$10,000 + Trophy",
+    location: "Istanbul",
+    link: "control-game.html"
+  },
+  { 
+    name: "اهرب من المصيدة",
+    date: "2026-03-01",
+    reg: "open",
+    description: "Girişimciler ve şirketler için açık networking etkinliği.",
+    reward: "Connections",
+    location: "Online",
+     link: "run-game.html"
+  },
+ 
+  { 
+    name: "الفرار من الحفلة",
+    date: "2026-03-01",
+    reg: "open",
+    description: "Girişimciler ve şirketler için açık networking etkinliği.",
+    reward: "Connections",
+    location: "Online",
+     link: " run-from-party.html"
+  },
+],
 
   posts: [
     {
@@ -292,10 +397,13 @@ function statusTag(status){
 function renderCampaigns(){
   const ul = $("campaignList");
   ul.innerHTML = "";
+
   state.campaigns.forEach((c) => {
     const li = document.createElement("li");
     li.className = "li";
+
     const t = statusTag(c.status);
+
     li.innerHTML = `
       <div>
         <div class="strong">${c.name}</div>
@@ -303,6 +411,17 @@ function renderCampaigns(){
       </div>
       <span class="${t.cls}">${t.label}</span>
     `;
+
+    // ✅ TIKLAMA EKLENDİ
+    li.style.cursor = "pointer";
+    li.addEventListener("click", () => {
+      if (c.link) {
+        window.location.href = c.link;
+      } else {
+        toast("No page linked");
+      }
+    });
+
     ul.appendChild(li);
   });
 }
@@ -384,36 +503,10 @@ function renderEvents(){
   `;
 
   // Tıklayınca popup aç
-  li.addEventListener("click", () => {
-    openModal(
-      e.name,
-      `
-      <div style="line-height:1.6">
-        <div><b>📅 Date:</b> ${e.date}</div>
-        <div><b>📌 Status:</b> ${e.reg}</div>
-      </div>
-      `,
-      [
-        {
-          label: "Join Event",
-          className: "cta small",
-          onClick: () => {
-            // 🔥 EVENT BİLGİSİNİ TAŞI
-            localStorage.setItem("selected_event", JSON.stringify(e));
-
-            // 🔥 SAYFAYA GİT
-            window.location.href = "code.html";
-          }
-        },
-        {
-          label: "Close",
-          className: "ghost",
-          onClick: closeModal
-        }
-      ]
-    );
-  });
-
+ li.addEventListener("click", () => {
+  localStorage.setItem("selected_event", JSON.stringify(e));
+  window.location.href = e.link || "code.html";
+});
   // Listeye ekle
   ul.appendChild(li);
 };
@@ -638,6 +731,9 @@ applyManualAnnualPercent(); // 👈 MUTLAKA EN ÜSTTE
 
 renderCampaigns();
 renderAnnual();
+
+
+
 renderEvents();
 renderPosts();
 renderSelectedPost();
