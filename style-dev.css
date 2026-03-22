@@ -3521,3 +3521,23 @@ html[dir="rtl"] #pendingOrdersModal .order-row {
 .hero + .finance-v2 {
   margin-top: 32px;
 }
+#privateEvents {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+#publicEvents {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+#privateEvents::-webkit-scrollbar,
+#publicEvents::-webkit-scrollbar {
+  width: 6px;
+}
+
+#privateEvents::-webkit-scrollbar-thumb,
+#publicEvents::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+}
