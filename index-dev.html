@@ -6,7 +6,65 @@
   <title>TBC Command Hub</title>
   <link rel="stylesheet" href="style-dev.css" />
 </head>
+<style>.mini-apps {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
 
+/* Desktop */
+.mini-card {
+  flex: 1;
+  background: #0a0a0a;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mini-card iframe {
+  width: 100%;
+  height: 341px;
+  border: none;
+}
+
+/* Hover */
+.mini-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 40px rgba(212,175,55,0.2);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 768px) {
+  .mini-apps {
+    flex-direction: column; /* ALT ALTA */
+  }
+
+  .mini-card iframe {
+    height: 341px; /* telefonda biraz daha büyük */
+  }
+}
+.card-click {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.card-click1 {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.card-click2 {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 10;
+}</style>
 <body>
 
   <header class="topbar">
