@@ -156,6 +156,29 @@
   </div>
 
 </section>
+<section class="mini-apps">
+
+<div class="mini-card" style="position:relative;">
+  
+  <iframe src="command-hub-bank.html"></iframe>
+
+  <!-- Tıklama katmanı -->
+  <div class="card-click"></div>
+
+</div>
+
+<div class="mini-card" style="position:relative;">
+    <iframe src="command-hub-store.html"></iframe>
+  <div class="card-click1"></div>
+
+  </div>
+
+<div class="mini-card" style="position:relative;">
+    <iframe src="command-hub-trade.html"></iframe>
+      <div class="card-click2"></div>
+  </div>
+
+</section>
 
  
     <section class="grid">
@@ -1430,7 +1453,19 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   </div>
 </div>
+<script>
+document.querySelector(".card-click").addEventListener("click", function() {
+  window.location.href = "command-hub-bank1.html";
+});
 
+document.querySelector(".card-click1").addEventListener("click", function() {
+  window.location.href = "command-hub.market.html";
+});
+
+document.querySelector(".card-click2").addEventListener("click", function() {
+  window.location.href = "command-hub-socket.html"; // DOĞRU
+});
+</script>
 
 </body>
 </html>
