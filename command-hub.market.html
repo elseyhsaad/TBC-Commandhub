@@ -205,37 +205,24 @@
     }
 
     // Buy item
-    async function buyItem(productId, method) {
-      if (isLoading) return;
-      if (cartData.length >= 999) {
-        showToast('وصلت للحد الأقصى من المشتريات!', 'error');
-        return;
-      }
-      const product = products.find(p => p.id === productId);
-      if (!product) return;
+async function buyItem(productId, method) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
 
-      isLoading = true;
-      // Disable all buy buttons
-      document.querySelectorAll('.btn-dollar, .btn-points').forEach(b => b.disabled = true);
+  // FAKE ADD (SDK yerine)
+  const fakeItem = {
+    __backendId: Date.now().toString(),
+    item_name: product.name,
+    item_price_dollar: product.dollar,
+    item_price_points: product.points,
+    payment_method: method
+  };
 
-      const result = await window.dataSdk.create({
-        item_name: product.name,
-        item_price_dollar: product.dollar,
-        item_price_points: product.points,
-        payment_method: method,
-        status: 'pending',
-        purchased_at: new Date().toISOString()
-      });
+  cartData.push(fakeItem);
+  renderCart(cartData);
 
-      if (result.isOk) {
-        showToast(`تمت إضافة "${product.name}" إلى السلة!`, 'success');
-      } else {
-        showToast('حدث خطأ، حاول مجدداً', 'error');
-      }
-
-      isLoading = false;
-      document.querySelectorAll('.btn-dollar, .btn-points').forEach(b => b.disabled = false);
-    }
+  showToast(`تمت إضافة "${product.name}" إلى السلة!`);
+}
 
     // Toggle cart
     function toggleCart() {
