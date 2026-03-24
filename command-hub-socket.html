@@ -1,0 +1,1735 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سوق التداول - كوماند هاب</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;family=Noto+Kufi+Arabic:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Tajawal',sans-serif;background:#0a0e1a}
+
+.glow-gold{text-shadow:0 0 20px rgba(255,193,7,.5),0 0 40px rgba(255,193,7,.3)}
+.glow-border{box-shadow:0 0 15px rgba(255,193,7,.2),inset 0 0 15px rgba(255,193,7,.05)}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(255,193,7,.3)}50%{box-shadow:0 0 40px rgba(255,193,7,.6)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes countDown{from{width:100%}to{width:0%}}
+@keyframes sparkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+
+.animate-float{animation:float 3s ease-in-out infinite}
+.animate-pulse-glow{animation:pulse-glow 2s ease-in-out infinite}
+.animate-slide-up{animation:slideUp .6s ease-out forwards}
+.animate-fade{animation:fadeIn .4s ease-out}
+.animate-shake{animation:shake .5s ease-in-out}
+.animate-sparkle{animation:sparkle 1.5s ease-in-out infinite}
+
+.prize-card{background:linear-gradient(135deg,rgba(20,25,40,.9),rgba(30,35,55,.9));border:1px solid rgba(255,193,7,.15);border-radius:16px;transition:all .3s}
+.prize-card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(255,193,7,.2)}
+.prize-1{border-color:rgba(255,215,0,.5);background:linear-gradient(135deg,rgba(40,35,10,.9),rgba(50,40,15,.9))}
+.prize-2{border-color:rgba(192,192,192,.4)}
+.prize-3{border-color:rgba(205,127,50,.4)}
+
+.btn-trade{background:linear-gradient(135deg,#ffc107,#ff9800);color:#0a0e1a;font-weight:700;border:none;border-radius:12px;padding:10px 24px;cursor:pointer;transition:all .3s;font-family:'Tajawal',sans-serif}
+.btn-trade:hover{transform:scale(1.05);box-shadow:0 4px 20px rgba(255,193,7,.4)}
+.btn-trade:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-weight:700;border:none;border-radius:12px;padding:10px 24px;cursor:pointer;transition:all .3s;font-family:'Tajawal',sans-serif}
+.btn-danger:hover{transform:scale(1.05)}
+
+.btn-ghost{background:rgba(255,255,255,.05);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 24px;cursor:pointer;transition:all .3s;font-family:'Tajawal',sans-serif}
+.btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff}
+
+.input-dark{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 16px;color:#fff;font-family:'Tajawal',sans-serif;width:100%;transition:border-color .3s}
+.input-dark:focus{outline:none;border-color:rgba(255,193,7,.5)}
+.input-dark::placeholder{color:#64748b}
+
+.card-dark{background:linear-gradient(135deg,rgba(15,20,35,.95),rgba(20,25,45,.95));border:1px solid rgba(255,255,255,.06);border-radius:16px}
+
+.tab-btn{padding:10px 20px;border-radius:12px;cursor:pointer;transition:all .3s;border:1px solid transparent;font-family:'Tajawal',sans-serif;font-weight:600}
+.tab-btn.active{background:linear-gradient(135deg,rgba(255,193,7,.15),rgba(255,152,0,.1));border-color:rgba(255,193,7,.3);color:#ffc107}
+.tab-btn:not(.active){color:#64748b}
+.tab-btn:not(.active):hover{color:#94a3b8;background:rgba(255,255,255,.03)}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 24px;border-radius:12px;font-weight:600;animation:slideUp .4s ease-out}
+.toast-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.toast-error{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.toast-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#0a0e1a}
+
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s}
+.popup-content{background:linear-gradient(135deg,#141928,#1a2040);border:1px solid rgba(255,193,7,.2);border-radius:20px;padding:28px;max-width:420px;width:90%;animation:slideUp .4s ease-out}
+
+.progress-bar{height:4px;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.1)}
+.progress-fill{height:100%;border-radius:4px;transition:width .3s}
+
+.deal-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;margin-bottom:10px;transition:all .3s}
+.deal-card:hover{border-color:rgba(255,193,7,.2)}
+
+.timer-bar{height:6px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden}
+.timer-fill{height:100%;background:linear-gradient(90deg,#ef4444,#ffc107);border-radius:6px}
+
+.scroll-area{overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,193,7,.3) transparent}
+.scroll-area::-webkit-scrollbar{width:6px}
+.scroll-area::-webkit-scrollbar-track{background:transparent}
+.scroll-area::-webkit-scrollbar-thumb{background:rgba(255,193,7,.3);border-radius:6px}
+
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:900px){.market-grid{grid-template-columns:1fr}}
+
+.rank-badge{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.rank-1{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#1a1a00}
+.rank-2{background:linear-gradient(135deg,#c0c0c0,#a0a0a0);color:#1a1a1a}
+.rank-3{background:linear-gradient(135deg,#cd7f32,#a0652a);color:#fff}
+.rank-4,.rank-5{background:linear-gradient(135deg,#4a5568,#2d3748);color:#cbd5e0}
+
+.question-option{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;cursor:pointer;transition:all .3s;text-align:center}
+.question-option:hover{border-color:rgba(255,193,7,.4);background:rgba(255,193,7,.05)}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto scroll-area" style="background:linear-gradient(180deg,#0a0e1a 0%,#111827 50%,#0a0e1a 100%)"><!-- TOAST -->
+   <div id="toast-container"></div><!-- PAGE: WELCOME -->
+   <div id="page-welcome" class="min-h-full p-4 md:p-8">
+    <div class="max-w-4xl mx-auto"><!-- Header -->
+     <div class="text-center mb-8 animate-slide-up">
+      <div class="inline-block mb-4">
+       <div class="text-5xl mb-2 animate-float">
+        📈
+       </div>
+      </div>
+      <h1 id="el-main-title" class="text-3xl md:text-5xl font-black glow-gold mb-3" style="font-family:'Noto Kufi Arabic',sans-serif;color:#ffc107">سوق التداول</h1>
+      <p class="text-lg text-gray-400 mb-2">كوماند هاب</p>
+      <p id="el-welcome-msg" class="text-base text-gray-500 max-w-lg mx-auto">مرحباً بك في سوق التداول – جاهزك لتحديات مسلية تختبر سرعة بديهتك وذكاؤك؟</p>
+     </div><!-- Warning Banner -->
+     <div class="card-dark p-4 mb-8 border-r-4 animate-slide-up" style="border-right-color:#f59e0b;animation-delay:.1s">
+      <div class="flex items-start gap-3">
+       <div class="text-2xl">
+        🎮
+       </div>
+       <div>
+        <h3 class="text-purple-400 font-bold text-lg mb-1">التحديات المسلية</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">اختبر مهاراتك في الصفقات الكلاسيكية وتحديات البديهة السريعة! يمكنك الاقتراض 3 مرات لزيادة رصيدك. الفرصة 50-50 في كل تحدٍ – هل تثق بحدسك؟</p>
+       </div>
+      </div>
+     </div><!-- Prizes -->
+     <div class="mb-8">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><span class="text-2xl">🏆</span> المراكز والجوائز</h2>
+      <div class="grid gap-3"><!-- 1st -->
+       <div class="prize-card prize-1 p-4 animate-slide-up flex items-center gap-4" style="animation-delay:.15s">
+        <div class="rank-badge rank-1 animate-sparkle">
+         1
+        </div>
+        <div class="flex-1">
+         <div class="font-bold text-yellow-400 text-lg">
+          المركز الأول
+         </div>
+         <div class="text-gray-400 text-sm">
+          تحويل <span class="text-yellow-300 font-bold">750,000 نقطة</span> إلى رصيد قابل للسحب بالكامل
+         </div>
+        </div>
+        <div class="text-2xl">
+         👑
+        </div>
+       </div><!-- 2nd -->
+       <div class="prize-card prize-2 p-4 animate-slide-up flex items-center gap-4" style="animation-delay:.2s">
+        <div class="rank-badge rank-2">
+         2
+        </div>
+        <div class="flex-1">
+         <div class="font-bold text-gray-300 text-lg">
+          المركز الثاني
+         </div>
+         <div class="text-gray-400 text-sm">
+          <span class="text-gray-200 font-bold">500,000 نقطة</span> رصيد فعلي – 50% قابل للسحب
+         </div>
+        </div>
+        <div class="text-2xl">
+         🥈
+        </div>
+       </div><!-- 3rd -->
+       <div class="prize-card prize-3 p-4 animate-slide-up flex items-center gap-4" style="animation-delay:.25s">
+        <div class="rank-badge rank-3">
+         3
+        </div>
+        <div class="flex-1">
+         <div class="font-bold text-orange-400 text-lg">
+          المركز الثالث
+         </div>
+         <div class="text-gray-400 text-sm">
+          <span class="text-orange-300 font-bold">350,000 نقطة</span> رصيد فعلي – 40% قابل للسحب
+         </div>
+        </div>
+        <div class="text-2xl">
+         🥉
+        </div>
+       </div><!-- 4th & 5th -->
+       <div class="prize-card p-4 animate-slide-up flex items-center gap-4" style="animation-delay:.3s">
+        <div class="flex gap-2">
+         <div class="rank-badge rank-4">
+          4
+         </div>
+         <div class="rank-badge rank-5">
+          5
+         </div>
+        </div>
+        <div class="flex-1">
+         <div class="font-bold text-gray-400 text-lg">
+          المركز الرابع والخامس
+         </div>
+         <div class="text-gray-500 text-sm">
+          <span class="text-gray-300 font-bold">150,000 نقطة</span> رصيد فعلي – 40% قابل للسحب
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Teaser -->
+     <div class="card-dark p-5 mb-8 animate-slide-up" style="animation-delay:.35s">
+      <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">💡 كيف يعمل السوق؟</h3>
+      <ul class="space-y-2 text-gray-400 text-sm">
+       <li class="flex gap-2"><span class="text-purple-500">▸</span> أدخل اسمك، رصيدك، وسلعك – كل $1 = 2,500 نقطة</li>
+       <li class="flex gap-2"><span class="text-purple-500">▸</span> اختر بين التداول النشط (صفقات وتحديات مسلية) أو التداول الحر (بيع سلعك)</li>
+       <li class="flex gap-2"><span class="text-purple-500">▸</span> تحديات البديهة السريعة 50-50: اختر الرمز الصحيح بسرعة وربح أو خسر المبلغ كاملاً</li>
+       <li class="flex gap-2"><span class="text-purple-500">▸</span> بيع سلعك بأرباح – عروض شراء واستبدال تأتيك تلقائياً</li>
+      </ul>
+     </div>
+     <div class="text-center animate-slide-up" style="animation-delay:.4s"><button class="btn-trade text-lg px-10 py-3" onclick="showPage('page-setup')"> ابدأ التداول الآن 🚀 </button>
+     </div>
+    </div>
+   </div><!-- PAGE: SETUP -->
+   <div id="page-setup" class="min-h-full p-4 md:p-8 hidden">
+    <div class="max-w-2xl mx-auto">
+     <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-white mb-2" style="font-family:'Noto Kufi Arabic',sans-serif">إعداد حساب التداول</h2>
+      <p class="text-gray-500 text-sm">أدخل بياناتك لبدء التداول</p>
+     </div>
+     <div class="card-dark p-6">
+      <div class="space-y-4">
+       <div><label class="block text-gray-400 text-sm mb-1">اسم المتداول</label> <input id="inp-name" type="text" class="input-dark" placeholder="أدخل اسمك...">
+       </div>
+       <div><label class="block text-gray-400 text-sm mb-1">الرصيد بالنقاط</label> <input id="inp-balance" type="number" class="input-dark" placeholder="مثال: 250000">
+        <p class="text-gray-600 text-xs mt-1">كل 1 دولار = 2,500 نقطة</p>
+       </div><!-- Items Section -->
+       <div><label class="block text-gray-400 text-sm mb-2">إضافة سلع للتداول</label>
+        <div class="flex gap-2 mb-2"><input id="inp-item-name" type="text" class="input-dark flex-1" placeholder="اسم السلعة"> <input id="inp-item-price" type="number" class="input-dark" style="width:120px" placeholder="السعر ($)"> <button class="btn-trade text-sm px-4" onclick="addItem()">إضافة</button>
+        </div>
+        <div id="items-list" class="space-y-2 max-h-48 overflow-y-auto scroll-area"></div>
+        <div id="items-summary" class="mt-2 text-sm text-gray-500 hidden">
+         إجمالي السلع: <span id="items-total-usd" class="text-yellow-400 font-bold">$0</span> = <span id="items-total-pts" class="text-yellow-400 font-bold">0 نقطة</span>
+        </div>
+       </div>
+       <div class="card-dark p-3" style="background:rgba(255,193,7,.05);border-color:rgba(255,193,7,.15)">
+        <div class="flex justify-between items-center"><span class="text-gray-400 text-sm">إجمالي رصيد التداول:</span> <span id="total-trading" class="text-yellow-400 font-bold text-lg">0 نقطة</span>
+        </div>
+       </div><button class="btn-trade w-full py-3 text-lg" onclick="startTrading()">دخول السوق ⚡</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- PAGE: MARKET -->
+   <div id="page-market" class="h-full flex flex-col hidden"><!-- Top Bar -->
+    <div class="flex items-center justify-between p-3 border-b" style="border-color:rgba(255,255,255,.06);background:rgba(10,14,26,.95)">
+     <div class="flex items-center gap-3"><button class="btn-ghost text-sm px-3 py-2" onclick="showWithdrawMenu()"> <i data-lucide="arrow-right" style="width:16px;height:16px"></i> </button>
+      <div><span id="market-player-name" class="text-white font-bold text-sm">متداول</span>
+      </div>
+     </div>
+     <div class="flex items-center gap-4">
+      <div class="text-center">
+       <div class="text-gray-500 text-xs">
+        الرصيد
+       </div>
+       <div id="market-balance" class="text-yellow-400 font-bold text-sm">
+        0
+       </div>
+      </div>
+      <div class="text-center">
+       <div class="text-gray-500 text-xs">
+        الصفقات
+       </div>
+       <div id="market-deals" class="text-gray-300 font-bold text-sm">
+        0
+       </div>
+      </div>
+      <div class="text-center">
+       <div class="text-gray-500 text-xs">
+        الاقتراض
+       </div>
+       <div id="market-loans" class="text-blue-400 font-bold text-sm">
+        3/3
+       </div>
+      </div>
+      <div class="text-center">
+       <div class="text-gray-500 text-xs">
+        المستوى
+       </div>
+       <div id="market-level" class="text-green-400 font-bold text-sm">
+        مبتدئ
+       </div>
+      </div>
+     </div>
+    </div><!-- Tabs -->
+    <div class="flex gap-2 p-3" style="background:rgba(10,14,26,.9)"><button class="tab-btn active flex-1 text-sm" id="tab-active" onclick="switchTab('active')">📊 التداول النشط</button> <button class="tab-btn flex-1 text-sm" id="tab-free" onclick="switchTab('free')">🏪 التداول الحر</button>
+    </div><!-- Content Area -->
+    <div class="flex-1 overflow-hidden"><!-- Two columns layout on desktop -->
+     <div class="h-full market-grid p-3 gap-3"><!-- Active Trading Panel -->
+      <div id="panel-active" class="card-dark flex flex-col h-full overflow-hidden">
+       <div class="p-3 border-b" style="border-color:rgba(255,255,255,.06)">
+        <h3 class="text-white font-bold text-sm flex items-center gap-2">📊 التداول النشط</h3>
+        <div class="progress-bar mt-2">
+         <div id="xp-bar" class="progress-fill" style="width:0%;background:linear-gradient(90deg,#ffc107,#ff9800)"></div>
+        </div>
+       </div>
+       <div class="flex-1 overflow-y-auto scroll-area p-3" id="active-content">
+        <div class="text-center py-8 animate-fade">
+         <div class="space-y-2 mb-4">
+          <button class="btn-trade text-base px-8 py-3" onclick="generateDeal()">ابدأ صفقة جديدة 🎯</button> <button class="btn-ghost text-sm px-6 py-2 w-full" onclick="showLoanMenu()">🏦 اقتراض إضافي</button>
+         </div>
+        </div>
+       </div>
+       <div id="active-log" class="border-t p-3 max-h-32 overflow-y-auto scroll-area" style="border-color:rgba(255,255,255,.06)">
+        <div class="text-gray-600 text-xs text-center">
+         سجل الصفقات سيظهر هنا
+        </div>
+       </div>
+      </div><!-- Free Trading Panel -->
+      <div id="panel-free" class="card-dark flex flex-col h-full overflow-hidden">
+       <div class="p-3 border-b" style="border-color:rgba(255,255,255,.06)">
+        <h3 class="text-white font-bold text-sm flex items-center gap-2">🏪 التداول الحر</h3>
+        <p class="text-gray-500 text-xs mt-1">اعرض سلعك للبيع واحصل على عروض شراء</p>
+       </div>
+       <div class="flex-1 overflow-y-auto scroll-area p-3" id="free-content">
+        <div id="free-items-list" class="space-y-2"></div>
+        <div id="no-items-msg" class="text-center py-8 text-gray-600 text-sm">
+         لا توجد سلع للعرض
+        </div>
+       </div>
+       <div id="free-requests" class="border-t p-3 max-h-40 overflow-y-auto scroll-area" style="border-color:rgba(255,255,255,.06)">
+        <div class="text-gray-600 text-xs text-center">
+         طلبات البيع ستظهر هنا
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- POPUP CONTAINER -->
+   <div id="popup-overlay" class="popup-overlay hidden"></div>
+  </div>
+  <script>
+// ===== STATE =====
+let state = {
+  name: '',
+  balance: 0,
+  items: [],
+  totalDeals: 0,
+  history: [],
+  freeRequests: [],
+  consecutiveWins: 0,
+  loansUsed: 0, // 0-3 loans available
+  dealsCount: 0 // track deals for difficulty curve
+};
+
+const RATE = 2500; // 1 USD = 2500 points
+
+// ===== CONFIG =====
+const defaultConfig = {
+  main_title: 'سوق التداول',
+  welcome_message: 'مرحباً بك في سوق التداول – ساحة المحترفين حيث الأرباح الكبيرة والمخاطر العالية',
+  background_color: '#0a0e1a',
+  surface_color: '#141928',
+  text_color: '#e2e8f0',
+  primary_action: '#ffc107',
+  secondary_action: '#64748b'
+};
+
+function applyConfig(config) {
+  const t = (k) => config[k] || defaultConfig[k];
+  const el = (id) => document.getElementById(id);
+  
+  if(el('el-main-title')) el('el-main-title').textContent = t('main_title');
+  if(el('el-welcome-msg')) el('el-welcome-msg').textContent = t('welcome_message');
+  
+  document.body.style.background = t('background_color');
+  document.getElementById('app').style.color = t('text_color');
+  
+  document.querySelectorAll('.btn-trade').forEach(b => {
+    b.style.background = `linear-gradient(135deg, ${t('primary_action')}, ${adjustColor(t('primary_action'), -30)})`;
+  });
+}
+
+function adjustColor(hex, amount) {
+  let r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  r = Math.max(0, Math.min(255, r+amount));
+  g = Math.max(0, Math.min(255, g+amount));
+  b = Math.max(0, Math.min(255, b+amount));
+  return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+
+// ===== ELEMENT SDK =====
+if(window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => { applyConfig(config); },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get:()=>config.background_color||defaultConfig.background_color, set:(v)=>{config.background_color=v;window.elementSdk.setConfig({background_color:v})} },
+        { get:()=>config.surface_color||defaultConfig.surface_color, set:(v)=>{config.surface_color=v;window.elementSdk.setConfig({surface_color:v})} },
+        { get:()=>config.text_color||defaultConfig.text_color, set:(v)=>{config.text_color=v;window.elementSdk.setConfig({text_color:v})} },
+        { get:()=>config.primary_action||defaultConfig.primary_action, set:(v)=>{config.primary_action=v;window.elementSdk.setConfig({primary_action:v})} },
+        { get:()=>config.secondary_action||defaultConfig.secondary_action, set:(v)=>{config.secondary_action=v;window.elementSdk.setConfig({secondary_action:v})} }
+      ],
+      borderables: [],
+      fontEditable: {
+        get:()=>config.font_family||'Tajawal',
+        set:(v)=>{config.font_family=v;window.elementSdk.setConfig({font_family:v})}
+      },
+      fontSizeable: {
+        get:()=>config.font_size||16,
+        set:(v)=>{config.font_size=v;window.elementSdk.setConfig({font_size:v})}
+      }
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ['main_title', config.main_title || defaultConfig.main_title],
+      ['welcome_message', config.welcome_message || defaultConfig.welcome_message]
+    ])
+  });
+}
+
+// ===== NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if(id === 'page-market') updateMarketUI();
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-active').classList.toggle('active', tab==='active');
+  document.getElementById('tab-free').classList.toggle('active', tab==='free');
+  // On mobile, show/hide panels
+  if(window.innerWidth < 900) {
+    document.getElementById('panel-active').style.display = tab==='active' ? 'flex' : 'none';
+    document.getElementById('panel-free').style.display = tab==='free' ? 'flex' : 'none';
+  }
+}
+
+// ===== TOAST =====
+function showToast(msg, type='success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ===== ITEMS =====
+function addItem() {
+  const nameEl = document.getElementById('inp-item-name');
+  const priceEl = document.getElementById('inp-item-price');
+  const name = nameEl.value.trim();
+  const price = parseFloat(priceEl.value);
+  if(!name || !price || price <= 0) { showToast('أدخل اسم وسعر السلعة', 'error'); return; }
+
+  const pts = Math.round(price * RATE);
+  state.items.push({ id: Date.now()+'_'+Math.random().toString(36).substr(2,4), name, priceUSD: price, pricePoints: pts, forSale: false });
+  nameEl.value = '';
+  priceEl.value = '';
+  renderItems();
+  updateTotalTrading();
+  showToast(`تمت إضافة ${name} ($${price} = ${pts.toLocaleString()} نقطة)`);
+}
+
+function removeItem(id) {
+  state.items = state.items.filter(i => i.id !== id);
+  renderItems();
+  updateTotalTrading();
+}
+
+function renderItems() {
+  const list = document.getElementById('items-list');
+  const summary = document.getElementById('items-summary');
+  if(state.items.length === 0) { list.innerHTML = ''; summary.classList.add('hidden'); return; }
+  
+  summary.classList.remove('hidden');
+  let totalUSD = 0;
+  list.innerHTML = state.items.map(item => {
+    totalUSD += item.priceUSD;
+    return `<div class="flex items-center justify-between p-2 rounded-lg" style="background:rgba(255,255,255,.03)">
+      <div class="flex-1">
+        <span class="text-white text-sm font-bold">${item.name}</span>
+        <span class="text-gray-500 text-xs mr-2">$${item.priceUSD} = ${item.pricePoints.toLocaleString()} نقطة</span>
+      </div>
+      <button class="text-red-400 text-xs hover:text-red-300 px-2" onclick="removeItem('${item.id}')">حذف</button>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('items-total-usd').textContent = '$' + totalUSD.toFixed(2);
+  document.getElementById('items-total-pts').textContent = Math.round(totalUSD * RATE).toLocaleString() + ' نقطة';
+}
+
+function updateTotalTrading() {
+  const bal = parseFloat(document.getElementById('inp-balance').value) || 0;
+  const itemsPts = state.items.reduce((s,i) => s + i.pricePoints, 0);
+  document.getElementById('total-trading').textContent = (bal + itemsPts).toLocaleString() + ' نقطة';
+}
+
+document.getElementById('inp-balance').addEventListener('input', updateTotalTrading);
+
+// ===== START TRADING =====
+function startTrading() {
+  const name = document.getElementById('inp-name').value.trim();
+  const bal = parseFloat(document.getElementById('inp-balance').value) || 0;
+  const itemsPts = state.items.reduce((s,i) => s + i.pricePoints, 0);
+  
+  if(!name) { showToast('أدخل اسمك', 'error'); return; }
+  if(bal + itemsPts < 1000) { showToast('الرصيد غير كافٍ للتداول', 'error'); return; }
+  
+  state.name = name;
+  state.balance = bal + itemsPts;
+  state.totalDeals = 0;
+  state.dealsCount = 0;
+  state.history = [];
+  state.loansUsed = 0;
+  state.consecutiveWins = 0;
+  
+  showPage('page-market');
+  renderFreeItems();
+}
+
+// ===== MARKET UI =====
+function updateMarketUI() {
+  document.getElementById('market-player-name').textContent = state.name;
+  document.getElementById('market-balance').textContent = state.balance.toLocaleString();
+  document.getElementById('market-deals').textContent = state.totalDeals;
+  document.getElementById('market-loans').textContent = (3 - state.loansUsed) + '/3';
+  
+  let level = 'مبتدئ', color = '#10b981';
+  if(state.balance >= 600000) { level = 'خبير'; color = '#ef4444'; }
+  else if(state.balance >= 500000) { level = 'محترف'; color = '#f59e0b'; }
+  else if(state.balance >= 400000) { level = 'متقدم'; color = '#8b5cf6'; }
+  else if(state.balance >= 300000) { level = 'متوسط'; color = '#3b82f6'; }
+  
+  const lvlEl = document.getElementById('market-level');
+  lvlEl.textContent = level;
+  lvlEl.style.color = color;
+  
+  // XP bar
+  const pct = Math.min(100, (state.balance / 750000) * 100);
+  document.getElementById('xp-bar').style.width = pct + '%';
+}
+
+function addLog(msg, type='info') {
+  const log = document.getElementById('active-log');
+  const colors = { win:'#10b981', loss:'#ef4444', info:'#64748b', warn:'#f59e0b' };
+
+  // حذف placeholder أول مرة فقط
+  if(log.dataset.init !== '1') {
+    log.innerHTML = '';
+    log.dataset.init = '1';
+  }
+
+  const entry = document.createElement('div');
+  entry.className = 'text-xs py-1 animate-fade';
+  entry.style.color = colors[type] || colors.info;
+  entry.textContent = `[${new Date().toLocaleTimeString('ar-EG')}] ${msg}`;
+
+  log.insertBefore(entry, log.firstChild);
+}
+// ===== DEAL TYPES & PROBABILITY ENGINE =====
+function getDealProbabilities() {
+  const b = state.balance;
+  const d = state.dealsCount; // deals counter for early game easing
+  
+  // First 10 deals: much easier (more wins)
+  if(d < 10) {
+    return {
+      buy: 45, sell: 20, hold: 5, question: 15,
+      broker: 5, disaster: 5, reflex: 5
+    };
+  }
+  
+  // Base distribution after warm-up
+  let probs = {
+    buy: 32, sell: 15, hold: 12, question: 10,
+    broker: 6, disaster: 10, reflex: 15
+  };
+  
+  // Increase difficulty at higher balances
+  if(b >= 600000) {
+    probs.disaster = 18; probs.reflex = 18;
+    probs.buy = 18; probs.sell = 10; probs.hold = 8; probs.question = 12; probs.broker = 6;
+  } else if(b >= 500000) {
+    probs.disaster = 14; probs.reflex = 16;
+    probs.buy = 22; probs.sell = 12; probs.hold = 10; probs.question = 11; probs.broker = 6;
+  } else if(b >= 400000) {
+    probs.disaster = 12; probs.reflex = 16;
+    probs.buy = 27; probs.sell = 13; probs.hold = 11; probs.question = 10; probs.broker = 6;
+  }
+  return probs;
+}
+
+function pickDealType() {
+  const probs = getDealProbabilities();
+  const entries = Object.entries(probs);
+  const total = entries.reduce((s,[,v]) => s+v, 0);
+  let r = Math.random() * total;
+  for(const [type, weight] of entries) {
+    r -= weight;
+    if(r <= 0) return type;
+  }
+  return 'buy';
+}
+
+function getLossChance() {
+  const b = state.balance;
+  if(b >= 600000) return 0.82;
+  if(b >= 500000) return 0.70;
+  if(b >= 400000) return 0.60;
+  if(b >= 300000) return 0.55;
+  return 0.40;
+}
+
+// Greed system
+function checkGreed() {
+  if(state.consecutiveWins >= 3) {
+    state.consecutiveWins = 0;
+    return true;
+  }
+  return false;
+}
+function resetGame() {
+  state = {
+    name: '',
+    balance: 0,
+    items: [],
+    totalDeals: 0,
+    history: [],
+    freeRequests: [],
+    consecutiveWins: 0,
+    loansUsed: 0,
+    dealsCount: 0
+  };
+
+  // تنظيف الواجهة
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-balance').value = '';
+  document.getElementById('items-list').innerHTML = '';
+  document.getElementById('items-summary').classList.add('hidden');
+  document.getElementById('total-trading').textContent = '0 نقطة';
+
+  // تنظيف السجل
+  const log = document.getElementById('active-log');
+  log.innerHTML = `
+    <div class="text-gray-600 text-xs text-center">
+      سجل الصفقات سيظهر هنا
+    </div>
+  `;
+  log.dataset.init = '';
+
+  // تنظيف السوق الحر
+  document.getElementById('free-items-list').innerHTML = '';
+  document.getElementById('free-requests').innerHTML = `
+    <div class="text-gray-600 text-xs text-center">
+      طلبات البيع ستظهر هنا
+    </div>
+  `;
+}
+
+// ===== DEAL GENERATORS =====
+const commodities = ['نفط خام','ذهب','فضة','نحاس','قمح','قهوة','غاز طبيعي','قطن','سكر','بلاتين'];
+const companies = ['تسلا','أبل','أمازون','غوغل','مايكروسوفت','نيتفليكس','إنفيديا','ميتا'];
+const questions = [
+  // أسئلة اقتصادية بإجابات مخفية
+  {q:'برأيك، ما تأثير التضخم الاقتصادي على فئات المجتمع المختلفة؟', opts:['يزيد دخل الموظفين بشكل تلقائي','ينخفض قوة شراء المواطن العادي','يرفع أسعار الأسهم فقط','لا يؤثر على أحد'], correct:1},
+  {q:'كيف يمكن للحكومات السيطرة على التضخم؟', opts:['بطباعة المزيد من النقود','برفع أسعار الفائدة','بخفض الرسوم الجمركية','بعدم فعل أي شيء'], correct:1},
+  {q:'إذا انهار السوق مالياً، ماذا يجب أن يفعل المستثمر الذكي؟', opts:['يبيع كل أمواله فوراً','يشتري أسهماً بسعر منخفض','يحتفظ بنقوده في الشارع','ينتظر بدون أي إجراء'], correct:1},
+  {q:'ما أفضل استراتيجية للاستثمار على المدى الطويل؟', opts:['البيع والشراء بسرعة يومياً','الاستثمار المتنوع والصبر','وضع أموالك تحت الوسادة','المراهنة على سهم واحد'], correct:1},
+  {q:'ماذا يعني قيام دولة بخفض قيمة عملتها؟', opts:['تقوي اقتصادها','تجعل صادراتها أرخص وأكثر جاذبية','تدمر الاقتصاد مباشرة','لا تغير شيء'], correct:1},
+  
+  // أسئلة إدارية
+  {q:'كيف يجب على القيادة التعامل مع فريق منقسم الآراء؟', opts:['فرض رأي الزعيم بالقوة','الاستماع لجميع الآراء واتخاذ قرار موحد','تجاهل الاختلافات','ترك الفريق بدون قيادة'], correct:1},
+  {q:'ما أهم صفة لقائد ناجح؟', opts:['الصلابة والقسوة','الاستماع والحكمة','السيطرة المطلقة','الخوف من المسؤولية'], correct:1},
+  {q:'ما دور التواصل الفعال في المنظمات؟', opts:['مضيعة للوقت','أساسي لنجاح العمل','غير مهم إطلاقاً','يقلل الإنتاجية'], correct:1},
+  
+  // أسئلة الرؤية والتحليل
+  {q:'كيف يمكن تحديد فرصة استثمارية جيدة؟', opts:['الاستثمار بناءً على الشائعات','التحليل العميق للبيانات','المراهنة العشوائية','عدم الاستثمار إطلاقاً'], correct:1},
+  {q:'كيف تتجنب الوقوع في فخ الاستثمارات الوهمية؟', opts:['بالمراهنة الكبيرة','بالتحقق والتحليل الدقيق','بعدم التفكير','بالثقة العمياء'], correct:1},
+];
+
+function generateDeal() {
+  const content = document.getElementById('active-content');
+  
+  // Check if greedy
+  if(checkGreed()) {
+    return generateGreedDeal(content);
+  }
+  
+  const type = pickDealType();
+  
+  switch(type) {
+    case 'buy': return generateBuyDeal(content);
+    case 'sell': return generateSellDeal(content);
+    case 'hold': return generateHoldDeal(content);
+    case 'question': return generateQuestionDeal(content);
+    case 'broker': return generateBrokerDeal(content);
+    case 'disaster': return generateDisasterAlert(content);
+    case 'reflex': return generateReflexDeal(content);
+    default: return generateBuyDeal(content);
+  }
+}
+
+function applyResult(amount, msg, type) {
+  state.balance += amount;
+  if(state.balance < 0) state.balance = 0;
+  state.totalDeals++;
+  state.dealsCount++;
+  if(amount > 0) state.consecutiveWins++;
+  else if(amount < 0) state.consecutiveWins = 0;
+  
+  updateMarketUI();
+  addLog(msg, type);
+  
+  // Check if game over after result
+  if(checkGameOver()) return;
+  
+  if(state.balance >= 750000) {
+    showToast('🎉 مبروك! وصلت إلى 750,000 نقطة – المركز الأول!', 'success');
+  }
+}
+
+function rand(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+// BUY DEAL
+function generateBuyDeal(container) {
+  const commodity = pick(commodities);
+  const price = rand(5000, 50000);
+  const lossChance = getLossChance();
+  const isLoss = Math.random() < lossChance;
+  const changePct = isLoss ? -rand(10,35) : rand(5,25);
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">📦</span>
+        <span class="text-yellow-400 font-bold">صفقة شراء</span>
+      </div>
+      <p class="text-gray-300 text-sm mb-2">فرصة شراء <span class="text-white font-bold">${commodity}</span> بسعر <span class="text-yellow-400">${price.toLocaleString()}</span> نقطة</p>
+      <p class="text-gray-500 text-xs mb-4">التوقعات: ${isLoss ? 'متقلبة ⚠️' : 'واعدة ✨'}</p>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1 text-sm" onclick="executeBuy(${price},${changePct},'${commodity}')">شراء 🛒</button>
+        <button class="btn-ghost flex-1 text-sm" onclick="skipDeal()">تخطي</button>
+      </div>
+    </div>`;
+}
+
+function executeBuy(price, changePct, commodity) {
+  if(state.balance < price) { showToast('رصيدك غير كافٍ!', 'error'); return; }
+  const profit = Math.round(price * changePct / 100);
+  state.balance -= price; // pay first
+  const net = price + profit;
+  state.balance += net; // get return
+  const type = profit >= 0 ? 'win' : 'loss';
+  applyResult(0, `${commodity}: ${profit >= 0 ? 'ربح' : 'خسارة'} ${Math.abs(profit).toLocaleString()} نقطة (${changePct > 0 ? '+' : ''}${changePct}%)`, type);
+  showDealResult(profit, commodity);
+}
+
+// SELL DEAL
+function generateSellDeal(container) {
+  const company = pick(companies);
+  const amount = rand(10000, 40000);
+  const lossChance = getLossChance();
+  const isLoss = Math.random() < lossChance;
+  const changePct = isLoss ? -rand(15,40) : rand(10,30);
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">📉</span>
+        <span class="text-blue-400 font-bold">صفقة بيع</span>
+      </div>
+      <p class="text-gray-300 text-sm mb-2">بيع أسهم <span class="text-white font-bold">${company}</span> بقيمة <span class="text-blue-400">${amount.toLocaleString()}</span> نقطة</p>
+      <div class="flex gap-2 mt-3">
+        <button class="btn-trade flex-1 text-sm" onclick="executeSell(${amount},${changePct},'${company}')">بيع 📉</button>
+        <button class="btn-ghost flex-1 text-sm" onclick="skipDeal()">تخطي</button>
+      </div>
+    </div>`;
+}
+
+function executeSell(amount, changePct, name) {
+  const profit = Math.round(amount * changePct / 100);
+  applyResult(profit, `بيع ${name}: ${profit >= 0 ? 'ربح' : 'خسارة'} ${Math.abs(profit).toLocaleString()} نقطة`, profit >= 0 ? 'win' : 'loss');
+  showDealResult(profit, name);
+}
+
+// HOLD DEAL
+function generateHoldDeal(container) {
+  const commodity = pick(commodities);
+  const isLoss = Math.random() < 0.75; // 75% loss
+  const changePct = isLoss ? -50 : 10;
+  const amount = rand(15000, 60000);
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">⏳</span>
+        <span class="text-purple-400 font-bold">صفقة احتفاظ</span>
+      </div>
+      <p class="text-gray-300 text-sm mb-2">احتفظ بـ <span class="text-white font-bold">${commodity}</span> بقيمة <span class="text-purple-400">${amount.toLocaleString()}</span> نقطة</p>
+      <p class="text-gray-500 text-xs mb-3">⚠️ الاحتفاظ محفوف بالمخاطر – 75% احتمال خسارة</p>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1 text-sm" onclick="executeHold(${amount},${changePct},'${commodity}')">احتفاظ ⏳</button>
+        <button class="btn-ghost flex-1 text-sm" onclick="skipDeal()">تخطي</button>
+      </div>
+    </div>`;
+}
+
+function executeHold(amount, changePct, name) {
+  const profit = Math.round(amount * changePct / 100);
+  applyResult(profit, `احتفاظ ${name}: ${profit >= 0 ? 'ربح' : 'خسارة'} ${Math.abs(profit).toLocaleString()} نقطة`, profit >= 0 ? 'win' : 'loss');
+  showDealResult(profit, name);
+}
+
+// QUESTION DEAL
+function generateQuestionDeal(container) {
+  const q = pick(questions);
+  const penalty = state.balance >= 400000 ? 30 : state.balance >= 300000 ? 25 : 20;
+  const penaltyAmount = Math.round(state.balance * penalty / 100);
+  const timeLimit = state.balance >= 400000 ? 10 : 15;
+  
+  let timerInterval;
+  let timeLeft = timeLimit;
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">🧠</span>
+        <span class="text-cyan-400 font-bold">سؤال اقتصادي</span>
+      </div>
+      <div class="timer-bar mb-3"><div id="q-timer" class="timer-fill" style="width:100%"></div></div>
+      <p class="text-xs text-gray-500 mb-1" id="q-time-text">${timeLeft} ثانية</p>
+      <p class="text-white text-sm font-bold mb-4">${q.q}</p>
+      <div class="grid grid-cols-2 gap-2" id="q-options">
+        ${q.opts.map((o,i) => `<div class="question-option text-sm text-gray-300" onclick="answerQuestion(${i},${q.correct},${penaltyAmount})">${o}</div>`).join('')}
+      </div>
+      <p class="text-red-400 text-xs mt-2">⚠️ الخطأ أو انتهاء الوقت = خصم ${penalty}% (${penaltyAmount.toLocaleString()} نقطة)</p>
+    </div>`;
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const pct = (timeLeft / timeLimit) * 100;
+    const timerEl = document.getElementById('q-timer');
+    const timeText = document.getElementById('q-time-text');
+    if(timerEl) timerEl.style.width = pct + '%';
+    if(timeText) timeText.textContent = timeLeft + ' ثانية';
+    if(timeLeft <= 0) {
+      clearInterval(timerInterval);
+      answerQuestion(-1, q.correct, penaltyAmount);
+    }
+  }, 1000);
+  
+  // Store interval for cleanup
+  window._qTimer = timerInterval;
+}
+
+function answerQuestion(selected, correct, penalty) {
+  if(window._qTimer) clearInterval(window._qTimer);
+  const container = document.getElementById('active-content');
+  
+  if(selected === correct) {
+    applyResult(0, 'إجابة صحيحة! ✅ بدون خصم', 'win');
+    container.innerHTML = `<div class="text-center py-6 animate-fade">
+      <div class="text-4xl mb-3">✅</div>
+      <p class="text-green-400 font-bold text-lg mb-4">إجابة صحيحة!</p>
+      <button class="btn-trade" onclick="generateDeal()">الصفقة التالية ➡️</button>
+    </div>`;
+  } else {
+    applyResult(-penalty, `إجابة ${selected === -1 ? 'انتهى الوقت' : 'خاطئة'} ❌ خصم ${penalty.toLocaleString()} نقطة`, 'loss');
+    container.innerHTML = `<div class="text-center py-6 animate-fade">
+      <div class="text-4xl mb-3">❌</div>
+      <p class="text-red-400 font-bold text-lg mb-2">${selected === -1 ? 'انتهى الوقت!' : 'إجابة خاطئة!'}</p>
+      <p class="text-gray-400 text-sm mb-4">خصم ${penalty.toLocaleString()} نقطة</p>
+      <button class="btn-trade" onclick="generateDeal()">الصفقة التالية ➡️</button>
+    </div>`;
+  }
+}
+
+// BROKER DEAL
+function generateBrokerDeal(container) {
+  const fee = rand(5000, 20000);
+  const lossChance = getLossChance();
+  const isLoss = Math.random() < lossChance;
+  const profit = isLoss ? -rand(10000, 40000) : rand(15000, 50000);
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xl">🤝</span>
+        <span class="text-emerald-400 font-bold">عرض وسيط</span>
+      </div>
+      <p class="text-gray-300 text-sm mb-2">وسيط يعرض عليك صفقة مقابل عمولة <span class="text-emerald-400">${fee.toLocaleString()}</span> نقطة</p>
+      <p class="text-gray-500 text-xs mb-3">💼 العائد المتوقع غير مضمون</p>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1 text-sm" onclick="executeBroker(${fee},${profit})">قبول 🤝</button>
+        <button class="btn-ghost flex-1 text-sm" onclick="skipDeal()">رفض</button>
+      </div>
+    </div>`;
+}
+
+function executeBroker(fee, profit) {
+  if(state.balance < fee) { showToast('رصيدك غير كافٍ للعمولة!', 'error'); return; }
+  const net = profit - fee;
+  applyResult(net, `صفقة وسيط: ${net >= 0 ? 'ربح' : 'خسارة'} ${Math.abs(net).toLocaleString()} نقطة (بعد العمولة)`, net >= 0 ? 'win' : 'loss');
+  showDealResult(net, 'صفقة وسيط');
+}
+
+// DISASTER ALERT - New system: choices matter!
+function generateDisasterAlert(container) {
+  const disasterLossPct = rand(20, 60);
+  const disasterAmount = Math.round(state.balance * disasterLossPct / 100);
+  
+  // Disguised choices - neutral language, not obviously good or bad
+  const allChoices = [
+    { text: 'التعاون مع السلطات الاقتصادية المختصة', type: 'positive', reward: true },
+    { text: 'العمل مع الهيئات التنظيمية للحفاظ على الاستقرار', type: 'positive', reward: true },
+    { text: 'دعم المبادرات الرسمية لحماية السوق', type: 'positive', reward: true },
+    { text: 'المشاركة في الخطة الجماعية للتعافي', type: 'positive', reward: true },
+    { text: 'الالتزام برزمة الإجراءات الحكومية', type: 'positive', reward: true },
+    { text: 'التركيز على حماية مصالحك الشخصية فقط', type: 'negative', reward: false },
+    { text: 'البحث عن منافذ للاستفادة من الأزمة', type: 'negative', reward: false },
+    { text: 'الانسحاب السريع من السوق قبل الآخرين', type: 'negative', reward: false },
+    { text: 'تجاهل الأضرار التي قد تصيب المستثمرين الآخرين', type: 'negative', reward: false },
+    { text: 'السعي للربح على حساب استقرار السوق', type: 'negative', reward: false },
+  ];
+  
+  // Pick 2 random choices - shuffled
+  const chosen = [];
+  let positiveRemaining = 5, negativeRemaining = 5;
+  
+  while(chosen.length < 2) {
+    const rand_idx = Math.floor(Math.random() * allChoices.length);
+    const choice = allChoices[rand_idx];
+    
+    if(choice.type === 'positive' && positiveRemaining > 0) {
+      chosen.push(choice);
+      positiveRemaining--;
+    } else if(choice.type === 'negative' && negativeRemaining > 0) {
+      chosen.push(choice);
+      negativeRemaining--;
+    }
+  }
+  
+  // Shuffle so good/bad are not in predictable order
+  chosen.sort(() => Math.random() - 0.5);
+  
+  container.innerHTML = `
+    <div class="card-dark animate-fade" style="border:2px solid rgba(239,68,68,.5);background:rgba(239,68,68,.08)">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-3xl animate-shake">🚨</span>
+        <div>
+          <h3 class="text-red-400 font-bold text-lg">تنبيه: كارثة اقتصادية طارئة!</h3>
+          <p class="text-gray-400 text-xs">موقف حرج في السوق – قرارك الآن حاسم</p>
+        </div>
+      </div>
+      
+      <div class="card-dark p-3 mb-4" style="background:rgba(139,0,0,.1);border-color:rgba(239,68,68,.3)">
+        <p class="text-red-300 text-sm mb-2">⚠️ الموقف الحالي يتطلب اتخاذ قرار فوري</p>
+        <p class="text-gray-400 text-xs">تأثير محتمل على رصيدك: <span class="text-red-500 font-bold">تغيير كبير</span></p>
+      </div>
+      
+      <p class="text-gray-300 text-sm mb-4 font-bold">اختر موقفك:</p>
+      
+      <div class="space-y-2">
+        ${chosen.map((choice, i) => `
+          <button class="question-option text-right w-full text-sm p-3" onclick="handleDisasterChoice(${choice.reward},${disasterAmount},'${choice.type}')">
+            <div class="font-bold text-gray-200">${choice.text}</div>
+          </button>
+        `).join('')}
+      </div>
+      
+      <p class="text-gray-600 text-xs text-center mt-4">🎲 النتيجة ستعتمد على قرارك – اختر بحكمة</p>
+    </div>`;
+}
+
+function handleDisasterChoice(isPositiveChoice, disasterAmount, choiceType) {
+  const container = document.getElementById('active-content');
+  
+  if(isPositiveChoice) {
+    // Good choice = protected
+    applyResult(0, `✅ قرار حكيم: تم حماية رصيدك من التأثر!`, 'win');
+    container.innerHTML = `
+      <div class="text-center py-6 animate-fade">
+        <div class="text-5xl mb-3">🛡️</div>
+        <p class="text-green-400 font-bold text-lg mb-2">نجحت في عبور الأزمة!</p>
+        <p class="text-gray-400 text-sm mb-4">اختيارك الموفق حماك من الخسارة 🌟</p>
+        <p class="text-gray-500 text-sm mb-4">رصيدك الحالي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span></p>
+        <button class="btn-trade px-8" onclick="generateDeal()">الصفقة التالية 🎯</button>
+      </div>`;
+  } else {
+    // Bad choice = automatic loss (fixed range: 50k-70k)
+    const lossAmount = rand(50000, 70000);
+    
+    applyResult(-lossAmount, `💥 قرار خاطئ: تضررت من الأزمة بخسارة ${lossAmount.toLocaleString()} نقطة`, 'loss');
+    
+    container.innerHTML = `
+      <div class="text-center py-6 animate-fade">
+        <div class="text-5xl mb-3">💥</div>
+        <p class="text-red-400 font-bold text-lg mb-2">انجرفت مع الأزمة!</p>
+        <p class="text-gray-400 text-sm mb-2">اختيارك أدى لخسائر فادحة</p>
+        <p class="text-red-300 font-bold text-xl mb-1">-${lossAmount.toLocaleString()} نقطة</p>
+        <p class="text-gray-500 text-sm mb-4">رصيدك الحالي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span></p>
+        ${state.balance > 0 ? `<button class="btn-trade px-8" onclick="generateDeal()">المحاولة التالية ⚡</button>` : `<button class="btn-danger px-8" onclick="resetGame(); showPage('page-welcome')">خسرت كل شيء 😔</button>`}
+      </div>`;
+  }
+}
+
+// REFLEX CHALLENGE DEAL - Color matching game
+function generateReflexDeal(container) {
+  const amount = rand(15000, 60000);
+  const colors = ['#FF1744', '#00E676', '#2979F3', '#FFD600']; // Red, Green, Blue, Yellow
+  const colorNames = ['أحمر', 'أخضر', 'أزرق', 'أصفر'];
+  
+  const targetColorIdx = rand(0, 3);
+  const targetColor = colors[targetColorIdx];
+  
+  // Create random order for options
+  let optionIndices = [0, 1, 2, 3];
+  optionIndices = optionIndices.sort(() => Math.random() - 0.5);
+  
+  let gameState = {
+    showingColor: true,
+    selectedCorrect: false,
+    attemptMade: false
+  };
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade" style="border-color:rgba(168,85,247,.4)">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xl">⚡</span>
+        <span class="text-purple-400 font-bold">تحدي البديهة السريعة!</span>
+      </div>
+      
+      <div class="card-dark p-6 mb-4 text-center" style="background:rgba(168,85,247,.1)">
+        <p class="text-gray-400 text-xs mb-4">اللون الأصلي (سيتحول للأبيض):</p>
+        <div id="reflex-color-ball" class="w-24 h-24 rounded-full mx-auto mb-3 animate-fade" style="background-color:${targetColor};box-shadow:0 0 30px ${targetColor}"></div>
+        <p class="text-gray-500 text-xs">انتظر... سيصبح أبيض بعد لحظة</p>
+      </div>
+      
+      <p class="text-gray-400 text-sm mb-3 text-center font-bold">اختر اللون الأصلي من الخيارات:</p>
+      
+      <div class="grid grid-cols-2 gap-3 mb-4" id="reflex-options">
+        ${optionIndices.map(idx => `
+          <button class="relative h-20 rounded-lg border-2 transition-all overflow-hidden" 
+            style="border-color:rgba(255,255,255,.2);background-color:${colors[idx]};opacity:0.9"
+            onclick="selectReflexColor(${idx === targetColorIdx},${amount})"
+            disabled>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white opacity-0">اختر</span>
+          </button>
+        `).join('')}
+      </div>
+      
+      <p class="text-xs text-purple-300 text-center">⚡ اختر اللون الصحيح من أول مرة – بدون ثانية فرصة!</p>
+      <p class="text-xs text-yellow-500 text-center mt-2">المبلغ على المحك: ${amount.toLocaleString()} نقطة</p>
+    </div>`;
+  
+  // After 1.5 seconds, make the ball white and enable buttons
+  setTimeout(() => {
+    const ball = document.getElementById('reflex-color-ball');
+    const buttons = document.querySelectorAll('#reflex-options button');
+    
+    if(ball) {
+      ball.style.backgroundColor = '#FFFFFF';
+      ball.style.boxShadow = '0 0 30px rgba(255,255,255,0.8)';
+    }
+    
+    buttons.forEach(btn => btn.disabled = false);
+  }, 1500);
+  
+  // Timeout after 8 seconds = auto loss
+  setTimeout(() => {
+    if(!gameState.attemptMade) {
+      selectReflexColor(false, amount);
+    }
+  }, 8000);
+  
+  window._reflexGameState = gameState;
+}
+
+function selectReflexColor(isCorrect, amount) {
+  if(window._reflexGameState && window._reflexGameState.attemptMade) return;
+  if(window._reflexGameState) window._reflexGameState.attemptMade = true;
+  
+  // Disable all buttons
+  document.querySelectorAll('#reflex-options button').forEach(btn => btn.disabled = true);
+  
+  if(isCorrect) {
+    // Correct = keep balance (no profit, no loss)
+    applyResult(0, `✅ إجابة صحيحة! تم الحفاظ على رصيدك`, 'win');
+    showDealResult(0, '🎯 ردة فعل سريعة ممتازة!');
+  } else {
+    // Wrong = lose the amount
+    applyResult(-amount, `❌ إجابة خاطئة! خسارة ${amount.toLocaleString()} نقطة`, 'loss');
+    showDealResult(-amount, '⚠️ اختيار خاطئ');
+  }
+}
+
+// GREED DEAL
+function generateGreedDeal(container) {
+  const amount = rand(50000, 150000);
+  const isWin = Math.random() < 0.15; // only 15% chance
+  const result = isWin ? Math.round(amount * 0.4) : -Math.round(amount * 0.5);
+  
+  container.innerHTML = `
+    <div class="deal-card animate-fade animate-pulse-glow" style="border-color:rgba(255,193,7,.4);background:rgba(255,193,7,.03)">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-2xl animate-sparkle">💎</span>
+        <span class="text-yellow-300 font-bold text-lg">فرصة استثمار مضمونة!</span>
+      </div>
+      <p class="text-gray-300 text-sm mb-2">عرض حصري – ربح كبير بقيمة <span class="text-yellow-400 font-bold">${amount.toLocaleString()}</span> نقطة</p>
+      <p class="text-yellow-500 text-xs mb-3">⭐ فرصة لا تتكرر!</p>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1 text-sm" onclick="executeGreed(${result})">استثمر الآن 💰</button>
+        <button class="btn-ghost flex-1 text-sm" onclick="skipDeal()">لا أثق 🤔</button>
+      </div>
+    </div>`;
+}
+
+function executeGreed(result) {
+  const msg = result >= 0 ? `💎 فرصة مضمونة: ربح ${result.toLocaleString()} نقطة!` : `💎 فرصة وهمية: خسارة ${Math.abs(result).toLocaleString()} نقطة!`;
+  applyResult(result, msg, result >= 0 ? 'win' : 'loss');
+  showDealResult(result, result >= 0 ? 'استثمار ناجح' : 'صفقة وهمية');
+}
+
+// DEAL RESULT SCREEN
+function showDealResult(amount, label) {
+  const container = document.getElementById('active-content');
+  const isWin = amount >= 0;
+  container.innerHTML = `
+    <div class="text-center py-6 animate-fade">
+      <div class="text-5xl mb-3">${isWin ? '📈' : '📉'}</div>
+      <p class="${isWin ? 'text-green-400' : 'text-red-400'} font-bold text-xl mb-1">${isWin ? 'ربح' : 'خسارة'}!</p>
+      <p class="text-white text-2xl font-black mb-1">${isWin ? '+' : ''}${amount.toLocaleString()} نقطة</p>
+      <p class="text-gray-500 text-sm mb-4">${label}</p>
+      <p class="text-gray-400 text-sm mb-4">رصيدك الحالي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span></p>
+      ${state.balance > 0 ? `<button class="btn-trade px-8" onclick="generateDeal()">صفقة جديدة 🎯</button>` : `<button class="btn-danger px-8" onclick="resetGame(); showPage('page-welcome')">خسرت كل شيء – العودة 😞</button>`}
+    </div>`;
+}
+
+function skipDeal() {
+  if(window._qTimer) clearInterval(window._qTimer);
+  if(window._riskyTimer) clearInterval(window._riskyTimer);
+  const container = document.getElementById('active-content');
+  addLog('تخطي الصفقة', 'info');
+  container.innerHTML = `
+    <div class="text-center py-8 animate-fade">
+      <p class="text-gray-400 mb-4">تم تخطي الصفقة</p>
+      <button class="btn-trade px-8" onclick="generateDeal()">صفقة جديدة 🎯</button>
+    </div>`;
+}
+
+function checkGameOver() {
+  if(state.balance <= 0) {
+    showGameOverMenu();
+    return true;
+  }
+  return false;
+}
+
+// ===== FREE TRADING =====
+function renderFreeItems() {
+  const list = document.getElementById('free-items-list');
+  const noMsg = document.getElementById('no-items-msg');
+  
+  if(state.items.length === 0) {
+    list.innerHTML = '';
+    noMsg.style.display = 'block';
+    return;
+  }
+  noMsg.style.display = 'none';
+  
+  list.innerHTML = state.items.map(item => `
+    <div class="deal-card flex items-center justify-between" id="free-item-${item.id}">
+      <div>
+        <div class="text-white text-sm font-bold">${item.name}</div>
+        <div class="text-gray-500 text-xs">$${item.priceUSD} – ${item.pricePoints.toLocaleString()} نقطة</div>
+      </div>
+      <button class="btn-trade text-xs px-4 py-2" onclick="initFreeSell('${item.id}')">عرض للبيع 🏷️</button>
+    </div>
+  `).join('');
+}
+
+function initFreeSell(itemId) {
+  const item = state.items.find(i => i.id === itemId);
+  if(!item) return;
+  
+  // Add request to free requests area
+  const reqArea = document.getElementById('free-requests');
+  const reqId = 'req_' + Date.now();
+  
+  // Clear placeholder
+  if(reqArea.querySelector('.text-center')) reqArea.innerHTML = '';
+  
+  const reqEl = document.createElement('div');
+  reqEl.id = reqId;
+  reqEl.className = 'deal-card animate-fade';
+  reqEl.innerHTML = `
+    <div class="flex items-center gap-2">
+      <span class="text-sm">⏳</span>
+      <span class="text-gray-400 text-xs">طلب بيع: <span class="text-white font-bold">${item.name}</span> – جاري البحث عن مشتري...</span>
+    </div>
+    <div class="timer-bar mt-2"><div class="timer-fill" style="width:100%;animation:countDown 15s linear forwards"></div></div>
+  `;
+  reqArea.insertBefore(reqEl, reqArea.firstChild);
+  
+  // After 15 seconds, show purchase offer
+  setTimeout(() => {
+    showPurchaseOffer(item, reqId);
+  }, 15000);
+}
+
+function showPurchaseOffer(item, reqId) {
+  // Determine offer type: 60% buy offer, 40% swap
+  const isBuyOffer = Math.random() < 0.6;
+  
+  if(isBuyOffer) {
+    // حساب نسبة الزيادة حسب سعر السلعة
+    let increasePerc;
+    if(item.pricePoints < 150000) {
+      // تحت 150 ألف: 90%
+      increasePerc = rand(70, 90);
+    } else if(item.pricePoints < 200000) {
+      // من 150 إلى أقل من 200 ألف: 50%
+      increasePerc = rand(40, 50);
+    } else {
+      // 200 ألف فأكثر: 30%
+      increasePerc = rand(25, 30);
+    }
+    
+    const offerPrice = Math.round(item.pricePoints * (1 + increasePerc / 100));
+    
+    showPopup(`
+      <div class="text-center mb-4">
+        <div class="text-4xl mb-2">🛒</div>
+        <h3 class="text-yellow-400 font-bold text-lg">عرض شراء!</h3>
+      </div>
+      <div class="card-dark p-3 mb-4" style="background:rgba(255,193,7,.05)">
+        <p class="text-gray-300 text-sm mb-1">مشتري يريد <span class="text-white font-bold">${item.name}</span></p>
+        <p class="text-sm">السعر الأصلي: <span class="text-gray-400">${item.pricePoints.toLocaleString()}</span> نقطة</p>
+        <p class="text-sm">العرض: <span class="text-green-400 font-bold text-lg">${offerPrice.toLocaleString()}</span> نقطة <span class="text-green-500 text-xs">(+${increasePerc}%)</span></p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1" onclick="acceptBuyOffer('${item.id}',${offerPrice},'${reqId}')">بيع ✅</button>
+        <button class="btn-ghost flex-1" onclick="closePopup();updateReq('${reqId}','تم تخطي العرض','info')">تخطي</button>
+      </div>
+    `);
+  } else {
+    // Swap offer
+    const swapItems = ['هاتف ذكي','ساعة فاخرة','لابتوب','سماعات','كاميرا','تابلت','شاشة','كرسي مكتب'];
+    const swapName = pick(swapItems);
+    const isHigher = Math.random() < 0.4;
+    const swapValue = isHigher ? Math.round(item.pricePoints * (1 + rand(5,25)/100)) : Math.round(item.pricePoints * (1 - rand(10,30)/100));
+    
+    showPopup(`
+      <div class="text-center mb-4">
+        <div class="text-4xl mb-2">🔄</div>
+        <h3 class="text-purple-400 font-bold text-lg">عرض استبدال!</h3>
+      </div>
+      <div class="card-dark p-3 mb-4" style="background:rgba(168,85,247,.05)">
+        <p class="text-gray-300 text-sm mb-2">استبدال <span class="text-white font-bold">${item.name}</span></p>
+        <p class="text-sm mb-1">↕️ بـ <span class="text-purple-300 font-bold">${swapName}</span></p>
+        <p class="text-sm">قيمة السلعة الجديدة: <span class="${isHigher ? 'text-green-400' : 'text-red-400'} font-bold">${swapValue.toLocaleString()}</span> نقطة <span class="text-xs">(${isHigher ? 'أعلى ↑' : 'أقل ↓'})</span></p>
+      </div>
+      <div class="flex gap-2">
+        <button class="btn-trade flex-1" onclick="acceptSwapOffer('${item.id}','${swapName}',${swapValue},'${reqId}')">استبدال 🔄</button>
+        <button class="btn-ghost flex-1" onclick="closePopup();updateReq('${reqId}','تم تخطي الاستبدال','info')">تخطي</button>
+      </div>
+    `);
+  }
+}
+
+function acceptBuyOffer(itemId, price, reqId) {
+  const item = state.items.find(i => i.id === itemId);
+  if(!item) { closePopup(); return; }
+  
+  const profit = price - item.pricePoints;
+  state.balance += price;
+  state.items = state.items.filter(i => i.id !== itemId);
+  
+  closePopup();
+  updateMarketUI();
+  renderFreeItems();
+  updateReq(reqId, `✅ تم بيع ${item.name} بـ ${price.toLocaleString()} نقطة (ربح ${profit.toLocaleString()})`, 'win');
+  addLog(`بيع حر: ${item.name} بـ ${price.toLocaleString()} نقطة`, 'win');
+  showToast(`تم بيع ${item.name} بربح ${profit.toLocaleString()} نقطة!`);
+}
+
+function acceptSwapOffer(itemId, swapName, swapValue, reqId) {
+  const idx = state.items.findIndex(i => i.id === itemId);
+  if(idx === -1) { closePopup(); return; }
+  
+  const oldName = state.items[idx].name;
+  state.items[idx] = {
+    id: Date.now()+'_'+Math.random().toString(36).substr(2,4),
+    name: swapName,
+    priceUSD: swapValue / RATE,
+    pricePoints: swapValue,
+    forSale: false
+  };
+  
+  closePopup();
+  renderFreeItems();
+  updateReq(reqId, `🔄 تم استبدال ${oldName} بـ ${swapName} (${swapValue.toLocaleString()} نقطة)`, 'info');
+  addLog(`استبدال: ${oldName} → ${swapName}`, 'info');
+  showToast(`تم استبدال ${oldName} بـ ${swapName}!`, 'warning');
+}
+
+function updateReq(reqId, msg, type) {
+  const el = document.getElementById(reqId);
+  if(!el) return;
+  const colors = {win:'#10b981', loss:'#ef4444', info:'#64748b'};
+  el.innerHTML = `<div class="text-xs" style="color:${colors[type]||colors.info}">${msg}</div>`;
+}
+
+// ===== POPUP =====
+function showPopup(html) {
+  const overlay = document.getElementById('popup-overlay');
+  overlay.innerHTML = `<div class="popup-content">${html}</div>`;
+  overlay.classList.remove('hidden');
+}
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.add('hidden');
+}
+
+// Close popup on overlay click
+document.getElementById('popup-overlay').addEventListener('click', function(e) {
+  if(e.target === this) closePopup();
+});
+
+// ===== LOAN SYSTEM =====
+function showLoanMenu() {
+  if(state.loansUsed >= 3) {
+    showToast('استخدمت جميع فرص الاقتراض', 'error');
+    return;
+  }
+  
+  const loans = [100000, 50000, 50000];
+  const loanAmount = loans[state.loansUsed];
+  
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">🏦</div>
+      <h3 class="text-blue-400 font-bold text-lg">فرصة اقتراض</h3>
+    </div>
+    <div class="card-dark p-3 mb-4" style="background:rgba(59,130,246,.05)">
+      <p class="text-gray-300 text-sm mb-2">الاقتراض رقم: <span class="text-blue-400 font-bold">${state.loansUsed + 1}/3</span></p>
+      <p class="text-sm">المبلغ: <span class="text-blue-400 font-bold text-lg">${loanAmount.toLocaleString()}</span> نقطة</p>
+      <p class="text-gray-500 text-xs mt-2">سيتم خصم هذا المبلغ من رصيدك النهائي</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn-trade flex-1" onclick="acceptLoan(${loanAmount})">اقتراض ✅</button>
+      <button class="btn-ghost flex-1" onclick="closePopup()">إلغاء</button>
+    </div>
+  `);
+}
+
+function acceptLoan(amount) {
+  state.balance += amount;
+  state.loansUsed++;
+  
+  closePopup();
+  updateMarketUI();
+  addLog(`💳 اقتراض: +${amount.toLocaleString()} نقطة (${3-state.loansUsed} اقتراضات متبقية)`, 'info');
+  showToast(`تم الاقتراض: ${amount.toLocaleString()} نقطة 💳`);
+}
+
+// ===== WITHDRAW MENU =====
+function showWithdrawMenu() {
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">🚪</div>
+      <h3 class="text-white font-bold text-lg">خيارات</h3>
+    </div>
+    <div class="space-y-2">
+      <button class="btn-trade w-full text-sm" onclick="requestWithdraw()">طلب سحب الأرباح 💰</button>
+      <button class="btn-ghost w-full text-sm" onclick="showLoanMenu()">اقتراض إضافي 🏦</button>
+      <button class="btn-ghost w-full text-sm" onclick="notifyAdminDuringGame()">📢 إبلاغ الإدارة بالنتيجة</button>
+      <button class="btn-ghost w-full text-sm" onclick="confirmExit()">الانسحاب من السوق 🚪</button>
+      <button class="btn-ghost w-full text-sm" onclick="closePopup()">إلغاء</button>
+    </div>
+  `);
+}
+
+function requestWithdraw() {
+  const originalBalance = state.items.reduce((s,i) => s + i.pricePoints, 0) + (parseFloat(document.getElementById('inp-balance').value) || 0);
+  const loansTotal = [100000, 50000, 50000].slice(0, state.loansUsed).reduce((s,l) => s+l, 0);
+  const withdrawable = state.balance - loansTotal;
+  
+  closePopup();
+  
+  if(withdrawable <= 0) {
+    showToast('الرصيد غير كافٍ بعد خصم الاقتراضات', 'error');
+    return;
+  }
+  
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">💰</div>
+      <h3 class="text-green-400 font-bold text-lg">ملخص السحب</h3>
+    </div>
+    <div class="card-dark p-3 mb-3 space-y-2" style="background:rgba(16,185,129,.05)">
+      <div class="flex justify-between text-sm">
+        <span class="text-gray-400">الرصيد الحالي:</span>
+        <span class="text-white font-bold">${state.balance.toLocaleString()} نقطة</span>
+      </div>
+      <div class="border-t border-gray-700 pt-2 mt-2" style="border-color:rgba(255,255,255,.1)"></div>
+      <div class="flex justify-between text-sm">
+        <span class="text-red-400">خصم الاقتراضات:</span>
+        <span class="text-red-400 font-bold">-${loansTotal.toLocaleString()} نقطة</span>
+      </div>
+      <div class="border-t border-gray-700 pt-2 mt-2" style="border-color:rgba(255,255,255,.1)"></div>
+      <div class="flex justify-between text-sm">
+        <span class="text-green-400 font-bold">المبلغ القابل للسحب:</span>
+        <span class="text-green-400 font-bold text-lg">${withdrawable.toLocaleString()}</span>
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs text-center mb-3">سيتم التحويل إلى حسابك خلال 24 ساعة</p>
+    <button class="btn-trade w-full" onclick="completedGame(${withdrawable})">تأكيد السحب ✅</button>
+  `);
+}
+
+function confirmExit() {
+  closePopup();
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-3xl mb-2">🤔</div>
+      <h3 class="text-yellow-400 font-bold">هل أنت متأكد؟</h3>
+    </div>
+    <p class="text-gray-400 text-sm text-center mb-4">يمكنك الانسحاب في أي وقت. رصيدك الحالي:</p>
+    <div class="card-dark p-3 mb-4 text-center">
+      <p class="text-yellow-400 font-bold text-lg">${state.balance.toLocaleString()} نقطة</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn-danger flex-1" onclick="completedGame(0)">انسحاب 🚪</button>
+      <button class="btn-ghost flex-1" onclick="closePopup()">استمرار</button>
+    </div>
+  `);
+}
+
+function completedGame(finalBalance) {
+  closePopup();
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-5xl mb-2">🎮</div>
+      <h3 class="text-white font-bold text-lg">انتهت جلستك</h3>
+    </div>
+    <div class="card-dark p-3 mb-4">
+      <p class="text-gray-400 text-sm">الاسم: <span class="text-white font-bold">${state.name}</span></p>
+      <p class="text-gray-400 text-sm">عدد الصفقات: <span class="text-white font-bold">${state.totalDeals}</span></p>
+      <p class="text-gray-400 text-sm">الرصيد النهائي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span> نقطة</p>
+      ${finalBalance > 0 ? `<p class="text-gray-400 text-sm">المبلغ المحول: <span class="text-green-400 font-bold">${finalBalance.toLocaleString()}</span> نقطة</p>` : ''}
+    </div>
+    <button class="btn-trade w-full" onclick="showPage('page-welcome')">العودة للرئيسية 🏠</button>
+  `);
+}
+
+function getPlayerRank() {
+  const b = state.balance;
+  if(b >= 750000) return 1;
+  if(b >= 500000) return 2;
+  if(b >= 350000) return 3;
+  if(b >= 150000) return 4;
+  return 5;
+}
+
+function showGameOverMenu() {
+  const container = document.getElementById('active-content');
+  
+  // Show option to continue or withdraw
+  container.innerHTML = `
+    <div class="text-center py-6 animate-fade">
+      <div class="text-6xl mb-4">💔</div>
+      <p class="text-red-400 font-bold text-lg mb-3">انتهى رصيدك!</p>
+      
+      <div class="card-dark p-4 mb-4" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)">
+        <p class="text-gray-300 text-sm mb-3">لا تستسلم! لديك خيارات</p>
+        <div class="space-y-2">
+          <p class="text-gray-400 text-xs">الاسم: <span class="text-white font-bold">${state.name}</span></p>
+          <p class="text-gray-400 text-xs">عدد الصفقات: <span class="text-white font-bold">${state.totalDeals}</span></p>
+          <p class="text-gray-400 text-xs">الرصيد الحالي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span> نقطة</p>
+        </div>
+      </div>
+      
+      <div class="space-y-2">
+        ${state.loansUsed < 3 ? `<button class="btn-trade w-full text-sm px-4 py-3 font-bold" onclick="showGameOverLoanMenu()">استمرار اللعب 💪</button>` : ''}
+        <button class="btn-danger w-full text-sm px-4 py-3 font-bold" onclick="showGameOverWithdrawMenu()">الاقتراض والانسحاب 🚪</button>
+        <button class="btn-ghost w-full text-sm px-4 py-2" onclick="showPage('page-welcome')">العودة للرئيسية 🏠</button>
+      </div>
+    </div>`;
+}
+
+function showGameOverLoanMenu() {
+  const loansRemaining = 3 - state.loansUsed;
+  if(loansRemaining <= 0) {
+    showToast('استخدمت جميع فرص الاقتراض', 'error');
+    return;
+  }
+  
+  const loans = [100000, 50000, 50000];
+  const loanAmount = loans[state.loansUsed];
+  
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">🏦</div>
+      <h3 class="text-blue-400 font-bold text-lg">فرصة اقتراض</h3>
+    </div>
+    <div class="card-dark p-3 mb-4" style="background:rgba(59,130,246,.05)">
+      <p class="text-gray-300 text-sm mb-2">الاقتراض رقم: <span class="text-blue-400 font-bold">${state.loansUsed + 1}/3</span></p>
+      <p class="text-sm">المبلغ: <span class="text-blue-400 font-bold text-lg">${loanAmount.toLocaleString()}</span> نقطة</p>
+      <p class="text-gray-500 text-xs mt-2">سيتم خصم هذا المبلغ من رصيدك النهائي</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn-trade flex-1" onclick="acceptGameOverLoan(${loanAmount})">اقتراض واستمرار ✅</button>
+      <button class="btn-danger flex-1" onclick="completeGameOverWithdraw()">الانسحاب الآن 🚪</button>
+    </div>
+  `);
+}
+
+function acceptGameOverLoan(amount) {
+  state.balance = amount; // Reset balance with loan amount
+  state.loansUsed++;
+  
+  closePopup();
+  updateMarketUI();
+  addLog(`💳 اقتراض طوارئ: +${amount.toLocaleString()} نقطة (${3-state.loansUsed} اقتراضات متبقية)`, 'info');
+  showToast(`تم الاقتراض: ${amount.toLocaleString()} نقطة – استمتع باللعب! 💪`);
+  
+  // Resume game
+  const container = document.getElementById('active-content');
+  container.innerHTML = `
+    <div class="text-center py-8 animate-fade">
+      <div class="space-y-2 mb-4">
+        <p class="text-green-400 font-bold text-lg">🎮 عدت إلى اللعبة!</p>
+        <p class="text-gray-400 text-sm">رصيدك الجديد: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span> نقطة</p>
+      </div>
+      <button class="btn-trade px-8" onclick="generateDeal()">ابدأ صفقة جديدة 🎯</button>
+    </div>`;
+}
+
+function completeGameOverWithdraw() {
+  const loansTotal = [100000, 50000, 50000].slice(0, state.loansUsed).reduce((s,l) => s+l, 0);
+  const finalBalance = state.balance - loansTotal;
+  
+  closePopup();
+  
+  // Show final results screen with sharing options
+  showFinalResultsScreen(finalBalance > 0 ? finalBalance : 0);
+}
+
+function showFinalResultsScreen(finalBalance) {
+  const rank = getPlayerRank();
+  let rankMessage = '';
+  let rankColor = 'text-gray-400';
+  let rankIcon = '🎮';
+  
+  if(rank === 1) {
+    rankMessage = '🏆 مبروك سيتم التواصل معك من الإدارة لمنحك نسبة السحب وتفعيل الخدمة';
+    rankColor = 'text-yellow-400';
+    rankIcon = '👑';
+  } else if(rank === 2) {
+    rankMessage = '🥈 مبروك سيتم التواصل معك من الإدارة لمنحك نسبة السحب وتفعيل الخدمة';
+    rankColor = 'text-gray-300';
+    rankIcon = '🥈';
+  } else if(rank === 3) {
+    rankMessage = '🥉 مبروك سيتم التواصل معك من الإدارة لمنحك نسبة السحب وتفعيل الخدمة';
+    rankColor = 'text-orange-400';
+    rankIcon = '🥉';
+  } else {
+    rankMessage = 'نتوق لنراك ثانية! جرب مرة أخرى وحقق أرقاماً أعلى 🚀';
+  }
+  
+  const container = document.getElementById('active-content');
+  
+  container.innerHTML = `
+    <div class="text-center py-6 overflow-y-auto scroll-area">
+      <div class="animate-fade">
+        <div class="text-6xl mb-4">${rankIcon}</div>
+        <h2 class="text-white font-black text-2xl mb-2">النتائج النهائية</h2>
+        
+        <div class="card-dark p-4 mb-4" style="background:linear-gradient(135deg,rgba(255,193,7,.1),rgba(255,152,0,.05));border-color:rgba(255,193,7,.3)">
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-400">👤 الاسم:</span>
+              <span class="text-white font-bold">${state.name}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-400">📊 الصفقات:</span>
+              <span class="text-white font-bold">${state.totalDeals}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-400">💰 الرصيد النهائي:</span>
+              <span class="text-yellow-400 font-bold text-lg">${state.balance.toLocaleString()}</span>
+            </div>
+            ${finalBalance > 0 ? `
+              <div class="border-t border-gray-700 pt-3 mt-3" style="border-color:rgba(255,255,255,.1)">
+                <div class="flex justify-between items-center">
+                  <span class="text-green-400 font-bold">✅ المبلغ المحول:</span>
+                  <span class="text-green-400 font-bold text-lg">${finalBalance.toLocaleString()}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <div class="card-dark p-3 mb-4" style="background:rgba(168,85,247,.05);border-color:rgba(168,85,247,.2)">
+          <p class="${rank <= 3 ? rankColor : 'text-gray-400'} text-sm font-bold leading-relaxed">${rankMessage}</p>
+        </div>
+        
+        <div class="space-y-2 mb-4">
+          <button class="btn-trade w-full text-sm px-4 py-3 font-bold flex items-center justify-center gap-2" onclick="shareToWhatsApp('${state.name}',${state.balance},${state.totalDeals})">
+            <span>📱 أخبر الإدارة بالنتيجة</span>
+          </button>
+          <button class="btn-ghost w-full text-sm px-4 py-3 font-bold flex items-center justify-center gap-2" onclick="shareToOthers('${state.name}',${state.balance})">
+            <span>👥 انشر للآخرين</span>
+          </button>
+        </div>
+        
+        <p class="text-gray-500 text-xs mb-4">💫 نتوق لنراك ثانية في المحاولة القادمة!</p>
+        
+        <div class="space-y-2">
+          <button class="btn-trade w-full text-sm px-4 py-3 font-bold" onclick="notifyAdmin('${state.name}',${state.balance},${state.totalDeals})">📢 إبلاغ الإدارة بالنتيجة</button>
+          <button class="btn-ghost w-full text-sm px-4 py-2" onclick="showPage('page-welcome')">العودة للرئيسية 🏠</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function showGameOverWithdrawMenu() {
+  showPopup(`
+    <div class="text-center mb-4">
+      <div class="text-4xl mb-2">💰</div>
+      <h3 class="text-yellow-400 font-bold text-lg">الاقتراض والانسحاب</h3>
+    </div>
+    <div class="card-dark p-3 mb-4" style="background:rgba(59,130,246,.05)">
+      <p class="text-gray-300 text-sm mb-3">💡 اختر مبلغ إضافي لمحاولة أخرى أو انسحب الآن</p>
+      <p class="text-gray-500 text-xs">ستُخصم الاقتراضات من رصيدك النهائي</p>
+    </div>
+    
+    ${state.loansUsed < 3 ? `
+      <div class="space-y-2 mb-3">
+        <button class="btn-trade w-full text-sm px-4 py-3 font-bold" onclick="acceptGameOverLoan(100000)">
+          اقتراض 100,000 نقطة ✅
+        </button>
+      </div>
+    ` : `
+      <div class="card-dark p-3 mb-3" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)">
+        <p class="text-red-400 text-xs font-bold">❌ لا توجد اقتراضات متبقية</p>
+      </div>
+    `}
+    
+    <button class="btn-danger w-full text-sm px-4 py-2 font-bold" onclick="completeGameOverWithdraw()">الانسحاب والذهاب للنتائج 🚪</button>
+  `);
+}
+
+function shareToWhatsApp(name, balance, deals) {
+  const rank = getPlayerRank();
+  let rankText = '';
+  if(rank === 1) rankText = '🏆 المركز الأول';
+  else if(rank === 2) rankText = '🥈 المركز الثاني';
+  else if(rank === 3) rankText = '🥉 المركز الثالث';
+  else rankText = '🎮 اللاعب';
+  
+  const message = encodeURIComponent(
+    `🎮 *سوق التداول - كوماند هاب*\n\n` +
+    `👤 *${name}*\n` +
+    `💰 الرصيد النهائي: ${balance.toLocaleString()} نقطة\n` +
+    `📊 عدد الصفقات: ${deals}\n` +
+    `🏅 ${rankText}\n\n` +
+    `🚀 تفضل وجرب اللعبة الآن!\n` +
+    `نتوق لنراك ثانية! 🌟`
+  );
+  
+  window.open(`https://wa.me/?text=${message}`, '_blank', 'noopener,noreferrer');
+}
+
+function shareToOthers(name, balance) {
+  const message = encodeURIComponent(
+    `🎮 سوق التداول - كوماند هاب 🎮\n\n` +
+    `لقد حققت: 💰 ${balance.toLocaleString()} نقطة\n` +
+    `هل تستطيع التغلب على مستواي؟ 🔥\n\n` +
+    `جرب اللعبة الآن وأثبت مهاراتك! ⚡`
+  );
+  
+  const shareUrl = `https://wa.me/?text=${message}`;
+  window.open(shareUrl, '_blank', 'noopener,noreferrer');
+}
+
+function notifyAdmin(name, balance, deals) {
+  const rank = getPlayerRank();
+  let rankText = '';
+  if(rank === 1) rankText = '🏆 المركز الأول';
+  else if(rank === 2) rankText = '🥈 المركز الثاني';
+  else if(rank === 3) rankText = '🥉 المركز الثالث';
+  else rankText = '🎮 اللاعب';
+  
+  const message = encodeURIComponent(
+    `🎮 *تقرير جديد من سوق التداول*\n\n` +
+    `👤 *الاسم:* ${name}\n` +
+    `💰 *الرصيد النهائي:* ${balance.toLocaleString()} نقطة\n` +
+    `📊 *عدد الصفقات:* ${deals}\n` +
+    `🏅 *الترتيب:* ${rankText}\n\n` +
+    `⏰ الوقت: ${new Date().toLocaleString('ar-EG')}`
+  );
+  
+  window.open(`https://wa.me/?text=${message}`, '_blank', 'noopener,noreferrer');
+  showToast('تم فتح الرسالة – أرسل للإدارة الآن ✅', 'success');
+}
+
+function notifyAdminDuringGame() {
+  closePopup();
+  const rank = getPlayerRank();
+  let rankText = '';
+  if(rank === 1) rankText = '🏆 المركز الأول';
+  else if(rank === 2) rankText = '🥈 المركز الثاني';
+  else if(rank === 3) rankText = '🥉 المركز الثالث';
+  else rankText = '🎮 اللاعب';
+  
+  const message = encodeURIComponent(
+    `🎮 *تقرير من سوق التداول (أثناء اللعب)*\n\n` +
+    `👤 *الاسم:* ${state.name}\n` +
+    `💰 *الرصيد الحالي:* ${state.balance.toLocaleString()} نقطة\n` +
+    `📊 *عدد الصفقات:* ${state.totalDeals}\n` +
+    `🏅 *الترتيب:* ${rankText}\n` +
+    `🎲 *الاقتراضات المتبقية:* ${3 - state.loansUsed}/3\n\n` +
+    `⏰ الوقت: ${new Date().toLocaleString('ar-EG')}\n\n` +
+    `*الحالة:* لا يزال يلعب 🎮`
+  );
+  
+  window.open(`https://wa.me/?text=${message}`, '_blank', 'noopener,noreferrer');
+  showToast('تم فتح الرسالة – أرسل للإدارة الآن ✅', 'success');
+}
+
+// ===== RESPONSIVE =====
+function handleResize() {
+  if(window.innerWidth < 900) {
+    const activeTab = document.getElementById('tab-active').classList.contains('active');
+    document.getElementById('panel-active').style.display = activeTab ? 'flex' : 'none';
+    document.getElementById('panel-free').style.display = activeTab ? 'none' : 'flex';
+  } else {
+    document.getElementById('panel-active').style.display = 'flex';
+    document.getElementById('panel-free').style.display = 'flex';
+  }
+}
+window.addEventListener('resize', handleResize);
+
+// ===== INIT =====
+applyConfig(defaultConfig);
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e138a4e223dc4ff',t:'MTc3NDMzMjkxNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -1,0 +1,1728 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Hub Bank</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        taj: ['Tajawal', 'sans-serif'],
+        outfit: ['Outfit', 'sans-serif']
+      }
+    }
+  }
+}
+</script>
+  <style>
+html, body { height: 100%; margin: 0; }
+* { box-sizing: border-box; }
+
+:root {
+  --bg-primary: #0a0e1a;
+  --surface: #111827;
+  --text-main: #e8eaf0;
+  --accent: #c9a227;
+  --accent-secondary: #1a73e8;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Tajawal', sans-serif;
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #c9a227 0%, #f0d060 50%, #c9a227 100%);
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #c9a227 0%, #f0d060 50%, #c9a227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-glass {
+  background: rgba(17, 24, 39, 0.8);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.card-glass:hover {
+  border-color: rgba(201, 162, 39, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(201, 162, 39, 0.1);
+}
+
+.service-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+  transform: scale(1) translateY(0);
+}
+
+.nav-item {
+  transition: all 0.2s ease;
+  position: relative;
+}
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #c9a227, #f0d060);
+  border-radius: 1px;
+}
+
+.stat-card {
+  background: linear-gradient(145deg, rgba(17, 24, 39, 0.9), rgba(26, 35, 55, 0.9));
+  border: 1px solid rgba(201, 162, 39, 0.12);
+}
+
+.pulse-dot {
+  animation: pulse-anim 2s ease-in-out infinite;
+}
+@keyframes pulse-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+input, select, textarea {
+  background: rgba(10, 14, 26, 0.8);
+  border: 1px solid rgba(201, 162, 39, 0.2);
+  color: #e8eaf0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  width: 100%;
+  font-family: 'Tajawal', sans-serif;
+  transition: border-color 0.2s;
+  font-size: 14px;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #c9a227;
+  box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.15);
+}
+select option { background: #111827; color: #e8eaf0; }
+
+.btn-gold {
+  background: linear-gradient(135deg, #c9a227, #d4af37);
+  color: #0a0e1a;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  width: 100%;
+}
+.btn-gold:hover {
+  background: linear-gradient(135deg, #d4af37, #e8c445);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(201, 162, 39, 0.3);
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+.toast {
+  background: linear-gradient(135deg, #1a2335, #111827);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  color: #e8eaf0;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-family: 'Tajawal', sans-serif;
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 2.5s forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-20px); } }
+
+.hero-bg {
+  background: radial-gradient(ellipse at 30% 20%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(26, 115, 232, 0.05) 0%, transparent 50%),
+              var(--bg-primary);
+}
+
+.number-font { font-family: 'Outfit', sans-serif; }
+
+.exchange-info {
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.08), rgba(26, 115, 232, 0.05));
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.chart-container {
+  position: relative;
+  height: 120px;
+  margin-top: 8px;
+}
+
+canvas {
+  max-height: 120px;
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app-root" class="h-full overflow-auto scrollbar-hide hero-bg">
+   <!-- Loading State -->
+   <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden">
+    <div class="text-center">
+     <div class="w-12 h-12 rounded-lg gold-gradient flex items-center justify-center mb-3 mx-auto">
+      <div class="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+     </div>
+     <p class="text-sm text-gray-300">جاري تحميل البيانات...</p>
+    </div>
+   </div><!-- Toast Container -->
+   <div id="toast-container" class="toast-container"></div><!-- Navigation -->
+   <nav class="sticky top-0 z-50 border-b border-[rgba(201,162,39,0.1)]" style="background:rgba(10,14,26,0.95);backdrop-filter:blur(12px);">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center">
+       <svg width="22" height="22" viewbox="0 0 24 24" fill="none" stroke="#0a0e1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M9 21V9" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="nav-bank-name" class="text-lg font-extrabold gold-text leading-tight">Command Hub Bank</h1>
+       <p class="text-[10px] text-gray-500 leading-tight">بنك رقمي داخلي</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-1 text-sm"><button onclick="switchPage('home')" id="nav-home" class="nav-item active px-3 py-1.5 rounded-lg text-gray-300 hover:text-[#c9a227]">الرئيسية</button> <button onclick="switchPage('services')" id="nav-services" class="nav-item px-3 py-1.5 rounded-lg text-gray-300 hover:text-[#c9a227]">الخدمات</button> <button onclick="switchPage('invest')" id="nav-invest" class="nav-item px-3 py-1.5 rounded-lg text-gray-300 hover:text-[#c9a227]">الاستثمار</button> <button onclick="switchPage('account')" id="nav-account" class="nav-item px-3 py-1.5 rounded-lg text-gray-300 hover:text-[#c9a227]">حسابي</button>
+     </div>
+    </div>
+   </nav><!-- HOME PAGE -->
+   <div id="page-home" class="page-section"><!-- Hero Section -->
+    <div class="max-w-6xl mx-auto px-4 pt-10 pb-6">
+     <div class="text-center mb-8 fade-in">
+      <h2 id="hero-welcome" class="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">مرحباً بك في بنك <span class="gold-text">الكوماند هاب</span></h2>
+      <p class="text-gray-400 text-base max-w-xl mx-auto mb-4">نظامك المالي الرقمي الداخلي — إدارة أموالك ونقاطك واستثماراتك بكل سهولة وأمان</p>
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full" style="background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.2)"><span class="w-2 h-2 rounded-full bg-green-400 pulse-dot inline-block"></span> <span id="hero-user-count" class="text-sm text-[#c9a227] font-bold">أكثر من 10,000 مستخدم يثقون بنا</span>
+      </div>
+     </div><!-- Exchange Rate Banner -->
+     <div class="exchange-info max-w-md mx-auto text-center mb-10 fade-in stagger-1">
+      <p class="text-xs text-gray-400 mb-1">سعر الصرف الأساسي</p>
+      <p class="text-xl font-extrabold gold-text number-font">1 USD = 2,500 Points</p>
+     </div><!-- Stats Grid -->
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+      <div class="stat-card rounded-2xl p-4 text-center fade-in stagger-1">
+       <div class="w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:rgba(201,162,39,0.12)">
+        <i data-lucide="users" class="w-5 h-5 text-[#c9a227]"></i>
+       </div>
+       <p class="number-font text-2xl font-bold text-white">10,000</p>
+       <p class="text-[11px] text-gray-500">مستخدم نشط</p>
+      </div>
+      <div class="stat-card rounded-2xl p-4 text-center fade-in stagger-2">
+       <div class="w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:rgba(26,115,232,0.12)">
+        <i data-lucide="trending-up" class="w-5 h-5 text-[#1a73e8]"></i>
+       </div>
+       <p class="number-font text-2xl font-bold text-white">22%</p>
+       <p class="text-[11px] text-gray-500">أعلى عائد مرابحة</p>
+      </div>
+      <div class="stat-card rounded-2xl p-4 text-center fade-in stagger-3">
+       <div class="w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:rgba(52,211,153,0.12)">
+        <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
+       </div>
+       <p class="number-font text-2xl font-bold text-white">0%</p>
+       <p class="text-[11px] text-gray-500">رسوم الإيداع</p>
+      </div>
+      <div class="stat-card rounded-2xl p-4 text-center fade-in stagger-4">
+       <div class="w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:rgba(244,114,182,0.12)">
+        <i data-lucide="zap" class="w-5 h-5 text-pink-400"></i>
+       </div>
+       <p class="number-font text-2xl font-bold text-white">2%</p>
+       <p class="text-[11px] text-gray-500">رسوم التحويل</p>
+      </div>
+     </div><!-- Fee Overview -->
+     <div class="card-glass rounded-2xl p-5 mb-10 fade-in stagger-5">
+      <h3 class="font-bold text-lg mb-4 gold-text">💱 جدول الرسوم والتسعير</h3>
+      <div class="grid md:grid-cols-2 gap-3">
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">تحويل Points → دولار</span> <span class="number-font font-bold text-[#c9a227]">12%</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">تحويل دولار → Points</span> <span class="number-font font-bold text-[#c9a227]">6%</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">تحويل بين المستخدمين</span> <span class="number-font font-bold text-[#c9a227]">2%</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">السحب من البنك</span> <span class="number-font font-bold text-[#c9a227]">3%</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">الإيداع داخل البنك</span> <span class="number-font font-bold text-emerald-400">مجاني 0%</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)"><span class="text-sm text-gray-300">سعر الصرف</span> <span class="number-font font-bold text-[#1a73e8]">1$ = 2,500 Points</span>
+       </div>
+      </div>
+     </div><!-- Quick Actions -->
+     <div class="mb-10 fade-in stagger-6">
+      <h3 class="font-bold text-lg mb-4">⚡ إجراءات سريعة</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3"><button onclick="switchPage('services');setTimeout(()=>openModal('open-account'),200)" class="service-card card-glass rounded-2xl p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-xl gold-gradient flex items-center justify-center">
+         <i data-lucide="user-plus" class="w-6 h-6 text-[#0a0e1a]"></i>
+        </div><p class="text-sm font-bold">فتح حساب</p></button> <button onclick="switchPage('services');setTimeout(()=>openModal('deposit'),200)" class="service-card card-glass rounded-2xl p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#34d399)">
+         <i data-lucide="plus-circle" class="w-6 h-6 text-[#0a0e1a]"></i>
+        </div><p class="text-sm font-bold">إيداع</p></button> <button onclick="switchPage('services');setTimeout(()=>openModal('topup'),200)" class="service-card card-glass rounded-2xl p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#1a73e8,#60a5fa)">
+         <i data-lucide="credit-card" class="w-6 h-6 text-white"></i>
+        </div><p class="text-sm font-bold">شحن رصيد</p></button> <button onclick="switchPage('services');setTimeout(()=>openModal('transfer'),200)" class="service-card card-glass rounded-2xl p-4 text-center">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#a855f7,#c084fc)">
+         <i data-lucide="send" class="w-6 h-6 text-white"></i>
+        </div><p class="text-sm font-bold">تحويل Points</p></button>
+      </div>
+     </div><!-- Offers Section -->
+     <div class="mb-10 fade-in">
+      <h3 class="font-bold text-lg mb-4">📢 عروض وفرص البنك</h3>
+      <div class="grid md:grid-cols-3 gap-3">
+       <div class="card-glass rounded-2xl p-5 service-card">
+        <div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:rgba(201,162,39,0.2);color:#c9a227">جديد</span> <span class="text-[11px] text-gray-500">عرض محدود</span>
+        </div>
+        <h4 class="font-bold text-base mb-1">مرابحة 90 يوم بعائد 22%</h4>
+        <p class="text-xs text-gray-400 mb-3">أودع الآن واحصل على أعلى عائد استثماري داخل النظام</p><button onclick="switchPage('invest')" class="text-xs font-bold text-[#c9a227] hover:underline">استثمر الآن ←</button>
+       </div>
+       <div class="card-glass rounded-2xl p-5 service-card">
+        <div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:rgba(26,115,232,0.2);color:#60a5fa">فرصة</span> <span class="text-[11px] text-gray-500">استثمار تقني</span>
+        </div>
+        <h4 class="font-bold text-base mb-1">استثمار بالدعم الفني</h4>
+        <p class="text-xs text-gray-400 mb-3">شارك في تمويل مشاريع الدعم الفني داخل الكوماند هاب</p><button onclick="switchPage('invest')" class="text-xs font-bold text-[#1a73e8] hover:underline">اكتشف المزيد ←</button>
+       </div>
+       <div class="card-glass rounded-2xl p-5 service-card">
+        <div class="flex items-center gap-2 mb-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold" style="background:rgba(168,85,247,0.2);color:#c084fc">إبداع</span> <span class="text-[11px] text-gray-500">مشاريع إبداعية</span>
+        </div>
+        <h4 class="font-bold text-base mb-1">استثمار بالإبداع</h4>
+        <p class="text-xs text-gray-400 mb-3">ادعم مشاريع التصميم والمحتوى والألعاب واحصل على أرباح</p><button onclick="switchPage('invest')" class="text-xs font-bold text-purple-400 hover:underline">شارك الآن ←</button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- SERVICES PAGE -->
+   <div id="page-services" class="page-section hidden">
+    <div class="max-w-6xl mx-auto px-4 pt-8 pb-6">
+     <h2 class="text-2xl font-extrabold mb-2 fade-in">🏦 <span class="gold-text">الخدمات البنكية</span></h2>
+     <p class="text-sm text-gray-400 mb-8 fade-in">اختر الخدمة التي تحتاجها</p>
+     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"><!-- Open Account -->
+      <div onclick="openModal('open-account')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-1">
+       <div class="w-14 h-14 mb-3 rounded-2xl gold-gradient flex items-center justify-center">
+        <i data-lucide="user-plus" class="w-7 h-7 text-[#0a0e1a]"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">فتح حساب بنكي</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">أنشئ حسابك داخل البنك لتتمكن من إدارة أموالك ونقاطك</p>
+      </div><!-- Top Up -->
+      <div onclick="openModal('topup')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-2">
+       <div class="w-14 h-14 mb-3 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#1a73e8,#60a5fa)">
+        <i data-lucide="credit-card" class="w-7 h-7 text-white"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">شحن الرصيد</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">أرسل طلب شحن رصيد داخل حسابك البنكي</p>
+      </div><!-- Withdraw -->
+      <div onclick="openModal('withdraw')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-3">
+       <div class="w-14 h-14 mb-3 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#ef4444,#f87171)">
+        <i data-lucide="arrow-up-circle" class="w-7 h-7 text-white"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">طلب سحب</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">اطلب سحب من حسابك البنكي — رسوم 3%</p>
+      </div><!-- Deposit -->
+      <div onclick="openModal('deposit')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-4">
+       <div class="w-14 h-14 mb-3 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#34d399)">
+        <i data-lucide="plus-circle" class="w-7 h-7 text-[#0a0e1a]"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">إيداع داخل البنك</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">أضف رصيداً داخل حسابك — بدون رسوم!</p>
+      </div><!-- Transfer -->
+      <div onclick="openModal('transfer')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-5">
+       <div class="w-14 h-14 mb-3 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#a855f7,#c084fc)">
+        <i data-lucide="send" class="w-7 h-7 text-white"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">تحويل Points</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">حوّل Points إلى مستخدم آخر — رسوم 2%</p>
+      </div><!-- Convert -->
+      <div onclick="openModal('convert')" class="service-card card-glass rounded-2xl p-5 fade-in stagger-6">
+       <div class="w-14 h-14 mb-3 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">
+        <i data-lucide="repeat" class="w-7 h-7 text-[#0a0e1a]"></i>
+       </div>
+       <h3 class="font-bold text-base mb-1">تحويل عملات</h3>
+       <p class="text-xs text-gray-400 leading-relaxed">حوّل بين الدولار والـ Points بأسعار تنافسية</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- INVESTMENT PAGE -->
+   <div id="page-invest" class="page-section hidden">
+    <div class="max-w-6xl mx-auto px-4 pt-8 pb-6">
+     <h2 class="text-2xl font-extrabold mb-2 fade-in">💼 <span class="gold-text">خدمات الاستثمار</span></h2>
+     <p class="text-sm text-gray-400 mb-6 fade-in">نمِّ أموالك مع فرص الاستثمار داخل الكوماند هاب</p><!-- Live Analytics Charts -->
+     <div class="grid md:grid-cols-3 gap-4 mb-8"><!-- User Growth Chart -->
+      <div class="card-glass rounded-2xl p-5 fade-in stagger-1">
+       <div class="flex items-center justify-between mb-4">
+        <div>
+         <p class="text-xs text-gray-400">نمو المستخدمين النشطين</p>
+         <p class="number-font text-2xl font-bold gold-text mt-1" id="growth-stat">+12.5%</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(201,162,39,0.15)">
+         <i data-lucide="trending-up" class="w-5 h-5 text-[#c9a227]"></i>
+        </div>
+       </div>
+       <div class="chart-container">
+        <canvas id="chart-growth"></canvas>
+       </div>
+      </div><!-- Trading Volume Chart -->
+      <div class="card-glass rounded-2xl p-5 fade-in stagger-2">
+       <div class="flex items-center justify-between mb-4">
+        <div>
+         <p class="text-xs text-gray-400">حجم تداول السوق</p>
+         <p class="number-font text-2xl font-bold text-[#1a73e8] mt-1">$2.4M</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(26,115,232,0.15)">
+         <i data-lucide="bar-chart-3" class="w-5 h-5 text-[#1a73e8]"></i>
+        </div>
+       </div>
+       <div class="chart-container">
+        <canvas id="chart-volume"></canvas>
+       </div>
+      </div><!-- Game Activity Chart -->
+      <div class="card-glass rounded-2xl p-5 fade-in stagger-3">
+       <div class="flex items-center justify-between mb-4">
+        <div>
+         <p class="text-xs text-gray-400">نشاط الألعاب</p>
+         <p class="number-font text-2xl font-bold text-purple-400 mt-1" id="games-stat">8,432</p>
+        </div>
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(168,85,247,0.15)">
+         <i data-lucide="activity" class="w-5 h-5 text-purple-400"></i>
+        </div>
+       </div>
+       <div class="chart-container">
+        <canvas id="chart-games"></canvas>
+       </div>
+      </div>
+     </div><!-- LIVE TRADING DASHBOARD -->
+     <div class="card-glass rounded-2xl p-6 mb-8 fade-in stagger-4">
+      <h3 class="font-bold text-lg mb-4">📊 <span class="gold-text">لوحة تداول السوق الحية</span></h3>
+      <p class="text-xs text-gray-400 mb-5">تحديث فوري لصفقات البيع والشراء والاحتفاظ</p><!-- Live Trades Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6" id="live-trades-container">
+       <!-- Trades will be inserted here dynamically -->
+      </div><!-- Trading Stats -->
+      <div class="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-[rgba(201,162,39,0.1)]">
+       <div class="text-center">
+        <p class="text-xs text-gray-400 mb-1">إجمالي الصفقات</p>
+        <p class="number-font text-xl font-bold gold-text" id="total-trades">0</p>
+       </div>
+       <div class="text-center">
+        <p class="text-xs text-gray-400 mb-1">صفقات نشطة</p>
+        <p class="number-font text-xl font-bold text-emerald-400" id="active-trades">0</p>
+       </div>
+       <div class="text-center">
+        <p class="text-xs text-gray-400 mb-1">في الانتظار</p>
+        <p class="number-font text-xl font-bold text-[#1a73e8]" id="pending-trades">0</p>
+       </div>
+      </div>
+     </div><!-- Murabaha -->
+     <div class="card-glass rounded-2xl p-6 mb-6 fade-in stagger-5">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-12 h-12 rounded-2xl gold-gradient flex items-center justify-center">
+        <i data-lucide="landmark" class="w-6 h-6 text-[#0a0e1a]"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-lg">إيداع مرابحة</h3>
+        <p class="text-xs text-gray-400">استثمار بعائد ثابت — اختر المدة المناسبة</p>
+       </div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-3 mb-4">
+       <div class="rounded-xl p-4 text-center" style="background:rgba(10,14,26,0.6);border:1px solid rgba(201,162,39,0.15)">
+        <p class="text-sm text-gray-400 mb-2">30 يوم</p>
+        <div class="flex items-center justify-center gap-2 mb-2">
+         <p class="number-font text-3xl font-bold gold-text transition-all" id="murabaha-rate-30">6.00%</p>
+         <div id="murabaha-arrow-30" class="flex items-center">
+          <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+         </div>
+        </div>
+        <p class="text-[11px] text-gray-500">قيمة السهم</p>
+       </div>
+       <div class="rounded-xl p-4 text-center" style="background:rgba(10,14,26,0.6);border:1px solid rgba(26,115,232,0.2)">
+        <p class="text-sm text-gray-400 mb-2">60 يوم</p>
+        <div class="flex items-center justify-center gap-2 mb-2">
+         <p class="number-font text-3xl font-bold text-[#60a5fa] transition-all" id="murabaha-rate-60">13.00%</p>
+         <div id="murabaha-arrow-60" class="flex items-center">
+          <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+         </div>
+        </div>
+        <p class="text-[11px] text-gray-500">قيمة السهم</p>
+       </div>
+       <div class="rounded-xl p-4 text-center relative overflow-hidden" style="background:rgba(10,14,26,0.6);border:1px solid rgba(168,85,247,0.2)"><span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold" style="background:rgba(168,85,247,0.3);color:#c084fc">الأعلى عائداً</span>
+        <p class="text-sm text-gray-400 mb-2">90 يوم</p>
+        <div class="flex items-center justify-center gap-2 mb-2">
+         <p class="number-font text-3xl font-bold text-purple-400 transition-all" id="murabaha-rate-90">22.00%</p>
+         <div id="murabaha-arrow-90" class="flex items-center">
+          <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+         </div>
+        </div>
+        <p class="text-[11px] text-gray-500">قيمة السهم</p>
+       </div>
+      </div><button onclick="openModal('murabaha')" class="btn-gold">تقديم طلب إيداع مرابحة</button>
+     </div><!-- Tech Investment -->
+     <div class="card-glass rounded-2xl p-6 mb-6 fade-in stagger-5">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#1a73e8,#60a5fa)">
+        <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-lg">استثمار بالدعم الفني</h3>
+        <p class="text-xs text-gray-400">استثمر في مشاريع الدعم الفني والتقني</p>
+       </div>
+      </div>
+      <div class="flex items-center justify-between mb-4 p-4 rounded-xl" style="background:rgba(26,115,232,0.1);border:1px solid rgba(26,115,232,0.2)">
+       <p class="text-sm text-gray-300">معدل العائد السنوي</p>
+       <div class="flex items-center gap-2">
+        <p class="number-font text-2xl font-bold text-[#60a5fa] transition-all" id="tech-rate-display">33.00%</p>
+        <div id="tech-arrow" class="flex items-center">
+         <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+        </div>
+       </div>
+      </div>
+      <p class="text-sm text-gray-400 mb-4 leading-relaxed">شارك في تمويل المشاريع التقنية داخل الكوماند هاب واحصل على عوائد مجزية من أرباح هذه المشاريع.</p><button onclick="openModal('tech-invest')" class="btn-gold">تقديم طلب استثمار تقني</button>
+     </div><!-- Creative Investment -->
+     <div class="card-glass rounded-2xl p-6 mb-6 fade-in stagger-6">
+      <div class="flex items-center gap-3 mb-4">
+       <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#a855f7,#c084fc)">
+        <i data-lucide="palette" class="w-6 h-6 text-white"></i>
+       </div>
+       <div>
+        <h3 class="font-bold text-lg">استثمار بالإبداع</h3>
+        <p class="text-xs text-gray-400">ادعم مشاريع التصميم والمحتوى والألعاب</p>
+       </div>
+      </div>
+      <div class="flex items-center justify-between mb-4 p-4 rounded-xl" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2)">
+       <p class="text-sm text-gray-300">معدل العائد السنوي</p>
+       <div class="flex items-center gap-2">
+        <p class="number-font text-2xl font-bold text-purple-400 transition-all" id="creative-rate-display">45.00%</p>
+        <div id="creative-arrow" class="flex items-center">
+         <i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>
+        </div>
+       </div>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-4"><span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">🎨 التصميم</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">✍️ المحتوى</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">💡 الأفكار</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">🎮 الألعاب</span>
+      </div><button onclick="openModal('creative-invest')" class="btn-gold">تقديم طلب استثمار إبداعي</button>
+     </div>
+    </div>
+   </div><!-- ACCOUNT PAGE -->
+   <div id="page-account" class="page-section hidden">
+    <div class="max-w-6xl mx-auto px-4 pt-8 pb-6">
+     <h2 class="text-2xl font-extrabold mb-6 fade-in">📊 <span class="gold-text">حسابي البنكي</span></h2><!-- Balance Cards -->
+     <div class="grid md:grid-cols-2 gap-4 mb-6">
+      <div class="rounded-2xl p-5 fade-in stagger-1" style="background:linear-gradient(145deg,rgba(201,162,39,0.15),rgba(17,24,39,0.9));border:1px solid rgba(201,162,39,0.25)">
+       <p class="text-xs text-gray-400 mb-1">الرصيد بالدولار</p>
+       <p class="number-font text-4xl font-extrabold text-white">$1,250<span class="text-lg text-gray-400">.00</span></p>
+       <p class="text-[11px] text-gray-500 mt-2">USD — حساب جاري</p>
+      </div>
+      <div class="rounded-2xl p-5 fade-in stagger-2" style="background:linear-gradient(145deg,rgba(26,115,232,0.15),rgba(17,24,39,0.9));border:1px solid rgba(26,115,232,0.25)">
+       <p class="text-xs text-gray-400 mb-1">الرصيد بـ Points</p>
+       <p class="number-font text-4xl font-extrabold text-white">3,125,000</p>
+       <p class="text-[11px] text-gray-500 mt-2">Points — يعادل $1,250</p>
+      </div>
+     </div><!-- Account Stats -->
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div class="stat-card rounded-xl p-4 text-center fade-in stagger-3">
+       <p class="text-[11px] text-gray-500 mb-1">إجمالي الإيداعات</p>
+       <p class="number-font text-lg font-bold text-emerald-400">$5,400</p>
+      </div>
+      <div class="stat-card rounded-xl p-4 text-center fade-in stagger-3">
+       <p class="text-[11px] text-gray-500 mb-1">إجمالي السحوبات</p>
+       <p class="number-font text-lg font-bold text-red-400">$2,150</p>
+      </div>
+      <div class="stat-card rounded-xl p-4 text-center fade-in stagger-4">
+       <p class="text-[11px] text-gray-500 mb-1">أرباح الاستثمار</p>
+       <p class="number-font text-lg font-bold text-[#c9a227]">$820</p>
+      </div>
+      <div class="stat-card rounded-xl p-4 text-center fade-in stagger-4">
+       <p class="text-[11px] text-gray-500 mb-1">عدد التحويلات</p>
+       <p class="number-font text-lg font-bold text-purple-400">47</p>
+      </div>
+     </div><!-- Recent Transactions -->
+     <div class="card-glass rounded-2xl p-5 mb-6 fade-in stagger-5">
+      <h3 class="font-bold text-base mb-4">📋 آخر العمليات</h3>
+      <div class="space-y-3" id="transactions-list">
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)">
+        <div class="flex items-center gap-3">
+         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(52,211,153,0.15)">
+          <i data-lucide="arrow-down-circle" class="w-4 h-4 text-emerald-400"></i>
+         </div>
+         <div>
+          <p class="text-sm font-bold">إيداع</p>
+          <p class="text-[10px] text-gray-500">منذ ساعتين</p>
+         </div>
+        </div><span class="number-font font-bold text-emerald-400 text-sm">+$500.00</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)">
+        <div class="flex items-center gap-3">
+         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(168,85,247,0.15)">
+          <i data-lucide="send" class="w-4 h-4 text-purple-400"></i>
+         </div>
+         <div>
+          <p class="text-sm font-bold">تحويل Points</p>
+          <p class="text-[10px] text-gray-500">أمس</p>
+         </div>
+        </div><span class="number-font font-bold text-purple-400 text-sm">-50,000 Points</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)">
+        <div class="flex items-center gap-3">
+         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(201,162,39,0.15)">
+          <i data-lucide="landmark" class="w-4 h-4 text-[#c9a227]"></i>
+         </div>
+         <div>
+          <p class="text-sm font-bold">ربح مرابحة</p>
+          <p class="text-[10px] text-gray-500">قبل 3 أيام</p>
+         </div>
+        </div><span class="number-font font-bold text-[#c9a227] text-sm">+$120.00</span>
+       </div>
+       <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)">
+        <div class="flex items-center gap-3">
+         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(239,68,68,0.15)">
+          <i data-lucide="arrow-up-circle" class="w-4 h-4 text-red-400"></i>
+         </div>
+         <div>
+          <p class="text-sm font-bold">سحب</p>
+          <p class="text-[10px] text-gray-500">قبل أسبوع</p>
+         </div>
+        </div><span class="number-font font-bold text-red-400 text-sm">-$200.00</span>
+       </div>
+      </div>
+     </div><!-- Account Warning -->
+     <div class="rounded-xl p-4 mb-6" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3)">
+      <div class="flex items-start gap-3">
+       <i data-lucide="alert-circle" class="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5"></i>
+       <div>
+        <p class="text-sm font-bold text-purple-300 mb-1">⚠️ تنويه مهم</p>
+        <p class="text-xs text-gray-300 leading-relaxed">يجب تثبيت كل طلباتك من خلال الإدارة بشكل مباشر لحفظ الأمن والخصوصية. استخدم زر تأكيد الطلبات للتواصل مع الإدارة عبر واتساب.</p>
+       </div>
+      </div>
+     </div><!-- Confirm Requests Button -->
+     <div class="mb-6 fade-in stagger-5">
+      <button onclick="openModal('confirm-requests')" class="w-full btn-gold"> <span class="flex items-center justify-center gap-2"> <i data-lucide="check-circle" class="w-4 h-4"></i> تأكيد الطلبات مع الإدارة (واتساب) </span> </button>
+     </div><!-- Active Investments -->
+     <div class="card-glass rounded-2xl p-5 fade-in stagger-6">
+      <h3 class="font-bold text-base mb-4">📈 استثماراتي النشطة</h3>
+      <div class="space-y-3" id="active-investments">
+       <div class="rounded-xl p-4" style="background:rgba(10,14,26,0.6);border:1px solid rgba(201,162,39,0.12)">
+        <div class="flex items-center justify-between mb-2"><span class="text-sm font-bold">مرابحة 60 يوم</span> <span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background:rgba(52,211,153,0.2);color:#34d399">نشط</span>
+        </div>
+        <div class="flex justify-between text-xs text-gray-400"><span>المبلغ: <span class="number-font text-white font-bold">$2,000</span></span> <span>العائد: <span class="number-font text-[#c9a227] font-bold">13%</span></span> <span>متبقي: <span class="number-font text-white font-bold">34 يوم</span></span>
+        </div>
+        <div class="mt-2 h-1.5 rounded-full" style="background:rgba(201,162,39,0.15)">
+         <div class="h-full rounded-full gold-gradient" style="width:43%"></div>
+        </div>
+        <div class="flex gap-2 mt-3"><button onclick="openModal('investment-actions')" class="flex-1 px-2 py-1.5 rounded text-[10px] font-bold border border-[rgba(201,162,39,0.3)] text-[#c9a227] hover:bg-[rgba(201,162,39,0.1)] transition">⚙️ خيارات</button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- MODAL OVERLAY -->
+   <div id="modal-overlay" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="modal-content card-glass rounded-2xl w-full max-w-md max-h-[85%] overflow-auto scrollbar-hide p-6" id="modal-body"><!-- Dynamic content -->
+    </div>
+   </div><!-- Footer -->
+   <footer class="border-t border-[rgba(201,162,39,0.08)] py-6 mt-4">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+     <p class="text-xs text-gray-600">Command Hub Bank © 2025 — بنك رقمي داخلي</p>
+     <p class="text-[10px] text-gray-700 mt-1">جميع العمليات المالية داخلية وتخضع لسياسات الكوماند هاب</p>
+    </div>
+   </footer>
+  </div>
+  <script>
+// ============ CHART INSTANCES ============
+let chartGrowth, chartVolume, chartGames;
+
+// ============ DATA MANAGEMENT ============
+let allTransactions = [];
+let currentUserBalance = { usd: 1250, points: 3125000 };
+let currentUserInvestments = [];
+
+const dataHandler = {
+  onDataChanged(data) {
+    if (!data) return;
+    
+    const deposits = data.filter(d => d.type === 'deposit');
+    const withdrawals = data.filter(d => d.type === 'withdrawal');
+    const transfers = data.filter(d => d.type === 'transfer');
+    const conversions = data.filter(d => d.type === 'conversion');
+    const investments = data.filter(d => d.type === 'investment');
+    
+    allTransactions = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    currentUserInvestments = investments;
+    
+    // Update balances
+    let totalDeposits = deposits.reduce((sum, d) => sum + d.amount, 0);
+    let totalWithdrawals = withdrawals.reduce((sum, d) => sum + d.amount, 0);
+    
+    if (document.getElementById('page-account').classList.contains('hidden') === false) {
+      renderTransactionsList();
+      renderActiveInvestments();
+    }
+  }
+};
+
+async function initDataSDK() {
+  const result = await window.dataSdk.init(dataHandler);
+  if (!result.isOk) console.error('SDK Init Failed');
+}
+
+function showLoading(show) {
+  document.getElementById('loading-overlay').classList.toggle('hidden', !show);
+}
+
+async function submitTransaction(transactionData) {
+  showLoading(true);
+  const result = await window.dataSdk.create(transactionData);
+  showLoading(false);
+  
+  if (result.isOk) {
+    return true;
+  } else {
+    showToast('❌ حدث خطأ: ' + result.error.message, '❌');
+    return false;
+  }
+}
+
+function renderTransactionsList() {
+  const container = document.getElementById('transactions-list');
+  if (!container) return;
+  
+  if (allTransactions.length === 0) {
+    container.innerHTML = '<p class="text-center text-gray-500 text-sm py-4">لا توجد عمليات حتى الآن</p>';
+    return;
+  }
+
+  const icons = {
+    'deposit': { icon: 'arrow-down-circle', color: 'emerald-400', label: 'إيداع' },
+    'withdrawal': { icon: 'arrow-up-circle', color: 'red-400', label: 'سحب' },
+    'transfer': { icon: 'send', color: 'purple-400', label: 'تحويل' },
+    'conversion': { icon: 'repeat', color: '#c9a227', label: 'تحويل عملة' },
+    'investment': { icon: 'landmark', color: '#c9a227', label: 'استثمار' }
+  };
+
+  container.innerHTML = allTransactions.slice(0, 10).map((tx, idx) => {
+    const icon = icons[tx.type] || icons['deposit'];
+    const date = new Date(tx.date).toLocaleDateString('ar-SA');
+    const amount = tx.currency === 'usd' ? `$${tx.amount.toFixed(2)}` : `${tx.amount.toLocaleString()} Points`;
+    
+    return `
+      <div class="flex items-center justify-between p-3 rounded-xl" style="background:rgba(10,14,26,0.6)">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(${icon.color === 'emerald-400' ? '52,211,153' : icon.color === 'red-400' ? '239,68,68' : '168,85,247'},0.15)">
+            <i data-lucide="${icon.icon}" class="w-4 h-4 text-${icon.color}"></i>
+          </div>
+          <div>
+            <p class="text-sm font-bold">${tx.description || icon.label}</p>
+            <p class="text-[10px] text-gray-500">${date}</p>
+          </div>
+        </div>
+        <span class="number-font font-bold text-${icon.color} text-sm">${tx.type === 'withdrawal' || tx.type === 'transfer' || (tx.type === 'conversion' && tx.currency === 'points') ? '-' : '+'}${amount}</span>
+      </div>
+    `;
+  }).join('');
+  
+  lucide.createIcons();
+}
+
+function renderActiveInvestments() {
+  const container = document.getElementById('active-investments');
+  if (!container) return;
+  
+  if (currentUserInvestments.length === 0) {
+    container.innerHTML = '<p class="text-center text-gray-500 text-sm py-4">لا توجد استثمارات نشطة</p>';
+    return;
+  }
+
+  container.innerHTML = currentUserInvestments.map((inv, idx) => {
+    const daysElapsed = Math.floor((new Date() - new Date(inv.date)) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(100, (daysElapsed / inv.duration) * 100);
+    const daysRemaining = Math.max(0, inv.duration - daysElapsed);
+    
+    const icons = { 'murabaha': 'landmark', 'tech': 'cpu', 'creative': 'palette' };
+    const colors = { 'murabaha': '#c9a227', 'tech': '#1a73e8', 'creative': '#a855f7' };
+
+    return `
+      <div class="rounded-xl p-4" style="background:rgba(10,14,26,0.6);border:1px solid rgba(${colors[inv.investment_type] === '#c9a227' ? '201,162,39' : colors[inv.investment_type] === '#1a73e8' ? '26,115,232' : '168,85,247'},0.12)">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="${icons[inv.investment_type]}" class="w-4 h-4" style="color:${colors[inv.investment_type]}"></i>
+            <span class="text-sm font-bold">${inv.description}</span>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background:rgba(52,211,153,0.2);color:#34d399">نشط</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-xs text-gray-400 mb-2">
+          <span>المبلغ: <span class="number-font text-white font-bold">$${inv.amount.toFixed(2)}</span></span>
+          <span>العائد: <span class="number-font font-bold" style="color:${colors[inv.investment_type]}">${inv.return_rate}%</span></span>
+          <span>متبقي: <span class="number-font text-white font-bold">${daysRemaining} يوم</span></span>
+        </div>
+        <div class="mt-2 h-1.5 rounded-full" style="background:rgba(201,162,39,0.15)">
+          <div class="h-full rounded-full" style="width:${progress}%;background:linear-gradient(90deg,${colors[inv.investment_type]},#f0d060)"></div>
+        </div>
+        <div class="flex gap-2 mt-3">
+          <button onclick="openModal('investment-actions','${inv.__backendId}')" class="flex-1 px-2 py-1.5 rounded text-[10px] font-bold border border-[rgba(201,162,39,0.3)] text-[#c9a227] hover:bg-[rgba(201,162,39,0.1)] transition">⚙️ خيارات</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  lucide.createIcons();
+}
+
+// ============ CHART INIT ============
+function initCharts() {
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { 
+      y: { beginAtZero: true, grid: { color: 'rgba(201,162,39,0.08)' }, ticks: { color: '#999' } },
+      x: { grid: { display: false }, ticks: { color: '#999' } }
+    }
+  };
+
+  // User Growth Chart
+  const growthCtx = document.getElementById('chart-growth')?.getContext('2d');
+  if (growthCtx) {
+    chartGrowth = new Chart(growthCtx, {
+      type: 'line',
+      data: {
+        labels: ['أسبوع 1', 'أسبوع 2', 'أسبوع 3', 'أسبوع 4'],
+        datasets: [{
+          label: 'نمو المستخدمين',
+          data: [8200, 8650, 9120, 10000],
+          borderColor: '#c9a227',
+          backgroundColor: 'rgba(201,162,39,0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#c9a227',
+          pointRadius: 4
+        }]
+      },
+      options: chartOptions
+    });
+  }
+
+  // Trading Volume Chart
+  const volumeCtx = document.getElementById('chart-volume')?.getContext('2d');
+  if (volumeCtx) {
+    chartVolume = new Chart(volumeCtx, {
+      type: 'bar',
+      data: {
+        labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء'],
+        datasets: [{
+          label: 'حجم التداول',
+          data: [1800000, 2100000, 1950000, 2400000],
+          backgroundColor: ['#1a73e8', '#1a73e8', '#1a73e8', '#1a73e8'],
+          borderRadius: 6
+        }]
+      },
+      options: chartOptions
+    });
+  }
+
+  // Game Activity Chart
+  const gamesCtx = document.getElementById('chart-games')?.getContext('2d');
+  if (gamesCtx) {
+    chartGames = new Chart(gamesCtx, {
+      type: 'line',
+      data: {
+        labels: ['ساعة 1', 'ساعة 2', 'ساعة 3', 'ساعة 4'],
+        datasets: [{
+          label: 'نشاط الألعاب',
+          data: [6500, 7200, 7800, 8432],
+          borderColor: '#a855f7',
+          backgroundColor: 'rgba(168,85,247,0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#a855f7',
+          pointRadius: 4
+        }]
+      },
+      options: chartOptions
+    });
+  }
+}
+
+// ============ LIVE STATS UPDATE ============
+let currentGrowthStat = 12.5;
+let currentGamesStat = 8432;
+let murabahaRates = { 30: 6, 60: 13, 90: 22 };
+let murabahaDirection = { 30: 1, 60: 1, 90: 1 }; // 1 for up, -1 for down
+let techRate = 33;
+let techDirection = 1;
+let creativeRate = 45;
+let creativeDirection = 1;
+let previousRates = { murabaha: { 30: 6, 60: 13, 90: 22 }, tech: 33, creative: 45 };
+
+function updateLiveStats() {
+  // Update Growth Percentage (0.1% - 0.5% increase every 1-2 seconds)
+  const growthChange = (Math.random() * 0.4 + 0.1) * (Math.random() > 0.5 ? 1 : -1);
+  currentGrowthStat = Math.max(5, Math.min(25, currentGrowthStat + growthChange));
+  
+  const growthEl = document.getElementById('growth-stat');
+  if (growthEl) {
+    growthEl.textContent = currentGrowthStat.toFixed(2) + '%';
+  }
+  
+  // Update Games Activity (random between 7000-12000)
+  currentGamesStat = Math.floor(Math.random() * 5000) + 7000;
+  
+  const gamesEl = document.getElementById('games-stat');
+  if (gamesEl) {
+    gamesEl.textContent = currentGamesStat.toLocaleString();
+  }
+  
+  // Update Murabaha Rates: up to +5%, down to -10%
+  Object.keys(murabahaRates).forEach(duration => {
+    const baseRates = { 30: 6, 60: 13, 90: 22 };
+    let change;
+    
+    // 30% chance to go down, 70% chance to go up or stay
+    if (Math.random() < 0.3) {
+      change = (Math.random() * 10) * -0.01; // -10% to 0%
+      murabahaDirection[duration] = -1;
+    } else {
+      change = (Math.random() * 5) * 0.01; // 0% to +5%
+      murabahaDirection[duration] = 1;
+    }
+    
+    murabahaRates[duration] = Math.max(baseRates[duration] * 0.9, Math.min(baseRates[duration] * 1.05, baseRates[duration] + change));
+  });
+  
+  // Update rate display elements with directional arrows
+  const rate30 = document.getElementById('murabaha-rate-30');
+  const arrow30 = document.getElementById('murabaha-arrow-30');
+  if (rate30) {
+    const prevRate = previousRates.murabaha[30];
+    const currentRate = murabahaRates[30];
+    rate30.textContent = murabahaRates[30].toFixed(2) + '%';
+    if (arrow30) {
+      if (currentRate > prevRate) {
+        arrow30.innerHTML = '<i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>';
+        murabahaDirection[30] = 1;
+      } else if (currentRate < prevRate) {
+        arrow30.innerHTML = '<i data-lucide="trending-down" class="w-5 h-5 text-red-400"></i>';
+        murabahaDirection[30] = -1;
+      }
+    }
+    previousRates.murabaha[30] = currentRate;
+  }
+  
+  const rate60 = document.getElementById('murabaha-rate-60');
+  const arrow60 = document.getElementById('murabaha-arrow-60');
+  if (rate60) {
+    const prevRate = previousRates.murabaha[60];
+    const currentRate = murabahaRates[60];
+    rate60.textContent = murabahaRates[60].toFixed(2) + '%';
+    if (arrow60) {
+      if (currentRate > prevRate) {
+        arrow60.innerHTML = '<i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>';
+        murabahaDirection[60] = 1;
+      } else if (currentRate < prevRate) {
+        arrow60.innerHTML = '<i data-lucide="trending-down" class="w-5 h-5 text-red-400"></i>';
+        murabahaDirection[60] = -1;
+      }
+    }
+    previousRates.murabaha[60] = currentRate;
+  }
+  
+  const rate90 = document.getElementById('murabaha-rate-90');
+  const arrow90 = document.getElementById('murabaha-arrow-90');
+  if (rate90) {
+    const prevRate = previousRates.murabaha[90];
+    const currentRate = murabahaRates[90];
+    rate90.textContent = murabahaRates[90].toFixed(2) + '%';
+    if (arrow90) {
+      if (currentRate > prevRate) {
+        arrow90.innerHTML = '<i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>';
+        murabahaDirection[90] = 1;
+      } else if (currentRate < prevRate) {
+        arrow90.innerHTML = '<i data-lucide="trending-down" class="w-5 h-5 text-red-400"></i>';
+        murabahaDirection[90] = -1;
+      }
+    }
+    previousRates.murabaha[90] = currentRate;
+  }
+  
+  // Update Tech Rate (33% with +5% up, -10% down)
+  let techChange;
+  if (Math.random() < 0.3) {
+    techChange = (Math.random() * 10) * -0.01; // -10% to 0%
+    techDirection = -1;
+  } else {
+    techChange = (Math.random() * 5) * 0.01; // 0% to +5%
+    techDirection = 1;
+  }
+  
+  const prevTech = techRate;
+  techRate = Math.max(33 * 0.9, Math.min(33 * 1.05, 33 + techChange));
+  
+  const techEl = document.getElementById('tech-rate-display');
+  const techArrow = document.getElementById('tech-arrow');
+  if (techEl) {
+    techEl.textContent = techRate.toFixed(2) + '%';
+    if (techArrow) {
+      if (techRate > prevTech) {
+        techArrow.innerHTML = '<i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>';
+      } else if (techRate < prevTech) {
+        techArrow.innerHTML = '<i data-lucide="trending-down" class="w-5 h-5 text-red-400"></i>';
+      }
+    }
+  }
+  
+  // Update Creative Rate (45% with +3% up, -10% down)
+  let creativeChange;
+  if (Math.random() < 0.3) {
+    creativeChange = (Math.random() * 10) * -0.01; // -10% to 0%
+    creativeDirection = -1;
+  } else {
+    creativeChange = (Math.random() * 3) * 0.01; // 0% to +3%
+    creativeDirection = 1;
+  }
+  
+  const prevCreative = creativeRate;
+  creativeRate = Math.max(45 * 0.9, Math.min(45 * 1.03, 45 + creativeChange));
+  
+  const creativeEl = document.getElementById('creative-rate-display');
+  const creativeArrow = document.getElementById('creative-arrow');
+  if (creativeEl) {
+    creativeEl.textContent = creativeRate.toFixed(2) + '%';
+    if (creativeArrow) {
+      if (creativeRate > prevCreative) {
+        creativeArrow.innerHTML = '<i data-lucide="trending-up" class="w-5 h-5 text-emerald-400"></i>';
+      } else if (creativeRate < prevCreative) {
+        creativeArrow.innerHTML = '<i data-lucide="trending-down" class="w-5 h-5 text-red-400"></i>';
+      }
+    }
+  }
+  
+  lucide.createIcons();
+}
+
+// Start updating stats every 1.5-2 seconds
+setInterval(updateLiveStats, 1800);
+
+// ============ DEFAULT CONFIG ============
+const defaultConfig = {
+  bank_name: 'Command Hub Bank',
+  welcome_message: 'مرحباً بك في بنك الكوماند هاب',
+  user_count_label: 'أكثر من 10,000 مستخدم يثقون بنا',
+  primary_color: '#0a0e1a',
+  surface_color: '#111827',
+  text_color: '#e8eaf0',
+  accent_color: '#c9a227',
+  action_color: '#1a73e8',
+  font_family: 'Tajawal',
+  font_size: 16
+};
+
+// ============ SDK INIT ============
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    const c = { ...defaultConfig, ...config };
+    const font = c.font_family || defaultConfig.font_family;
+    const baseSize = c.font_size || defaultConfig.font_size;
+
+    // Update text content
+    const navName = document.getElementById('nav-bank-name');
+    if (navName) navName.textContent = c.bank_name;
+
+    const heroWelcome = document.getElementById('hero-welcome');
+    if (heroWelcome) heroWelcome.innerHTML = c.welcome_message.replace(/(الكوماند هاب|Command Hub)/gi, '<span class="gold-text">$1</span>');
+
+    const userCount = document.getElementById('hero-user-count');
+    if (userCount) userCount.textContent = c.user_count_label;
+
+    // Update colors
+    document.documentElement.style.setProperty('--bg-primary', c.primary_color);
+    document.documentElement.style.setProperty('--surface', c.surface_color);
+    document.documentElement.style.setProperty('--text-main', c.text_color);
+    document.documentElement.style.setProperty('--accent', c.accent_color);
+    document.documentElement.style.setProperty('--accent-secondary', c.action_color);
+
+    document.body.style.color = c.text_color;
+
+    // Font
+    document.body.style.fontFamily = `${font}, sans-serif`;
+    document.body.style.fontSize = `${baseSize}px`;
+  },
+  mapToCapabilities: (config) => {
+    const c = { ...defaultConfig, ...config };
+    return {
+      recolorables: [
+        { get: () => c.primary_color || defaultConfig.primary_color, set: (v) => { c.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+        { get: () => c.surface_color || defaultConfig.surface_color, set: (v) => { c.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+        { get: () => c.text_color || defaultConfig.text_color, set: (v) => { c.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+        { get: () => c.accent_color || defaultConfig.accent_color, set: (v) => { c.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+        { get: () => c.action_color || defaultConfig.action_color, set: (v) => { c.action_color = v; window.elementSdk.setConfig({ action_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: {
+        get: () => c.font_family || defaultConfig.font_family,
+        set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+      },
+      fontSizeable: {
+        get: () => c.font_size || defaultConfig.font_size,
+        set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+      }
+    };
+  },
+  mapToEditPanelValues: (config) => {
+    const c = { ...defaultConfig, ...config };
+    return new Map([
+      ['bank_name', c.bank_name || defaultConfig.bank_name],
+      ['welcome_message', c.welcome_message || defaultConfig.welcome_message],
+      ['user_count_label', c.user_count_label || defaultConfig.user_count_label]
+    ]);
+  }
+});
+
+// ============ PAGE NAVIGATION ============
+function switchPage(page) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(`page-${page}`).classList.remove('hidden');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${page}`).classList.add('active');
+
+  document.getElementById('app-root').scrollTop = 0;
+  lucide.createIcons();
+  
+  // Init charts when investment page loads
+  if (page === 'invest') {
+    setTimeout(() => initCharts(), 100);
+    animateTrades();
+  }
+}
+
+// ============ TOAST ============
+function showToast(msg, icon = '✅') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ============ MODAL SYSTEM ============
+function openModal(type) {
+  const overlay = document.getElementById('modal-overlay');
+  const body = document.getElementById('modal-body');
+  body.innerHTML = getModalContent(type);
+  overlay.classList.add('active');
+  lucide.createIcons();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+function getModalContent(type) {
+  const closeBtn = `<button onclick="closeModal()" class="absolute top-4 left-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[rgba(255,255,255,0.1)] transition"><i data-lucide="x" class="w-5 h-5 text-gray-400"></i></button>`;
+
+  const modals = {
+    'confirm-requests': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#06b6d4,#22d3ee)"><i data-lucide="phone" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">تأكيد الطلبات مع الإدارة</h3><p class="text-xs text-gray-400">تواصل مع إدارة البنك عبر واتساب</p></div>
+        <div class="space-y-3 mb-5">
+          <div class="p-4 rounded-xl" style="background:rgba(10,14,26,0.6);border:1px solid rgba(6,182,212,0.2)">
+            <p class="text-xs text-gray-400 mb-2">اضغط الزر أدناه للتواصل مع الإدارة:</p>
+            <a href="https://wa.me/966501234567?text=السلام عليكم، أريد تأكيد طلباتي البنكية" target="_blank" rel="noopener noreferrer" class="btn-gold flex items-center justify-center gap-2">
+              <i data-lucide="phone" class="w-4 h-4"></i>
+              فتح محادثة واتساب
+            </a>
+          </div>
+          <div class="text-xs text-gray-400 p-3 rounded-lg" style="background:rgba(201,162,39,0.08)">
+            <p class="font-bold mb-1">📌 تذكير:</p>
+            <p>أرسل الرقم التعريفي لحسابك وتفاصيل الطلبات المراد تأكيدها.</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="w-full px-4 py-2 rounded-lg border border-[rgba(201,162,39,0.3)] text-[#c9a227] font-bold text-sm hover:bg-[rgba(201,162,39,0.1)] transition">إغلاق</button>
+      </div>`,
+    'open-account': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl gold-gradient flex items-center justify-center mb-3"><i data-lucide="user-plus" class="w-6 h-6 text-[#0a0e1a]"></i></div>
+        <h3 class="font-bold text-lg">فتح حساب بنكي</h3><p class="text-xs text-gray-400">أنشئ حسابك للبدء في إدارة أموالك</p></div>
+        <form onsubmit="handleForm(event,'تم إرسال طلب فتح الحساب بنجاح')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">الاسم الكامل</label><input type="text" placeholder="أدخل اسمك الكامل" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">رقم المستخدم</label><input type="text" placeholder="مثال: CH-12345" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">البريد الإلكتروني</label><input type="email" placeholder="email@example.com" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">رقم واتساب</label><input type="tel" placeholder="+966 5XXXXXXXX" required></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب فتح الحساب</button>
+        </form>
+      </div>`,
+    'topup': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#1a73e8,#60a5fa)"><i data-lucide="credit-card" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">شحن الرصيد</h3><p class="text-xs text-gray-400">أرسل طلب شحن — رسوم دولار→Points 6%</p></div>
+        <form onsubmit="handleForm(event,'تم إرسال طلب الشحن بنجاح')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ المطلوب شحنه</label><input type="number" min="1" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">نوع العملة</label><select required><option value="">اختر العملة</option><option>دولار (USD)</option><option>نقاط (Points)</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">تاريخ الشحن</label><input type="date" required></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب الشحن عبر واتساب</button>
+        </form>
+      </div>`,
+    'withdraw': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#ef4444,#f87171)"><i data-lucide="arrow-up-circle" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">طلب سحب</h3><p class="text-xs text-gray-400">سحب من حسابك — رسوم 3%</p></div>
+        <form onsubmit="handleForm(event,'تم إرسال طلب السحب بنجاح')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">نوع السحب</label><select required><option value="">اختر النوع</option><option>دولار (USD)</option><option>Points</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ المطلوب</label><input type="number" min="1" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">ملاحظة (اختياري)</label><textarea rows="2" placeholder="أي ملاحظة إضافية"></textarea></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب السحب</button>
+        </form>
+      </div>`,
+    'deposit': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#10b981,#34d399)"><i data-lucide="plus-circle" class="w-6 h-6 text-[#0a0e1a]"></i></div>
+        <h3 class="font-bold text-lg">إيداع داخل البنك</h3><p class="text-xs text-gray-400">أضف رصيداً — بدون أي رسوم! 🎉</p></div>
+        <form onsubmit="handleDepositForm(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ</label><input type="number" step="0.01" min="0.01" name="amount" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">نوع العملة</label><select name="currency" required><option value="">اختر العملة</option><option value="usd">دولار (USD)</option><option value="points">Points</option></select></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب الإيداع</button>
+        </form>
+      </div>`,
+    'transfer': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#a855f7,#c084fc)"><i data-lucide="send" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">تحويل Points</h3><p class="text-xs text-gray-400">حوّل Points لمستخدم آخر — رسوم 2%</p></div>
+        <form onsubmit="handleTransferForm(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">رقم الحساب المستلم</label><input type="text" name="recipient" placeholder="مثال: CH-67890" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">عدد النقاط</label><input type="number" step="1" min="1" name="amount" placeholder="0" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">ملاحظة (اختياري)</label><textarea name="notes" rows="2" placeholder="سبب التحويل"></textarea></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب التحويل</button>
+        </form>
+      </div>`,
+    'convert': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i data-lucide="repeat" class="w-6 h-6 text-[#0a0e1a]"></i></div>
+        <h3 class="font-bold text-lg">تحويل عملات</h3><p class="text-xs text-gray-400">حوّل بين الدولار والـ Points</p></div>
+        <div class="exchange-info mb-4">
+          <div class="flex justify-between text-xs mb-1"><span class="text-gray-400">دولار → Points</span><span class="font-bold">1$ = 2,350 Points <span class="text-gray-500">(رسوم 6%)</span></span></div>
+          <div class="flex justify-between text-xs"><span class="text-gray-400">Points → دولار</span><span class="font-bold">2,500 Points = $0.88 <span class="text-gray-500">(رسوم 12%)</span></span></div>
+        </div>
+        <form onsubmit="handleConvertForm(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">اتجاه التحويل</label><select name="direction" required id="convert-dir" onchange="updateConvertPreview()"><option value="">اختر الاتجاه</option><option value="usd-pts">دولار → Points</option><option value="pts-usd">Points → دولار</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ</label><input type="number" step="0.01" min="0.01" name="amount" id="convert-amount" placeholder="0" required oninput="updateConvertPreview()"></div>
+            <div id="convert-preview" class="text-center p-3 rounded-xl" style="background:rgba(201,162,39,0.08);display:none">
+              <p class="text-xs text-gray-400">ستحصل على تقريباً</p>
+              <p id="convert-result" class="number-font text-xl font-bold gold-text">—</p>
+            </div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">تنفيذ التحويل</button>
+        </form>
+      </div>`,
+    'murabaha': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl gold-gradient flex items-center justify-center mb-3"><i data-lucide="landmark" class="w-6 h-6 text-[#0a0e1a]"></i></div>
+        <h3 class="font-bold text-lg">إيداع مرابحة</h3><p class="text-xs text-gray-400">استثمار بعائد ثابت مضمون</p></div>
+        <form onsubmit="handleInvestmentForm(event,'murabaha')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">مبلغ الإيداع (بالدولار)</label><input type="number" step="0.01" min="0.01" name="amount" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">مدة الاستثمار</label><select name="duration" required><option value="">اختر المدة</option><option value="30">30 يوم — عائد 6%</option><option value="60">60 يوم — عائد 13%</option><option value="90">90 يوم — عائد 22%</option></select></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">تقديم طلب إيداع مرابحة</button>
+        </form>
+      </div>`,
+    'tech-invest': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#1a73e8,#60a5fa)"><i data-lucide="cpu" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">استثمار بالدعم الفني</h3><p class="text-xs text-gray-400">استثمر في المشاريع التقنية</p></div>
+        <form onsubmit="handleForm(event,'تم تقديم طلب الاستثمار التقني بنجاح')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">مبلغ الاستثمار (بالدولار)</label><input type="number" min="1" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">اختيار المشروع</label><select required><option value="">اختر المشروع</option><option>نظام إدارة التذاكر</option><option>تطوير الروبوت الآلي</option><option>تحسين الخوادم</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">مدة الاستثمار</label><select required><option value="">اختر المدة</option><option>30 يوم</option><option>60 يوم</option><option>90 يوم</option></select></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب الاستثمار</button>
+        </form>
+      </div>`,
+    'creative-invest': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#a855f7,#c084fc)"><i data-lucide="palette" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">استثمار بالإبداع</h3><p class="text-xs text-gray-400">ادعم مشاريع التصميم والمحتوى</p></div>
+        <form onsubmit="handleInvestmentForm(event,'creative')">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">مبلغ الاستثمار (بالدولار)</label><input type="number" min="1" name="amount" placeholder="0.00" required></div>
+            <div><label class="text-xs text-gray-400 block mb-1">مجال الإبداع</label><select name="description" required><option value="">اختر المجال</option><option>🎨 التصميم</option><option>✍️ المحتوى</option><option>💡 الأفكار</option><option>🎮 الألعاب</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">مدة الاستثمار</label><select name="duration" required><option value="">اختر المدة</option><option value="30">30 يوم</option><option value="60">60 يوم</option><option value="90">90 يوم</option></select></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب الاستثمار</button>
+        </form>
+      </div>`,
+    'investment-actions': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><h3 class="font-bold text-lg">⚙️ خيارات الاستثمار</h3><p class="text-xs text-gray-400">إدارة استثمارك</p></div>
+        <div class="space-y-2">
+          <button onclick="openModal('boost-investment')" class="w-full p-3 rounded-lg text-right border border-[rgba(201,162,39,0.2)] hover:bg-[rgba(201,162,39,0.1)] transition">
+            <p class="font-bold text-sm">📈 تعزيز المبلغ</p>
+            <p class="text-xs text-gray-400">أضف مبلغ إضافي للاستثمار</p>
+          </button>
+          <button onclick="openModal('withdrawal-investment')" class="w-full p-3 rounded-lg text-right border border-[rgba(239,68,68,0.2)] hover:bg-[rgba(239,68,68,0.1)] transition">
+            <p class="font-bold text-sm">💸 طلب السحب</p>
+            <p class="text-xs text-gray-400">اسحب أرباحك من الاستثمار</p>
+          </button>
+          <button onclick="openModal('report-investment')" class="w-full p-3 rounded-lg text-right border border-[rgba(100,100,100,0.2)] hover:bg-[rgba(100,100,100,0.1)] transition">
+            <p class="font-bold text-sm">📝 تقديم ملاحظة</p>
+            <p class="text-xs text-gray-400">تواصل مع الإدارة</p>
+          </button>
+        </div>
+      </div>`,
+    'boost-investment': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i data-lucide="trending-up" class="w-6 h-6 text-[#0a0e1a]"></i></div>
+        <h3 class="font-bold text-lg">📈 تعزيز الاستثمار</h3><p class="text-xs text-gray-400">أضف مبلغ إضافي لزيادة أرباحك</p></div>
+        <form onsubmit="handleBoostForm(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ الإضافي (بالدولار)</label><input type="number" min="1" name="amount" placeholder="0.00" required></div>
+            <div class="p-3 rounded-lg" style="background:rgba(201,162,39,0.08);border:1px solid rgba(201,162,39,0.15)"><p class="text-xs text-gray-400">ملاحظة: المبلغ الإضافي سيخضع نفس شروط الاستثمار الأساسي</p></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">تعزيز الاستثمار</button>
+        </form>
+      </div>`,
+    'withdrawal-investment': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#ef4444,#f87171)"><i data-lucide="arrow-up-circle" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">💸 طلب سحب من الاستثمار</h3><p class="text-xs text-gray-400">اسحب أرباحك أو رأس مالك</p></div>
+        <form onsubmit="handleInvestmentWithdrawal(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">نوع السحب</label><select name="withdrawal_type" required><option value="">اختر النوع</option><option value="profit">الأرباح فقط</option><option value="partial">سحب جزئي</option><option value="full">السحب الكامل</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">المبلغ المطلوب (اختياري)</label><input type="number" min="1" name="amount" placeholder="0.00"></div>
+            <div><label class="text-xs text-gray-400 block mb-1">ملاحظة</label><textarea name="notes" rows="2" placeholder="أسباب السحب أو تفاصيل إضافية"></textarea></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال طلب السحب</button>
+        </form>
+      </div>`,
+    'report-investment': `
+      <div class="relative">
+        ${closeBtn}
+        <div class="mb-5"><div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#06b6d4,#22d3ee)"><i data-lucide="message-circle" class="w-6 h-6 text-white"></i></div>
+        <h3 class="font-bold text-lg">📝 تقديم ملاحظة للإدارة</h3><p class="text-xs text-gray-400">تواصل معنا بخصوص استثمارك</p></div>
+        <form onsubmit="handleInvestmentReport(event)">
+          <div class="space-y-3">
+            <div><label class="text-xs text-gray-400 block mb-1">نوع الملاحظة</label><select name="report_type" required><option value="">اختر النوع</option><option>استفسار عام</option><option>مشكلة تقنية</option><option>طلب تحديث</option><option>شكوى أو اقتراح</option></select></div>
+            <div><label class="text-xs text-gray-400 block mb-1">الرسالة</label><textarea name="message" rows="3" placeholder="اكتب ملاحظتك هنا" required></textarea></div>
+          </div>
+          <button type="submit" class="btn-gold mt-5">إرسال الملاحظة</button>
+        </form>
+      </div>`
+  };
+  return modals[type] || '<p class="text-center text-gray-400">محتوى غير متاح</p>';
+}
+
+// ============ FORM HANDLER ============
+function handleForm(e, msg) {
+  e.preventDefault();
+  closeModal();
+  showToast(msg);
+}
+
+// ============ TRANSACTION HANDLERS ============
+function handleDepositForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const amount = parseFloat(form.amount.value);
+  const currency = form.currency.value;
+
+  submitTransaction({
+    type: 'deposit',
+    amount: amount,
+    currency: currency,
+    description: 'إيداع',
+    date: new Date().toISOString(),
+    status: 'pending'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم إيداع ${amount} ${currency === 'usd' ? 'دولار' : 'Points'} بنجاح`);
+    }
+  });
+}
+
+function handleTransferForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const amount = parseFloat(form.amount.value);
+  const recipient = form.recipient.value;
+  const fee = amount * 0.02;
+
+  submitTransaction({
+    type: 'transfer',
+    amount: amount,
+    currency: 'points',
+    description: `تحويل إلى ${recipient}`,
+    recipient: recipient,
+    fee: fee,
+    net_amount: amount - fee,
+    date: new Date().toISOString(),
+    notes: form.notes.value,
+    status: 'pending'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم إرسال طلب التحويل — رسوم: ${(fee).toLocaleString()} Points`);
+    }
+  });
+}
+
+function handleConvertForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const direction = form.direction.value;
+  const amount = parseFloat(form.amount.value);
+  
+  let netAmount, fee, description;
+  if (direction === 'usd-pts') {
+    fee = amount * 0.06;
+    netAmount = (amount * 2500) * (1 - 0.06);
+    description = `${amount}$ → ${Math.floor(netAmount)} Points`;
+  } else {
+    fee = amount / 2500 * 0.12;
+    netAmount = (amount / 2500) * (1 - 0.12);
+    description = `${Math.floor(amount)} Points → ${netAmount.toFixed(2)}$`;
+  }
+
+  submitTransaction({
+    type: 'conversion',
+    amount: amount,
+    currency: direction === 'usd-pts' ? 'usd' : 'points',
+    description: description,
+    fee: fee,
+    net_amount: netAmount,
+    date: new Date().toISOString(),
+    status: 'completed'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم التحويل بنجاح`);
+    }
+  });
+}
+
+function handleInvestmentForm(e, type) {
+  e.preventDefault();
+  const form = e.target;
+  const amount = parseFloat(form.amount.value);
+  const description = form.description.value;
+  const duration = parseInt(form.duration.value);
+  
+  let returnRate;
+  
+  if (type === 'murabaha') {
+    returnRate = murabahaRates[duration];
+  } else if (type === 'tech') {
+    returnRate = techRate;
+  } else if (type === 'creative') {
+    returnRate = creativeRate;
+  } else {
+    returnRate = 12;
+  }
+  
+  const maturityDate = new Date(Date.now() + duration * 24 * 60 * 60 * 1000).toISOString();
+
+  showLoading(true);
+  submitTransaction({
+    type: 'investment',
+    amount: amount,
+    currency: 'usd',
+    investment_type: type,
+    description: description,
+    duration: duration,
+    return_rate: returnRate,
+    date: new Date().toISOString(),
+    maturity_date: maturityDate,
+    status: 'active'
+  }).then(success => {
+    showLoading(false);
+    if (success) {
+      closeModal();
+      showToast(`✅ تم تقديم طلب الاستثمار — عائد: ${returnRate.toFixed(2)}%`);
+      // Switch to account page after 1 second to show new investment
+      setTimeout(() => {
+        switchPage('account');
+      }, 1200);
+    }
+  });
+}
+
+function handleBoostForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const amount = parseFloat(form.amount.value);
+
+  submitTransaction({
+    type: 'investment',
+    amount: amount,
+    currency: 'usd',
+    investment_type: 'boost',
+    description: 'تعزيز استثمار',
+    duration: 0,
+    return_rate: 0,
+    date: new Date().toISOString(),
+    status: 'pending'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم إرسال طلب التعزيز بمبلغ $${amount.toFixed(2)}`);
+    }
+  });
+}
+
+function handleInvestmentWithdrawal(e) {
+  e.preventDefault();
+  const form = e.target;
+  const withdrawalType = form.withdrawal_type.value;
+  const amount = form.amount.value ? parseFloat(form.amount.value) : 0;
+  const notes = form.notes.value;
+
+  submitTransaction({
+    type: 'withdrawal',
+    amount: amount,
+    currency: 'usd',
+    investment_type: withdrawalType,
+    description: `طلب سحب من الاستثمار - ${withdrawalType}`,
+    date: new Date().toISOString(),
+    notes: notes,
+    status: 'pending'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم إرسال طلب السحب من الاستثمار`);
+    }
+  });
+}
+
+function handleInvestmentReport(e) {
+  e.preventDefault();
+  const form = e.target;
+  const reportType = form.report_type.value;
+  const message = form.message.value;
+
+  submitTransaction({
+    type: 'report',
+    description: `تقرير - ${reportType}`,
+    notes: message,
+    date: new Date().toISOString(),
+    status: 'pending',
+    amount: 0,
+    currency: 'usd'
+  }).then(success => {
+    if (success) {
+      closeModal();
+      showToast(`✅ تم إرسال ملاحظتك للإدارة`);
+    }
+  });
+}
+
+// ============ CONVERT PREVIEW ============
+function updateConvertPreview() {
+  const dir = document.getElementById('convert-dir')?.value;
+  const amount = parseFloat(document.getElementById('convert-amount')?.value) || 0;
+  const preview = document.getElementById('convert-preview');
+  const result = document.getElementById('convert-result');
+
+  if (!dir || !amount || !preview || !result) { if (preview) preview.style.display = 'none'; return; }
+
+  preview.style.display = 'block';
+  if (dir === 'usd-pts') {
+    result.textContent = Math.floor(amount * 2500 * 0.94).toLocaleString() + ' Points';
+  } else {
+    result.textContent = '$' + (amount / 2500 * 0.88).toFixed(2);
+  }
+}
+
+// ============ LIVE TRADING SYSTEM ============
+const trades = [];
+let tradeStatsInterval = null;
+
+function generateRandomTrades() {
+  const symbols = ['BTC', 'ETH', 'XRP', 'ADA', 'SOL', 'DOGE', 'BNB', 'USDC'];
+  const types = ['buy', 'sell', 'hold'];
+  const statuses = ['active', 'pending'];
+  
+  for (let i = 0; i < 6; i++) {
+    const basePrice = Math.random() * 10000 + 500;
+    trades.push({
+      id: i,
+      symbol: symbols[Math.floor(Math.random() * symbols.length)],
+      type: types[Math.floor(Math.random() * types.length)],
+      quantity: Math.floor(Math.random() * 210) + 40, // 40-250
+      price: parseFloat(basePrice.toFixed(2)),
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      change: (Math.random() - 0.5) * 10
+    });
+  }
+}
+
+function updateTradeStats() {
+  const activeTrades = trades.filter(t => t.status === 'active').length;
+  const pendingTrades = trades.filter(t => t.status === 'pending').length;
+  const totalQuantity = trades.reduce((sum, t) => sum + t.quantity, 0);
+  
+  const totalEl = document.getElementById('total-trades');
+  const activeEl = document.getElementById('active-trades');
+  const pendingEl = document.getElementById('pending-trades');
+  
+  if (totalEl) totalEl.textContent = totalQuantity;
+  if (activeEl) activeEl.textContent = activeTrades;
+  if (pendingEl) pendingEl.textContent = pendingTrades;
+}
+
+function animateTrades() {
+  const container = document.getElementById('live-trades-container');
+  if (!container) return;
+
+  // Update existing trades with animation and random quantities every 2-3 seconds
+  trades.forEach((trade, idx) => {
+    trade.change += (Math.random() - 0.5) * 2;
+    trade.price += trade.change / 100;
+    
+    // Update quantity randomly between 40-250 every 2-3 seconds
+    if (Math.random() > 0.6) {
+      trade.quantity = Math.floor(Math.random() * 210) + 40;
+    }
+    
+    // Randomly change status
+    if (Math.random() > 0.9) {
+      trade.status = trade.status === 'active' ? 'pending' : 'active';
+    }
+  });
+
+  const tradeHTML = trades.map((trade, idx) => {
+    const isPositive = trade.change >= 0;
+    const color = trade.type === 'buy' ? 'emerald' : trade.type === 'sell' ? 'red' : 'blue';
+    const typeLabel = { 'buy': '🟢 شراء', 'sell': '🔴 بيع', 'hold': '🟡 احتفاظ' };
+    const statusLabel = trade.status === 'active' ? '✓ نشط' : '⏳ معلق';
+    
+    return `
+      <div class="rounded-xl p-4 border animate-pulse" style="background:rgba(10,14,26,0.7);border-color:rgba(${color === 'emerald' ? '52,211,153' : color === 'red' ? '239,68,68' : '59,130,246'},0.2);animation-duration:2s;animation-delay:${idx * 0.1}s">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <p class="font-bold text-base">${trade.symbol}</p>
+            <p class="text-xs text-gray-400">${typeLabel[trade.type]}</p>
+          </div>
+          <span class="px-2 py-1 rounded text-[10px] font-bold" style="background:rgba(${color === 'emerald' ? '52,211,153' : color === 'red' ? '239,68,68' : '59,130,246'},0.2);color:${color === 'emerald' ? '#34d399' : color === 'red' ? '#f87171' : '#60a5fa'}">${statusLabel}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+          <div>
+            <p class="text-gray-500">السعر</p>
+            <p class="number-font font-bold text-white">$${trade.price.toFixed(2)}</p>
+          </div>
+          <div>
+            <p class="text-gray-500">الكمية</p>
+            <p class="number-font font-bold text-lg transition-all" style="color:#c9a227">${trade.quantity}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <i data-lucide="${isPositive ? 'trending-up' : 'trending-down'}" class="w-3 h-3" style="color:${isPositive ? '#34d399' : '#f87171'}"></i>
+          <span class="number-font text-xs font-bold" style="color:${isPositive ? '#34d399' : '#f87171'}">${isPositive ? '+' : ''}${trade.change.toFixed(2)}%</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = tradeHTML;
+  updateTradeStats();
+  lucide.createIcons();
+}
+
+// ============ INIT PAGE ============
+lucide.createIcons();
+
+// ============ INITIALIZE SDK ============
+initDataSDK();
+
+// Generate and animate trades when investment page loads
+generateRandomTrades();
+setInterval(animateTrades, 1500);
+
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e16ab1f91997214',t:'MTc3NDM2NTcxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
