@@ -295,20 +295,31 @@
     lucide.createIcons();
 
     // Animated counters
-    function animateCounter(el, target, suffix = '') {
-      let current = 0;
-      const step = Math.ceil(target / 40);
-      const interval = setInterval(() => {
-        current += step;
-        if (current >= target) { current = target; clearInterval(interval); }
-        el.textContent = current.toLocaleString() + suffix;
-      }, 40);
-    }
-    setTimeout(() => animateCounter(document.getElementById('counter1'), 8524), 1200);
-    setTimeout(() => animateCounter(document.getElementById('counter2'), 156), 1400);
-    setTimeout(() => {
-      animateCounter(document.getElementById('counter3'), 245, '%');
-    }, 1600);
+  function liveTicker(el, min, max, suffix = '') {
+  if (!el) return;
+
+  let current = Math.floor(Math.random() * (max - min) + min);
+
+  function update() {
+    let change = Math.floor(Math.random() * 40) - 20; // daha smooth
+
+    current += change;
+
+    if (current < min) current = min;
+    if (current > max) current = max;
+
+    el.textContent = current.toLocaleString() + suffix;
+
+    setTimeout(update, 1000 + Math.random() * 1500);
+  }
+
+  update();
+}
+
+
+liveTicker(document.getElementById('counter1'), 7000, 12000);
+liveTicker(document.getElementById('counter2'), 100, 500);
+liveTicker(document.getElementById('counter3'), 26, 34, '%');
 
     // Button click effect
     document.getElementById('ctaBtn').addEventListener('click', function(e) {
