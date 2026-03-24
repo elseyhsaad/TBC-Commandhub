@@ -289,21 +289,33 @@
   <script>
     lucide.createIcons();
 
-    // Animated counters
-    function animateCounter(el, target, suffix = '') {
-      let current = 0;
-      const step = Math.ceil(target / 40);
-      const interval = setInterval(() => {
-        current += step;
-        if (current >= target) { current = target; clearInterval(interval); }
-        el.textContent = current.toLocaleString() + suffix;
-      }, 40);
-    }
-    setTimeout(() => animateCounter(document.getElementById('counter1'), 12847), 1200);
-    setTimeout(() => animateCounter(document.getElementById('counter2'), 5234), 1400);
-    setTimeout(() => {
-      animateCounter(document.getElementById('counter3'), 387, '%');
-    }, 1600);
+   lucide.createIcons();
+
+// 🔥 LIVE RANDOM COUNTERS
+function liveTicker(el, min, max, suffix = '') {
+  if (!el) return; // güvenlik
+
+  let current = Math.floor(Math.random() * (max - min) + min);
+
+  function update() {
+    let change = Math.floor(Math.random() * 200) - 100;
+    current += change;
+
+    if (current < min) current = min;
+    if (current > max) current = max;
+
+    el.textContent = current.toLocaleString() + suffix;
+
+    setTimeout(update, 1000 + Math.random() * 1500);
+  }
+
+  update();
+}
+
+// 🚀 BAŞLAT
+liveTicker(document.getElementById('counter1'), 10000, 15000);
+liveTicker(document.getElementById('counter2'), 4000, 7000);
+liveTicker(document.getElementById('counter3'), 20, 25, '%');
 
     // Button click effect
     document.getElementById('ctaBtn').addEventListener('click', function(e) {
