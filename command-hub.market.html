@@ -70,7 +70,7 @@
    </header><!-- Cart Toggle Button -->
    <div class="sticky top-0 z-40 bg-[#0f0f23]/95 backdrop-blur border-b border-[#e2b04a]/10 px-4 py-3">
     <div class="max-w-7xl mx-auto flex items-center justify-between"><button id="cart-toggle" onclick="toggleCart()" class="flex items-center gap-2 bg-[#e2b04a] text-[#0f0f23] px-4 py-2 rounded-xl font-bold hover:bg-[#d4a03e] transition-all"> <i data-lucide="shopping-cart" class="w-5 h-5"></i> <span>سلة المشتريات</span> <span id="cart-count" class="bg-[#0f0f23] text-[#e2b04a] rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">0</span> </button>
-     <div id="market-notice" class="flex items-center gap-2 text-[#ff6b6b] text-sm font-medium"><i data-lucide="clock" class="w-4 h-4"></i> <span id="market-notice-text">انتظر موعد افتتاح السوق من التقارير</span>
+     <div id="market-notice" class="flex items-center gap-4 text-[#ff6b6b] text-sm font-medium"><i data-lucide="clock" class="w-4 h-4"></i> <span id="market-notice-text">انتظر موعد افتتاح السوق من التقارير</span>
      </div>
     </div>
    </div><!-- Products Grid -->
@@ -92,7 +92,7 @@
        <div class="flex justify-between text-[#c0c0d8]"><span>المجموع بالدولار:</span> <span id="total-dollars" class="text-[#4ade80] font-bold">$0</span>
        </div>
        <div class="flex justify-between text-[#c0c0d8]"><span>المجموع بالنقاط:</span> <span id="total-points" class="text-[#60a5fa] font-bold">0 نقطة</span>
-       </div><button id="report-btn" onclick="reportPurchases()" class="w-full mt-4 bg-gradient-to-l from-[#e2b04a] to-[#d4943e] text-[#0f0f23] py-3 rounded-xl font-bold text-lg hover:brightness-110 transition-all flex items-center justify-center gap-2"> <i data-lucide="send" class="w-5 h-5"></i> إبلاغ الإدارة بالمشتريات </button>
+       </div><button id="report-btn" onclick="sendReportToWhatsApp()" class="w-full mt-4 bg-gradient-to-l from-[#e2b04a] to-[#d4943e] text-[#0f0f23] py-3 rounded-xl font-bold text-lg hover:brightness-110 transition-all flex items-center justify-center gap-2"> <i data-lucide="send" class="w-5 h-5"></i> إبلاغ الإدارة بالمشتريات </button>
        <div class="bg-[#1e1e3a] border border-[#ff6b6b]/30 rounded-xl p-3 mt-3 text-center">
         <p id="cart-market-notice" class="text-[#ff6b6b] text-sm flex items-center justify-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4"></i> انتظر موعد افتتاح السوق من التقارير</p>
        </div>
@@ -350,7 +350,21 @@ async function buyItem(productId, method) {
 
       lucide.createIcons();
     }
+function sendReportToWhatsApp() {
+  let message = "مرحبًا، أريد إبلاغ الإدارة بالمشتريات%0A%0A";
 
+  cartData.forEach((item, index) => {
+    message += `📦 منتج ${index + 1}:%0A`;
+    message += `الاسم: ${item.name}%0A`;
+    message += `السعر: ${item.price}%0A`;
+    message += `الكمية: ${item.quantity}%0A%0A`;
+  });
+
+  const phone = "905528828825";
+  const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
     // Default config
     const defaultConfig = {
       store_title: 'متجر الكوماند هاب',
