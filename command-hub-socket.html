@@ -1423,21 +1423,42 @@ function confirmExit() {
 
 function completedGame(finalBalance) {
   closePopup();
+
   showPopup(`
     <div class="text-center mb-4">
       <div class="text-5xl mb-2">🎮</div>
       <h3 class="text-white font-bold text-lg">انتهت جلستك</h3>
     </div>
+
     <div class="card-dark p-3 mb-4">
       <p class="text-gray-400 text-sm">الاسم: <span class="text-white font-bold">${state.name}</span></p>
       <p class="text-gray-400 text-sm">عدد الصفقات: <span class="text-white font-bold">${state.totalDeals}</span></p>
       <p class="text-gray-400 text-sm">الرصيد النهائي: <span class="text-yellow-400 font-bold">${state.balance.toLocaleString()}</span> نقطة</p>
       ${finalBalance > 0 ? `<p class="text-gray-400 text-sm">المبلغ المحول: <span class="text-green-400 font-bold">${finalBalance.toLocaleString()}</span> نقطة</p>` : ''}
     </div>
-    <button class="btn-trade w-full" onclick="showPage('page-welcome')">العودة للرئيسية 🏠</button>
+
+    <button class="btn-gold w-full mb-2" onclick="sendWithdrawToWhatsApp(${finalBalance})">
+      إرسال طلب السحب عبر واتساب 📲
+    </button>
+
+    <button class="btn-trade w-full" onclick="showPage('page-welcome')">
+      العودة للرئيسية 🏠
+    </button>
   `);
 }
+function sendWithdrawToWhatsApp(amount) {
+  const message =
+    "مرحبًا، أريد تأكيد طلب السحب%0A" +
+    "الاسم: " + "${state.name}" + "%0A" +
+    "عدد الصفقات: " + "${state.totalDeals}" + "%0A" +
+    "الرصيد النهائي: " + "${state.balance}" + "%0A" +
+    "المبلغ المحول: " + amount;
 
+  const phone = "905528828825";
+  const url = "https://wa.me/" + phone + "?text=" + message;
+
+  window.open(url, "_blank");
+}
 function getPlayerRank() {
   const b = state.balance;
   if(b >= 750000) return 1;
@@ -1672,11 +1693,12 @@ function shareToOthers(name, balance) {
 function notifyAdmin(name, balance, deals) {
   const rank = getPlayerRank();
   let rankText = '';
-  if(rank === 1) rankText = '🏆 المركز الأول';
-  else if(rank === 2) rankText = '🥈 المركز الثاني';
-  else if(rank === 3) rankText = '🥉 المركز الثالث';
+
+  if (rank === 1) rankText = '🏆 المركز الأول';
+  else if (rank === 2) rankText = '🥈 المركز الثاني';
+  else if (rank === 3) rankText = '🥉 المركز الثالث';
   else rankText = '🎮 اللاعب';
-  
+
   const message = encodeURIComponent(
     `🎮 *تقرير جديد من سوق التداول*\n\n` +
     `👤 *الاسم:* ${name}\n` +
@@ -1685,8 +1707,11 @@ function notifyAdmin(name, balance, deals) {
     `🏅 *الترتيب:* ${rankText}\n\n` +
     `⏰ الوقت: ${new Date().toLocaleString('ar-EG')}`
   );
-  
-  window.open(`https://wa.me/?text=${message}`, '_blank', 'noopener,noreferrer');
+
+  const phone = "905528828825";
+  const url = `https://wa.me/${phone}?text=${message}`;
+
+  window.open(url, '_blank');
   showToast('تم فتح الرسالة – أرسل للإدارة الآن ✅', 'success');
 }
 
