@@ -260,7 +260,7 @@ canvas {
      </div><!-- Exchange Rate Banner -->
      <div class="exchange-info max-w-md mx-auto text-center mb-10 fade-in stagger-1">
       <p class="text-xs text-gray-400 mb-1">سعر الصرف الأساسي</p>
-         <p class="text-xl font-extrabold gold-text number-font" dir="ltr">
+   <p class="text-xl font-extrabold gold-text number-font" dir="ltr">
   1 USD = 2,500 Points
 </p>
      </div><!-- Stats Grid -->
@@ -534,7 +534,19 @@ canvas {
         </div>
        </div>
       </div>
-      <p class="text-sm text-gray-400 mb-4 leading-relaxed">شارك في تمويل المشاريع التقنية داخل الكوماند هاب واحصل على عوائد مجزية من أرباح هذه المشاريع.</p><button onclick="openModal('tech-invest')" class="btn-gold">تقديم طلب استثمار تقني</button>
+      <p class="text-sm text-gray-400 mb-4 leading-relaxed">شارك في تمويل المشاريع التقنية داخل الكوماند هاب واحصل على عوائد مجزية من أرباح هذه المشاريع.</p><button onclick="sendWhatsApp()" class="btn-gold">
+  تقديم طلب استثمار تقني
+</button>
+
+<script>
+function sendWhatsApp() {
+  const message = "مرحبًا، أريد تقديم طلب استثمار تقني%0Aالاسم:%20%0Aالمبلغ:%20%0Aمدة الاستثمار:%20%0Aملاحظات:";
+  const phone = "905528828825";
+  const url = "https://wa.me/" + phone + "?text=" + message;
+
+  window.open(url, "_blank");
+}
+</script>
      </div><!-- Creative Investment -->
      <div class="card-glass rounded-2xl p-6 mb-6 fade-in stagger-6">
       <div class="flex items-center gap-3 mb-4">
@@ -556,7 +568,19 @@ canvas {
        </div>
       </div>
       <div class="flex flex-wrap gap-2 mb-4"><span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">🎨 التصميم</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">✍️ المحتوى</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">💡 الأفكار</span> <span class="px-3 py-1 rounded-lg text-xs" style="background:rgba(168,85,247,0.15);color:#c084fc">🎮 الألعاب</span>
-      </div><button onclick="openModal('creative-invest')" class="btn-gold">تقديم طلب استثمار إبداعي</button>
+      </div><button onclick="sendCreativeWhatsApp()" class="btn-gold">
+  تقديم طلب استثمار إبداعي
+</button>
+
+<script>
+function sendCreativeWhatsApp() {
+  const message = "مرحبًا، أريد تقديم طلب استثمار إبداعي%0Aالاسم:%20%0Aالمبلغ:%20%0Aنوع المشروع:%20%0Aمدة الاستثمار:%20%0Aملاحظات:";
+  const phone = "905528828825";
+  const url = "https://wa.me/" + phone + "?text=" + message;
+
+  window.open(url, "_blank");
+}
+</script>
      </div>
     </div>
    </div><!-- ACCOUNT PAGE -->
@@ -1133,7 +1157,7 @@ function getModalContent(type) {
         <div class="space-y-3 mb-5">
           <div class="p-4 rounded-xl" style="background:rgba(10,14,26,0.6);border:1px solid rgba(6,182,212,0.2)">
             <p class="text-xs text-gray-400 mb-2">اضغط الزر أدناه للتواصل مع الإدارة:</p>
-            <a href="https://wa.me/966501234567?text=السلام عليكم، أريد تأكيد طلباتي البنكية" target="_blank" rel="noopener noreferrer" class="btn-gold flex items-center justify-center gap-2">
+            <a href="https://wa.me/905528828825?text=السلام عليكم، أريد تأكيد طلباتي البنكية" target="_blank" rel="noopener noreferrer" class="btn-gold flex items-center justify-center gap-2">
               <i data-lucide="phone" class="w-4 h-4"></i>
               فتح محادثة واتساب
             </a>
@@ -1157,8 +1181,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">البريد الإلكتروني</label><input type="email" placeholder="email@example.com" required></div>
             <div><label class="text-xs text-gray-400 block mb-1">رقم واتساب</label><input type="tel" placeholder="+966 5XXXXXXXX" required></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">إرسال طلب فتح الحساب</button>
-        </form>
+<a href="https://wa.me/905528828825" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    إرسال طلب فتح الحساب
+  </button>
+</a>        </form>
       </div>`,
     'topup': `
       <div class="relative">
@@ -1171,8 +1198,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">نوع العملة</label><select required><option value="">اختر العملة</option><option>دولار (USD)</option><option>نقاط (Points)</option></select></div>
             <div><label class="text-xs text-gray-400 block mb-1">تاريخ الشحن</label><input type="date" required></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">إرسال طلب الشحن عبر واتساب</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20إرسال%20طلب%20شحن" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    إرسال طلب الشحن عبر واتساب
+  </button>
+</a>        </form>
       </div>`,
     'withdraw': `
       <div class="relative">
@@ -1198,8 +1228,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">المبلغ</label><input type="number" step="0.01" min="0.01" name="amount" placeholder="0.00" required></div>
             <div><label class="text-xs text-gray-400 block mb-1">نوع العملة</label><select name="currency" required><option value="">اختر العملة</option><option value="usd">دولار (USD)</option><option value="points">Points</option></select></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">إرسال طلب الإيداع</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20تقديم%20طلب%20إيداع" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    إرسال طلب الإيداع
+  </button>
+</a>        </form>
       </div>`,
     'transfer': `
       <div class="relative">
@@ -1212,8 +1245,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">عدد النقاط</label><input type="number" step="1" min="1" name="amount" placeholder="0" required></div>
             <div><label class="text-xs text-gray-400 block mb-1">ملاحظة (اختياري)</label><textarea name="notes" rows="2" placeholder="سبب التحويل"></textarea></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">إرسال طلب التحويل</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20إرسال%20طلب%20تحويل" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    إرسال طلب التحويل
+  </button>
+</a>        </form>
       </div>`,
     'convert': `
       <div class="relative">
@@ -1233,8 +1269,11 @@ function getModalContent(type) {
               <p id="convert-result" class="number-font text-xl font-bold gold-text">—</p>
             </div>
           </div>
-          <button type="submit" class="btn-gold mt-5">تنفيذ التحويل</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20تنفيذ%20عملية%20تحويل" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    تنفيذ التحويل
+  </button>
+</a>        </form>
       </div>`,
     'murabaha': `
       <div class="relative">
@@ -1246,8 +1285,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">مبلغ الإيداع (بالدولار)</label><input type="number" step="0.01" min="0.01" name="amount" placeholder="0.00" required></div>
             <div><label class="text-xs text-gray-400 block mb-1">مدة الاستثمار</label><select name="duration" required><option value="">اختر المدة</option><option value="30">30 يوم — عائد 6%</option><option value="60">60 يوم — عائد 13%</option><option value="90">90 يوم — عائد 22%</option></select></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">تقديم طلب إيداع مرابحة</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20تقديم%20طلب%20إيداع%20مرابحة" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    تقديم طلب إيداع مرابحة
+  </button>
+</a>        </form>
       </div>`,
     'tech-invest': `
       <div class="relative">
@@ -1320,8 +1362,11 @@ function getModalContent(type) {
             <div><label class="text-xs text-gray-400 block mb-1">المبلغ المطلوب (اختياري)</label><input type="number" min="1" name="amount" placeholder="0.00"></div>
             <div><label class="text-xs text-gray-400 block mb-1">ملاحظة</label><textarea name="notes" rows="2" placeholder="أسباب السحب أو تفاصيل إضافية"></textarea></div>
           </div>
-          <button type="submit" class="btn-gold mt-5">إرسال طلب السحب</button>
-        </form>
+<a href="https://wa.me/905528828825?text=مرحبًا،%20أريد%20إرسال%20طلب%20سحب" target="_blank">
+  <button type="button" class="btn-gold mt-5">
+    إرسال طلب السحب
+  </button>
+</a>        </form>
       </div>`,
     'report-investment': `
       <div class="relative">
