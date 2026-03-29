@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 0 40px rgba(212, 175, 55, 0.1); }
+      50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.2); }
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+      100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+    }
+
+    @keyframes counter-bump {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes border-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes star-twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    @keyframes slide-up-fade {
+      0% { opacity: 0; transform: translateY(15px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .shimmer-text {
+      background: linear-gradient(90deg, #d4af37 0%, #f5e6a3 25%, #d4af37 50%, #f5e6a3 75%, #d4af37 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    .gateway-box {
+      background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 40%, #0d0d0d 100%);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      position: relative;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .gateway-box::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, #d4af37, #e91e8a, #d4af37, #e91e8a, #d4af37);
+      background-size: 300% 300%;
+      animation: border-flow 4s ease infinite;
+      z-index: -1;
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #d4af37 0%, #b8941e 50%, #d4af37 100%);
+      background-size: 200% auto;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn:hover {
+      background-position: right center;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    }
+
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg);
+      transition: 0.5s;
+    }
+
+    .cta-btn:hover::after {
+      left: 100%;
+    }
+
+    .counter-box {
+      background: linear-gradient(135deg, rgba(233, 30, 138, 0.15), rgba(212, 175, 55, 0.15));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .counter-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(233, 30, 138, 0.1), transparent 60%);
+    }
+
+    .bump { animation: counter-bump 0.4s ease; }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .star-icon {
+      animation: star-twinkle 2s ease-in-out infinite;
+    }
+.gateway-box {
+  width: 100%;
+  height: 100%;
+}
+    .star-icon:nth-child(2) { animation-delay: 0.4s; }
+    .star-icon:nth-child(3) { animation-delay: 0.8s; }
+    .star-icon:nth-child(4) { animation-delay: 1.2s; }
+    .star-icon:nth-child(5) { animation-delay: 1.6s; }
+
+    .anim-item { animation: slide-up-fade 0.6s ease forwards; opacity: 0; }
+    .anim-item:nth-child(1) { animation-delay: 0.1s; }
+    .anim-item:nth-child(2) { animation-delay: 0.2s; }
+    .anim-item:nth-child(3) { animation-delay: 0.3s; }
+    .anim-item:nth-child(4) { animation-delay: 0.4s; }
+    .anim-item:nth-child(5) { animation-delay: 0.5s; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full" style="font-family: 'Tajawal', sans-serif;">
+  <div id="app" class="h-full w-full flex items-center justify-center p-4" style="background: #0a0a0a;">
+   <div class="gateway-box rounded-2xl p-6 sm:p-8 w-full max-w-md relative overflow-hidden"><!-- Floating particles container -->
+    <div id="particles" class="absolute inset-0 pointer-events-none"></div><!-- Stars row -->
+    <div class="flex justify-center gap-3 mb-4 anim-item relative z-10"><span class="star-icon text-yellow-400 text-lg">✦</span> <span class="star-icon text-pink-400 text-lg">✦</span> <span class="star-icon text-yellow-400 text-lg">✦</span> <span class="star-icon text-pink-400 text-lg">✦</span> <span class="star-icon text-yellow-400 text-lg">✦</span>
+    </div><!-- Title -->
+    <h1 id="mainTitle" class="shimmer-text text-3xl sm:text-4xl font-black text-center mb-2 anim-item relative z-10" style="line-height:1.4;">بوابة الدعم</h1><!-- Subtitle -->
+    <p id="subtitle" class="text-center text-base sm:text-lg font-medium mb-6 anim-item relative z-10" style="color: #f5e6a3;">سجل فكرتك - حقق حلمك</p><!-- Supporters Counter -->
+    <div class="counter-box rounded-xl p-4 mb-6 anim-item relative z-10">
+     <div class="flex items-center justify-center gap-3 relative z-10"><i data-lucide="users" style="color: #e91e8a; width: 22px; height: 22px;"></i> <span class="text-sm font-medium" style="color: #ccc;">عدد الداعمين</span>
+     </div>
+     <div class="flex items-center justify-center mt-2 relative z-10"><span id="counter" class="text-4xl font-black" style="color: #d4af37; letter-spacing: 2px;">800</span>
+     </div>
+     <div class="flex items-center justify-center mt-1 relative z-10"><span id="counterStatus" class="text-xs font-medium" style="color: #e91e8a;"> ⬆ في تزايد مستمر </span>
+     </div>
+    </div><!-- CTA Button -->
+    <div class="anim-item relative z-10"><button id="ctaBtn" class="cta-btn w-full rounded-xl py-4 text-lg font-bold text-black flex items-center justify-center gap-2"> <i data-lucide="gamepad-2" style="width: 22px; height: 22px;"></i> <span id="ctaText">امتلك لعبة</span> </button>
+    </div><!-- Bottom badge -->
+    <div class="flex items-center justify-center gap-2 mt-4 anim-item relative z-10"><i data-lucide="shield-check" style="color: #d4af37; width: 14px; height: 14px;"></i> <span class="text-xs" style="color: #666;">Command Hub — موثوق وآمن</span>
+    </div>
+   </div>
+  </div>
+  <script>
+    lucide.createIcons();
+
+    // Counter logic
+    let supporters = 800;
+    let totalAdded = 0;
+    const counterEl = document.getElementById('counter');
+    const statusEl = document.getElementById('counterStatus');
+
+    function updateCounter() {
+      // Every 50 added, subtract 10
+      if (totalAdded > 0 && totalAdded % 50 === 0) {
+        supporters -= 10;
+        statusEl.textContent = '⬇ تعديل مؤقت';
+        statusEl.style.color = '#ff6b6b';
+        setTimeout(() => {
+          statusEl.textContent = '⬆ في تزايد مستمر';
+          statusEl.style.color = '#e91e8a';
+        }, 3000);
+      } else {
+        const add = Math.random() < 0.5 ? 1 : 2;
+        supporters += add;
+        totalAdded += add;
+      }
+
+      counterEl.textContent = supporters.toLocaleString();
+      counterEl.classList.remove('bump');
+      void counterEl.offsetWidth;
+      counterEl.classList.add('bump');
+    }
+
+    setInterval(updateCounter, 60000); // every minute
+
+    // Floating particles
+    const particlesContainer = document.getElementById('particles');
+    function spawnParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const isGold = Math.random() > 0.4;
+      p.style.background = isGold ? '#d4af37' : '#e91e8a';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.bottom = '10%';
+      p.style.animation = `float-particle ${2 + Math.random() * 2}s ease forwards`;
+      p.style.opacity = '0.6';
+      particlesContainer.appendChild(p);
+      setTimeout(() => p.remove(), 4000);
+    }
+    setInterval(spawnParticle, 800);
+
+    // Element SDK
+    const defaultConfig = {
+      main_title: 'بوابة الدعم',
+      subtitle: 'سجل فكرتك - حقق حلمك',
+      cta_text: 'امتلك لعبة',
+      background_color: '#0a0a0a',
+      gold_color: '#d4af37',
+      pink_color: '#e91e8a',
+      text_color: '#f5e6a3',
+      surface_color: '#1a1a1a',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const c = { ...defaultConfig, ...config };
+
+        document.getElementById('mainTitle').textContent = c.main_title;
+        document.getElementById('subtitle').textContent = c.subtitle;
+        document.getElementById('ctaText').textContent = c.cta_text;
+
+        document.getElementById('app').style.background = c.background_color;
+        document.getElementById('subtitle').style.color = c.text_color;
+        statusEl.style.color = c.pink_color;
+        counterEl.style.color = c.gold_color;
+
+        const base = c.font_size;
+        document.getElementById('mainTitle').style.fontSize = `${base * 2}px`;
+        document.getElementById('subtitle').style.fontSize = `${base * 1.1}px`;
+        counterEl.style.fontSize = `${base * 2.5}px`;
+
+        const fam = `${c.font_family}, Tajawal, sans-serif`;
+        document.getElementById('app').style.fontFamily = fam;
+      },
+      mapToCapabilities: (config) => {
+        const c = { ...defaultConfig, ...config };
+        const makeColor = (key) => ({
+          get: () => c[key] || defaultConfig[key],
+          set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+        });
+        return {
+          recolorables: [
+            makeColor('background_color'),
+            makeColor('surface_color'),
+            makeColor('text_color'),
+            makeColor('gold_color'),
+            makeColor('pink_color')
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => c.font_family || defaultConfig.font_family,
+            set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => c.font_size || defaultConfig.font_size,
+            set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        };
+      },
+      mapToEditPanelValues: (config) => {
+        const c = { ...defaultConfig, ...config };
+        return new Map([
+          ['main_title', c.main_title],
+          ['subtitle', c.subtitle],
+          ['cta_text', c.cta_text]
+        ]);
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e3894adc7166953',t:'MTc3NDcyMTMxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

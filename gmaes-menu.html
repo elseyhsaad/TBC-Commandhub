@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6); }
+    }
+
+    @keyframes float-particle {
+      0% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+      100% { transform: translateY(-60px) scale(0.5); opacity: 0; }
+    }
+
+    @keyframes card-hover {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-8px) scale(1.02); }
+    }
+
+    @keyframes number-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes stat-slide {
+      0% { opacity: 0; transform: translateX(20px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes border-flow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes shine-effect {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
+    .shimmer-text {
+      background: linear-gradient(90deg, #d4af37 0%, #f5e6a3 25%, #d4af37 50%, #f5e6a3 75%, #d4af37 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    .game-card {
+      background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(45, 30, 15, 0.7));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(233, 30, 138, 0.1), transparent);
+      animation: shine-effect 3s infinite;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(212, 175, 55, 0.25), 0 0 30px rgba(233, 30, 138, 0.15);
+      border-color: rgba(212, 175, 55, 0.6);
+    }
+
+    .game-btn {
+      background: linear-gradient(135deg, #d4af37 0%, #b8941e 50%, #d4af37 100%);
+      background-size: 200% auto;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-btn:hover {
+      background-position: right center;
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(233, 30, 138, 0.1));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(212, 175, 55, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: black;
+      color: #d4af37;
+      animation: number-pulse 2s ease-in-out infinite;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .section-title {
+      background: linear-gradient(90deg, #d4af37, #e91e8a);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 18px;
+      font-weight: 800;
+      margin: 24px 0 16px 0;
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .container-max {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+      }
+      .header-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body style="font-family: 'Tajawal', sans-serif;">
+  <div id="app" class="app-wrapper">
+   <div id="particles" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></div>
+   <div class="container-max relative z-10"><!-- Header -->
+    <div style="margin-bottom: 32px;">
+     <h1 class="shimmer-text" style="font-size: 36px; font-weight: 900; text-align: center; margin-bottom: 8px;">مركز الألعاب</h1>
+     <p style="text-align: center; color: #f5e6a3; font-size: 14px;">استمتع بتجربة فريدة من الألعاب الرائعة</p>
+    </div><!-- Stats -->
+    <div class="header-stats">
+     <div class="stat-box">
+      <div style="position: relative; z-index: 10;">
+       <div class="stat-number" id="profitGrowth">
+        18%
+       </div>
+       <div class="stat-label">
+        نمو الأرباح
+       </div>
+      </div>
+     </div>
+     <div class="stat-box">
+      <div style="position: relative; z-index: 10;">
+       <div class="stat-number">
+        1300
+       </div>
+       <div class="stat-label">
+        عدد الجوائز
+       </div>
+      </div>
+     </div>
+     <div class="stat-box">
+      <div style="position: relative; z-index: 10;">
+       <div class="stat-number">
+        10M
+       </div>
+       <div class="stat-label">
+        النقاط المتاح
+       </div>
+      </div>
+     </div>
+    </div><!-- Main Games Section -->
+    <div class="section-title">
+     الألعاب الرئيسية
+    </div>
+    <div class="games-grid"><!-- Game 1 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="trending-up" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">إدارة الثروة</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">استثمر وادر أموالك بذكاء واحصل على أرباح</p><button class="game-btn"  style="width: 100%;"   onclick="window.location.href='code.html'">العب الآن</button>
+      </div>
+     </div><!-- Game 2 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="user" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">تعرف على شخصيتك</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">اكتشف سمات شخصيتك من خلال أسئلة ممتعة</p><button class="game-btn" style="width: 100%;"  onclick="window.location.href='caracter-select.html'">العب الآن</button>
+      </div>
+     </div><!-- Game 3 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="brain" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">تحدي الألغاز</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">حل ألغاز صعبة واكسب نقاط وجوائز</p><button class="game-btn" style="width: 100%;"  onclick="window.location.href='mestrey.html'">العب الآن</button>
+      </div>
+     </div><!-- Game 4 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="gift" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">مخزن النقاط</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">جمّع نقاطك وبدّلها بجوائز حصرية</p><button class="game-btn" style="width: 100%;"onclick="window.location.href='points-bank.html'"   >العب الآن</button>
+      </div>
+     </div><!-- Game 5 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="zap" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">لعبة البداية</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">ابدأ رحلتك نحو النجاح والثروة</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='start-game.html'" >العب الآن</button>
+      </div>
+     </div><!-- Game 6 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="star" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">كرت الحظ</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">استخدم الحظ واربح جوائز عظيمة يومياً</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='chance-card.html'">العب الآن</button>
+      </div>
+     </div><!-- Game 7 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="heart" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">كرت الدعم</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">ادعم المجتمع واحصل على مكافآت</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='donate-card.html'" >العب الآن</button>
+      </div>
+     </div><!-- Game 8 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="triangle" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">هرم Command Hub</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">اصعد في الهرم واحصل على مزايا</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='commandhub-piramit.html'">العب الآن</button>
+      </div>
+     </div><!-- Game 9 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="share-2" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">خبير السوشال</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">شارك المحتوى واكسب عمولات كبيرة</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='social-media-senior.html'">العب الآن</button>
+      </div>
+     </div>
+    </div><!-- Entertainment Section -->
+    <div class="section-title">
+     تسلية - حماس - تحدي - تجميع نقاط
+    </div>
+    <div class="games-grid"><!-- Entertainment 1 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="gamepad-2" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">لعبة الآلة</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">تحكم بالآلة واربح جوائز مذهلة</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='control-game.html'">العب الآن</button>
+      </div>
+     </div><!-- Entertainment 2 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="target" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">اهرب من المصيدة</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">تجنب العقبات واكسب نقاط أعلى</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='run-game.html'">العب الآن</button>
+      </div>
+     </div><!-- Entertainment 3 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="user-run" style="color: #e91e8a; width: 20px;"></i> <span style="color: #e91e8a; font-weight: 700; font-size: 13px;">الفرار من الحفلة</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">هروب مشوق مع موسيقى وحماس</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='run-from-party.html'">العب الآن</button>
+      </div>
+     </div><!-- Entertainment 4 -->
+     <div class="game-card">
+      <div style="position: relative; z-10;">
+       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;"><i data-lucide="trending-down" style="color: #d4af37; width: 20px;"></i> <span style="color: #d4af37; font-weight: 700; font-size: 13px;">سوق النقاط</span>
+       </div>
+       <p style="color: #999; font-size: 12px; margin-bottom: 12px; line-height: 1.4;">تداول افتراضي واكسب خبرة وأموال</p><button class="game-btn" style="width: 100%;" onclick="window.location.href='trading-game.html'">العب الآن</button>
+      </div>
+     </div>
+    </div>
+    <div style="height: 20px;"></div>
+   </div>
+  </div>
+  <script>
+    lucide.createIcons();
+
+    const defaultConfig = {
+      page_title: 'مركز الألعاب',
+      profit_label: 'نمو أرباحك',
+      entertainment_label: 'تسلية - حماس - تحدي - تجميع نقاط',
+      background_color: '#0a0a0a',
+      gold_color: '#d4af37',
+      pink_color: '#e91e8a',
+      text_color: '#f5e6a3',
+      surface_color: '#1a1a1a',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    // Floating particles effect
+    const particlesContainer = document.getElementById('particles');
+    function spawnParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const isGold = Math.random() > 0.4;
+      p.style.background = isGold ? '#d4af37' : '#e91e8a';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.top = '100%';
+      p.style.animation = `float-particle ${2 + Math.random() * 2}s ease forwards`;
+      particlesContainer.appendChild(p);
+      setTimeout(() => p.remove(), 4000);
+    }
+    setInterval(spawnParticle, 600);
+
+    // Random profit growth
+    function updateProfitGrowth() {
+      const growth = Math.floor(Math.random() * 30) + 8;
+      document.getElementById('profitGrowth').textContent = growth + '%';
+    }
+    updateProfitGrowth();
+    setInterval(updateProfitGrowth, 5000);
+
+    // Element SDK
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const c = { ...defaultConfig, ...config };
+        document.getElementById('app').style.background = c.background_color;
+        document.getElementById('app').style.color = c.text_color;
+        
+        const base = c.font_size;
+        const fam = `${c.font_family}, Tajawal, sans-serif`;
+        document.getElementById('app').style.fontFamily = fam;
+
+        // Update root CSS variables for colors
+        document.documentElement.style.setProperty('--gold-color', c.gold_color);
+        document.documentElement.style.setProperty('--pink-color', c.pink_color);
+      },
+      mapToCapabilities: (config) => {
+        const c = { ...defaultConfig, ...config };
+        const makeColor = (key) => ({
+          get: () => c[key] || defaultConfig[key],
+          set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+        });
+        return {
+          recolorables: [
+            makeColor('background_color'),
+            makeColor('surface_color'),
+            makeColor('text_color'),
+            makeColor('gold_color'),
+            makeColor('pink_color')
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => c.font_family || defaultConfig.font_family,
+            set: (v) => { c.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => c.font_size || defaultConfig.font_size,
+            set: (v) => { c.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        };
+      },
+      mapToEditPanelValues: (config) => {
+        const c = { ...defaultConfig, ...config };
+        return new Map([
+          ['page_title', c.page_title],
+          ['profit_label', c.profit_label],
+          ['entertainment_label', c.entertainment_label]
+        ]);
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e38dc97b36b6953',t:'MTc3NDcyNDI1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

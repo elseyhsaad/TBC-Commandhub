@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+x
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+* { font-family: 'Tajawal', sans-serif; }
+html, body { height: 100%; margin: 0; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #1a1a1a; }
+::-webkit-scrollbar-thumb { background: #c8a84e; border-radius: 4px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(200,168,78,0.3); }
+  50% { box-shadow: 0 0 20px rgba(200,168,78,0.6); }
+}
+@keyframes typing-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+.msg-anim { animation: fadeUp 0.4s ease-out; }
+.glow { animation: pulse-glow 2s infinite; }
+.dot1 { animation: typing-dot 1.2s infinite 0s; }
+.dot2 { animation: typing-dot 1.2s infinite 0.2s; }
+.dot3 { animation: typing-dot 1.2s infinite 0.4s; }
+.gold-gradient { background: linear-gradient(135deg, #c8a84e, #e8d48b, #c8a84e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.card-hover { transition: all 0.3s; }
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(200,168,78,0.2); }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script  type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-black text-white overflow-hidden">
+  <div id="app" class="h-full w-full flex flex-col" style="background: radial-gradient(ellipse at top, #1a1a1a 0%, #000 70%);"><!-- Header -->
+   <header class="flex items-center gap-3 px-4 py-3 border-b border-yellow-900/30" style="background: linear-gradient(180deg, rgba(200,168,78,0.08), transparent);">
+    <div class="w-10 h-10 rounded-full flex items-center justify-center glow" style="background: linear-gradient(135deg, #c8a84e, #e8d48b);"><span class="text-black font-bold text-lg">N</span>
+    </div>
+    <div>
+     <h1 id="header-title" class="font-bold text-lg gold-gradient">Command Nexa</h1>
+     <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span> <span class="text-xs text-gray-400">متصل الآن</span>
+     </div>
+    </div>
+    <div class="mr-auto flex gap-2"><button onclick="resetChat()" class="p-2 rounded-lg hover:bg-white/10 transition" title="محادثة جديدة"> <i data-lucide="refresh-cw" style="width:18px;height:18px;color:#c8a84e;"></i> </button>
+    </div>
+   </header><!-- Messages -->
+   <main id="messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+   </main><!-- Quick Actions -->
+   <div id="quick-actions" class="px-4 pb-2 flex flex-wrap gap-2 justify-center" style="display:none;">
+   </div><!-- Input -->
+   <div class="p-3 border-t border-yellow-900/30" style="background: rgba(26,26,26,0.8); backdrop-filter: blur(8px);">
+    <form id="chat-form" class="flex gap-2"><input id="chat-input" type="text" placeholder="اكتب رسالتك هنا..." autocomplete="off" class="flex-1 bg-white/5 border border-yellow-900/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-yellow-600/50 transition"> <button type="submit" class="px-4 rounded-xl font-medium text-black text-sm transition hover:scale-105" style="background: linear-gradient(135deg, #c8a84e, #e8d48b);"> <i data-lucide="send" style="width:18px;height:18px;"></i> </button>
+    </form>
+   </div>
+  </div>
+  <script>
+const defaultConfig = {
+  bot_name: 'Command Nexa',
+  welcome_message: 'أهلاً وسهلاً بك في Command Hub Dev!',
+  background_color: '#000000',
+  surface_color: '#1a1a1a',
+  text_color: '#ffffff',
+  primary_color: '#c8a84e',
+  accent_color: '#e91e8a',
+  font_family: 'Tajawal',
+  font_size: 14
+};
+
+let config = { ...defaultConfig };
+const messagesEl = document.getElementById('messages');
+const quickEl = document.getElementById('quick-actions');
+let chatHistory = [];
+
+// Knowledge base
+const KB = {
+  greet: () => `أهلاً وسهلاً بك! 🌟\n\nأنا **Nexa**، البوت الخاص بـ **Command Hub Dev** ✨\n\nأنا هون لأقدملك كل المعلومات اللي بتحتاجها عن المشروع والخدمات المتاحة 💡\n\nوفي مرحلة متقدمة، بقدر أعطيك نصائح وأسرار خاصة توصلك لأفضل النتائج عند استخدام التطبيق! 🚀\n\nأهلاً وسهلاً فيك! شو بتحب تعرف؟`,
+
+  identity: () => {
+    const i = [
+      `👋 **من أنا؟**\n\nأنا **Nexa**، البوت الذكي الخاص بـ **Command Hub Dev** 🤖✨\n\n📚 أنا هون لأقدملك المعلومات الكاملة عن المشروع والخدمات والأقسام والعروض\n\n💡 وفي مرحلة متقدمة من تفاعلك معي، بقدر أعطيك **نصائح وأسرار** تخصك توصلك لأفضل النتائج عند الاستخدام الصحيح للتطبيق! 🎯\n\nأهلاً وسهلاً فيك! 🎉`,
+      `🤖 **من أنا؟**\n\nأنا **Nexa**، assistant Command Hub Dev 🌟\n\nمهمتي:\n✅ تقديم كل المعلومات عن المشروع\n✅ الإجابة على أسئلتك\n✅ مساعدتك في الاستكشاف\n✅ إعطائك نصائح وحيل لتحقيق أفضل النتائج\n\nأنا بتطور مستمر لأقدملك أفضل تجربة! 🚀`
+    ];
+    return i[Math.floor(Math.random() * i.length)];
+  },
+
+  trading: () => `📊 **سوق التداول - Trading Market**\n\nهي لعبة احترافية مدمجة بالسوق الداخلي لـ **Command Market** 🎮💰\n\n✅ بتقدر تحقق الهدف وتربح الجائزة\n✅ الأرباح بتكون بحسب المعروض بسوق التداول\n✅ تجربة فريدة بتجمع بين المتعة والربح\n\n👇 فوت على سوق التداول وشوف العرض!`,
+
+  dollar: () => `💱 **سعر التصريف**\n\n**الدولار الواحد = 2,500 نقطة** في البنك الخاص بالكوماند هاب 🏦\n\nالنقاط بتقدر تستخدمها بكل خدمات المنصة! 💎`,
+
+  founders: () => `👑 **المؤسسون والشركاء**\n\nمشروع Command Hub Dev تأسس من قبل:\n\n🏢 **Right Way Holding**\n🏢 **Turk Palace المساهمة**\n🏢 **نادي الأعمال TBC**\n\n👤 سعد الشيخ\n👤 حمزة الشيخ\n👤 عبد الله الكريش\n👤 طاهر المارديني\n\nفريق متكامل برؤية واحدة! 🚀`,
+
+  features: () => `⭐ **ميزات Command Hub Dev**\n\n🥇 أول منصة بتقدم إمكانية **دعم مشروع ديجيتال** ومنح صاحب الفكرة أموال مقابل فكرته إذا نجحت!\n\n🎮 إمكانية الاستفادة من وقت اللعب بطريقة إنتاجية بتربحك فلوس ونقاط\n\n💡 المهم إنك تعرف كيف بيشتغل الكوماند هاب\n\n🌍 نحو مستقبل أفضل للجميع!`,
+
+  strategy: () => {
+    const s = [
+      `🎯 **استراتيجيتنا**\n\nهدفنا الأساسي هو **الاستدامة** وتطوير حياة المشتركين للأفضل 🌱\n\nنمنح الشركات ورجال الأعمال أفضل خدمة ممكنة عبر أدوات ذكية ومبتكرة 💼✨`,
+      `🚀 **رؤيتنا**\n\nبنسعى نبني مجتمع رقمي مستدام يخلق فرص حقيقية للجميع 🌟\n\nكل مشترك عنا هو شريك نجاح، ونحن نعمل على تمكينه وتطوير إمكاناته 💪`,
+      `🌍 **توجهنا**\n\nالابتكار + الاستدامة = مستقبل أفضل ✨\n\nنمنح كل شخص الأدوات اللي بيحتاجها ليحقق أهدافه الرقمية والمالية 💎`
+    ];
+    return s[Math.floor(Math.random() * s.length)];
+  },
+
+  sections: () => `📂 **أقسام Command Hub Dev الرئيسية**\n\nعندنا 6 أقسام أساسية:\n\n🏦 **بنك الكوماند هاب** - استثمر وادخر وحقق أرباح\n🏪 **متجر كوماند هاب** - تسوق واستمتع بعروص مميزة\n⛏️ **منجم الذهب** - استثمر بالذهب بأمان وسهولة\n📊 **سوق التداول** - لعب وتداول واربح جوائز\n🎮 **قسم الألعاب والتحديات** - العب واجمع نقاط وجوائز\n📢 **قسم الحملات الترويجية** - ترويج واكسب عمولات\n\nكل قسم فيو فرص مختلفة تناسب اهتماماتك! 🌟`,
+
+  games: () => {
+    const g = [
+      `🎮 **الألعاب - Games**\n\nالألعاب في Command Hub Dev ليست مجرد للتسلية، بل هي:\n\n🏆 ألعاب **تحدي** تختبر مهاراتك\n😊 ألعاب **مسلية** بتقضي بها وقت ممتع\n⚡ ألعاب **حماسية** بتثير الأدرينالين\n\n💡 **المهم**: كل لعبة بتساعدك تتطور مهاراتك وتتعلم كيف تربح من الاستخدام الصحيح لـ Command Hub!\n\n👇 فوت على الألعاب وابدأ حقق أرباحك الآن!`,
+      `🎯 **ألعاب Command Hub - التحدي والإثارة**\n\nعندنا ألعاب فريدة بتجمع بين:\n\n✨ التحدي والإثارة\n🧠 تطوير المهارات\n💰 كسب النقاط والأرباح\n\nكل لعبة مصممة تعلمك كيف تستخدم Command Hub بشكل صحيح وتحقق أرباح حقيقية! 🚀\n\n👇 جرب الألعاب واكتشف عالم جديد من الفرص!`
+    ];
+    return g[Math.floor(Math.random() * g.length)];
+  },
+
+  campaigns: () => `📢 **الحملات - للمن؟**\n\nحملات Command Hub موجهة لـ:\n\n👶 **الأطفال والشباب** - لتعليمهم المالية والمهارات\n🎓 **الطلاب** - دخل إضافي أثناء الدراسة\n💼 **أصحاب المشاريع** - فرص تطوير وتمويل\n🎮 **اللي بيحبو الألعاب** - ربح من اللعب\n💵 **اللي بيبحثو عن دخل إضافي** - مصدر دخل جانبي آمن\n🪙 **المستثمرين بالذهب** - فرص استثمارية ذهبية\n🏪 **أصحاب محلات الذهب** - خدمات متخصصة\n\nكل فئة عندها فرص وميزات خاصة! 🌟`,
+
+  mining: () => `⛏️ **منجم الذهب - Gold Mining**\n\nمشروع فريد لتوسعة عملاء الذهب والاستثمار الآمن! 🪙✨\n\n📌 **ما هو منجم الذهب؟**\n✅ مشروع **لتوسعة عملاء شركات الذهب** وزيادة عملائهم\n✅ **تأسيس مشاريع** لمن يرغب بدخول **مجال تجارة الذهب أونلاين**\n✅ **خدمة استثمار آمن** بالذهب للمشتركين واللاعبين والمستثمرين\n\n💎 **الفوائد:**\n🔒 استثمار **آمن وموثوق** في الذهب\n📈 **عوائد مستقرة** على استثمارك\n🌐 **تجارة ذهب أونلاين** سهلة وسريعة\n🛡️ **حماية كاملة** لاستثماراتك\n\n👇 لتعرف أكتر عن منجم الذهب وكل التفاصيل، **زور قسم منجم الذهب** وستجد كل ما تحتاجه! 🚀`,
+
+  subscription: () => `📝 **الاشتراك والبدء**\n\nتقدر تشترك معنا بعدة طرق:\n\n✅ **زر الاشتراك** - من الصفحة الرئيسية مباشرة\n✅ **فتح حساب بنك** - استثمر وادخر بأمان\n✅ **منجم الذهب** - استثمر بالذهب\n✅ **سوق التداول** - ابدأ التداول الآن\n✅ **التواصل المباشر** - أخبر الإدارة برغبتك\n\n💰 **تكاليف الاشتراك:**\n🎁 الاشتراك **مجاني تماماً**\n💸 شحن الرصيد يبدأ من **20 دولار فقط**\n\nلا تردد! ابدأ رحلتك معنا الآن! 🚀`,
+
+  fees: () => {
+    const f = [
+      `💰 **كيف نربح نحن؟**\n\nنحن نأخذ أجور مقابل الخدمات المميزة:\n\n🏦 **البنك** - الأجور موضحة بصفحة البنك\n📊 **سوق التداول** - أجور رمزية جداً\n🎮 **الألعاب والنقاط** - 0.01 سنت عن كل 2500 نقطة (أجور زهيدة جداً)\n\nأجورنا بسيطة وعادلة! 🤝`,
+      `📊 **نموذج الأرباح الخاص بنا**\n\nنحن نعتمد على نموذج الخدمات:\n\n✅ خدمات بنكية برسوم واضحة\n✅ سوق تداول برسوم رمزية\n✅ نقاط ألعاب برسوم شبه مجانية\n✅ اشتراك مجاني 100% - فقط شحن الرصيد\n\nنجاحك = نجاحنا! 🎯`
+    ];
+    return f[Math.floor(Math.random() * f.length)];
+  },
+
+  offers: () => {
+    const o = [
+      `🎁 **العروض المميزة**\n\n📊 **للاستثمار**: زور **البنك** وشوف عروض الاستثمار المذهلة! 💰\n\n⛏️ **للادخار**: زور **منجم الذهب** وشوف عروض الادخار المميزة! 🪙\n\n🎮 **لجمع النقاط**: زور **الألعاب** وشوف العروض المميزة لجمع النقاط! 🏆\n\nكل قسم فيو عروض تناسب احتياجاتك! ✨`,
+      `💎 **عروضنا المميزة**\n\n🏦 **البنك** - استثمر وحقق أرباح من أموالك 💸\n🏔️ **منجم الذهب** - ادخر ذهبك بأمان وحقق عوائد 🪙\n🎯 **الألعاب** - العب واجمع نقاط بطريقة مسلية وحماسية 🎮\n\nادخل على كل قسم واستكشف العروض الخاصة به!`
+    ];
+    return o[Math.floor(Math.random() * o.length)];
+  },
+
+ unknown: (userMessage) => {
+  return `👤 لقد قمت بطرح السؤال: **"${userMessage}"**  
+
+🔒 عذراً، هذه الميزة غير متاحة في النسخة التجريبية من **Command Hub Dev**  
+
+💡 للوصول إلى المحادثة الذكية الكاملة والاستفادة من جميع الميزات، يمكنك الترقية إلى النسخة المدفوعة  
+
+🚀 استمتع بتجربة أقوى وأكثر احترافية معنا  
+
+👇 تواصل معنا الآن لمعرفة طريقة الاشتراك:`;
+}
+};
+
+function detectIntent(msg) {
+  const m = msg.toLowerCase();
+  if (/من انت|شو اسمك|مين انت|من أنت|who are you|about you/.test(m)) return 'identity';
+  if (/تداول|trading|سوق/.test(m)) return 'trading';
+  if (/دولار|تصريف|نقط|سعر|عمل/.test(m)) return 'dollar';
+  if (/صاحب|مؤسس|شركا|مين|سعد|حمز|طاهر|عبد|رايت|تورك|نادي/.test(m)) return 'founders';
+  if (/ميز|فرق|خاص|ليش|احسن/.test(m)) return 'features';
+  if (/استراتيج|رؤي|هدف|توجه|مستقبل|خطة/.test(m)) return 'strategy';
+  if (/قسم|اقسام|خدم|حساب/.test(m)) return 'sections';
+  if (/لعب|ألعاب|games|gaming|تحدي|مسل|حماس/.test(m)) return 'games';
+  if (/حمل|campaign|campaigns|من|لمن|اللي|مستهدف/.test(m)) return 'campaigns';
+  if (/عرض|offers|deals|ديل|خصم/.test(m)) return 'offers';
+  if (/منج|ذهب|gold|mining/.test(m)) return 'mining';
+  if (/اشترك|نشترك|كيف اشترك|بدي اشترك|معكم|حساب|كيف|subscription|join|register|sign up/.test(m)) return 'subscription';
+  if (/اجور|رسوم|تكاليف|كم تربح|إيرادات|fees|revenue|profit|كيف تربحو|شو الاجور/.test(m)) return 'fees';
+  if (/مرحب|هلا|هاي|hi|hello|اهل|السلام/.test(m)) return 'greet';
+  return 'unknown';
+}
+
+function getQuickActions(intent) {
+  const all = [
+    { label: '📊 سوق التداول', value: 'شو هو سوق التداول؟' },
+    { label: '💱 سعر الدولار', value: 'شو سعر الدولار؟' },
+    { label: '👑 المؤسسون', value: 'مين أصحاب المشروع؟' },
+    { label: '⭐ الميزات', value: 'شو ميزات الكوماند هاب؟' },
+    { label: '🎯 الاستراتيجية', value: 'شو استراتيجيتكم؟' },
+    { label: '⛏️ منجم الذهب', value: 'شو هو منجم الذهب؟' },
+  ];
+  return all.filter(a => !a.value.toLowerCase().includes(intent === 'trading' ? 'تداول' : intent === 'dollar' ? 'دولار' : '___'));
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#e8d48b;">$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
+function addMessage(text, isUser) {
+  const div = document.createElement('div');
+  div.className = `msg-anim flex ${isUser ? 'justify-start' : 'justify-end'}`;
+  const bubble = document.createElement('div');
+  bubble.className = `max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed`;
+  if (isUser) {
+    bubble.style.cssText = 'background: linear-gradient(135deg, #c8a84e22, #c8a84e11); border: 1px solid rgba(200,168,78,0.2); color: #e8d48b;';
+  } else {
+    bubble.style.cssText = 'background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #e0e0e0;';
+  }
+  bubble.innerHTML = formatText(text);
+  div.appendChild(bubble);
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.id = 'typing';
+  div.className = 'msg-anim flex justify-end';
+  div.innerHTML = `<div class="rounded-2xl px-5 py-3 flex gap-1.5 items-center" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);">
+    <span class="w-2 h-2 rounded-full bg-yellow-500 dot1"></span>
+    <span class="w-2 h-2 rounded-full bg-yellow-500 dot2"></span>
+    <span class="w-2 h-2 rounded-full bg-yellow-500 dot3"></span>
+  </div>`;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function showQuickActions(intent) {
+  const actions = getQuickActions(intent);
+  quickEl.innerHTML = '';
+  quickEl.style.display = 'flex';
+  actions.forEach(a => {
+    const btn = document.createElement('button');
+    btn.className = 'card-hover text-xs px-3 py-1.5 rounded-full border transition';
+    btn.style.cssText = 'border-color: rgba(200,168,78,0.3); color: #c8a84e; background: rgba(200,168,78,0.08);';
+    btn.textContent = a.label;
+    btn.onclick = () => handleSend(a.value);
+    quickEl.appendChild(btn);
+  });
+}
+
+function showContactButton() {
+  quickEl.innerHTML = '';
+  quickEl.style.display = 'flex';
+  quickEl.style.justifyContent = 'center';
+  
+  const btn = document.createElement('a');
+  btn.href = 'https://wa.me/MESSAGE_HERE';
+  btn.target = '_blank';
+  btn.rel = 'noopener noreferrer';
+  btn.className = 'card-hover flex items-center gap-2 text-sm px-4 py-2.5 rounded-full border transition';
+  btn.style.cssText = 'border-color: #25d366; color: #25d366; background: rgba(37,211,102,0.1); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;';
+  btn.innerHTML = `<i data-lucide="message-circle" style="width:18px;height:18px;"></i> تواصل معنا عبر واتساب`;
+  
+  quickEl.appendChild(btn);
+  lucide.createIcons();
+}
+
+function handleSend(text) {
+  if (!text.trim()) return;
+  addMessage(text, true);
+  const intent = detectIntent(text);
+  showTyping();
+  const delay = 600 + Math.random() * 800;
+  setTimeout(() => {
+    removeTyping();
+    const reply = intent === 'unknown' ? KB[intent](text) : KB[intent]();
+    addMessage(reply, false);
+    if (intent === 'unknown') {
+      showContactButton();
+    } else {
+      showQuickActions(intent);
+    }
+  }, delay);
+}
+
+function resetChat() {
+  messagesEl.innerHTML = '';
+  chatHistory = [];
+  quickEl.style.display = 'none';
+  setTimeout(() => {
+    addMessage(KB.greet(), false);
+    showQuickActions('greet');
+  }, 300);
+}
+
+// Form
+document.getElementById('chat-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  handleSend(input.value);
+  input.value = '';
+});
+
+// Element SDK
+function applyConfig(c) {
+  document.getElementById('header-title').textContent = c.bot_name || defaultConfig.bot_name;
+}
+
+
+
+// Init
+lucide.createIcons();
+setTimeout(() => {
+  addMessage(KB.greet(), false);
+  showQuickActions('greet');
+}, 500);
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e325e4c50e0dd60',t:'MTc3NDY1NjE3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
