@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Tajawal',sans-serif}
+:root{
+--bg:#0a0a0f;
+--surface:#14141f;
+--gold:#d4a530;
+--gold-light:#f0d060;
+--text:#e8e4dc;
+--accent:#1a1a2e;
+}
+body{background:var(--bg);color:var(--text)}
+
+.gold-gradient{background:linear-gradient(135deg,#d4a530,#f0d060,#d4a530)}
+.gold-text{background:linear-gradient(135deg,#d4a530,#f0d060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.glass{background:rgba(20,20,31,.85);backdrop-filter:blur(16px);border:1px solid rgba(212,165,48,.12)}
+.glass-gold{background:rgba(212,165,48,.06);backdrop-filter:blur(12px);border:1px solid rgba(212,165,48,.2)}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 20px rgba(212,165,48,.15)}50%{box-shadow:0 0 40px rgba(212,165,48,.3)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes countUp{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes liveFeed{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes progressBar{from{width:0}to{width:100%}}
+
+.animate-float{animation:float 4s ease-in-out infinite}
+.animate-pulse-gold{animation:pulse-gold 3s ease-in-out infinite}
+.animate-slide-up{animation:slideUp .6s ease-out forwards}
+.animate-fade-in{animation:fadeIn .5s ease-out forwards}
+.animate-live{animation:liveFeed .4s ease-out forwards}
+
+.shimmer-bg{background:linear-gradient(90deg,transparent 0%,rgba(212,165,48,.08) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 3s infinite}
+
+.stat-card{transition:all .3s ease}
+.stat-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(212,165,48,.15)}
+
+.btn-gold{background:linear-gradient(135deg,#d4a530,#c49520);color:#0a0a0f;font-weight:700;transition:all .3s ease;border:none;cursor:pointer}
+.btn-gold:hover{background:linear-gradient(135deg,#f0d060,#d4a530);transform:translateY(-2px);box-shadow:0 8px 25px rgba(212,165,48,.3)}
+
+.btn-outline{border:1px solid rgba(212,165,48,.4);color:var(--gold);background:transparent;transition:all .3s ease;cursor:pointer}
+.btn-outline:hover{background:rgba(212,165,48,.1);border-color:var(--gold)}
+
+.popup-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:1000;display:none;justify-content:center;align-items:center}
+.popup-overlay.active{display:flex}
+.popup-content{max-height:90%;overflow-y:auto;width:95%;max-width:600px}
+
+.live-row{border-right:3px solid transparent;padding:8px 12px;margin:2px 0;border-radius:6px;font-size:13px}
+.live-row.buy{border-right-color:#d4a530;background:rgba(212,165,48,.06)}
+.live-row.sell{border-right-color:#22c55e;background:rgba(34,197,94,.06)}
+.live-row.fix{border-right-color:#f59e0b;background:rgba(245,158,11,.06)}
+
+.progress-line{height:3px;background:rgba(212,165,48,.15);border-radius:2px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,#d4a530,#f0d060);border-radius:2px;animation:progressBar 10s linear forwards}
+
+input,select,textarea{background:rgba(255,255,255,.05);border:1px solid rgba(212,165,48,.15);color:var(--text);border-radius:8px;padding:10px 14px;font-family:'Tajawal',sans-serif;font-size:14px;width:100%;transition:border-color .3s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+select option{background:#14141f;color:var(--text)}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;padding:12px 24px;border-radius:10px;font-weight:600;animation:slideUp .4s ease-out}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,.02)}
+::-webkit-scrollbar-thumb{background:rgba(212,165,48,.2);border-radius:3px}
+
+.pkg-card{transition:all .3s ease;cursor:pointer;border:2px solid transparent}
+.pkg-card:hover,.pkg-card.selected{border-color:var(--gold);box-shadow:0 0 30px rgba(212,165,48,.15)}
+.pkg-card.selected{background:rgba(212,165,48,.08)}
+</style>
+  <script>
+tailwind.config={theme:{extend:{colors:{gold:'#d4a530','gold-light':'#f0d060',dark:'#0a0a0f',surface:'#14141f'}}}}
+</script>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto" style="background:var(--bg)"><!-- PAGE: LANDING -->
+   <div id="page-landing" class="w-full"><!-- Hero -->
+    <div class="relative w-full overflow-hidden" style="min-height:100%">
+     <div class="absolute inset-0" style="background:radial-gradient(ellipse at 50% 0%,rgba(212,165,48,.08) 0%,transparent 60%)"></div>
+     <div class="absolute top-10 left-10 w-48 h-48 rounded-full opacity-10" style="background:radial-gradient(circle,#d4a530,transparent);filter:blur(60px)"></div>
+     <div class="absolute bottom-20 right-10 w-64 h-64 rounded-full opacity-5" style="background:radial-gradient(circle,#f0d060,transparent);filter:blur(80px)"></div>
+     <nav class="relative z-10 flex items-center justify-between px-6 py-4 glass" style="border-bottom:1px solid rgba(212,165,48,.1)">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center"><span style="font-size:20px;color:#0a0a0f;font-weight:900">G</span>
+       </div>
+       <div>
+        <div class="font-bold text-lg gold-text" style="font-family:'Outfit',sans-serif;letter-spacing:1px">
+         GOLD CONNECT
+        </div>
+        <div class="text-xs opacity-50" style="margin-top:-4px">
+         by Command Hub
+        </div>
+       </div>
+      </div><button onclick="showPopup('signup-popup')" class="btn-gold px-5 py-2 rounded-lg text-sm">اشترك الآن</button>
+     </nav>
+     <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-20">
+      <div class="animate-float mb-6">
+       <div class="w-24 h-24 mx-auto rounded-2xl gold-gradient flex items-center justify-center animate-pulse-gold" style="font-size:48px">
+        🪙
+       </div>
+      </div>
+      <h1 id="el-hero-title" class="text-4xl md:text-6xl font-black mb-4 gold-text" style="font-family:'Outfit',sans-serif;line-height:1.2">GOLD CONNECT</h1>
+      <p id="el-hero-subtitle" class="text-xl md:text-2xl opacity-80 mb-2 font-light">وسّع دائرة عملائك عالمياً</p>
+      <p class="text-sm opacity-50 mb-8 max-w-xl">مشروع لتوسعة دائرة عملاء شركات الذهب على مستوى عالمي — من خلال منصة كوماند هاب التي يدخلها يومياً آلاف اللاعبين والمستثمرين لتنفيذ المهام والتحديات واللعب والتداول وادخار الذهب</p><!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 w-full max-w-3xl">
+       <div class="stat-card glass rounded-xl p-4 text-center animate-slide-up" style="animation-delay:.1s">
+        <div id="el-sub-count" class="text-2xl font-black gold-text">
+         47,500+
+        </div>
+        <div class="text-xs opacity-50 mt-1">
+         مشترك نشط
+        </div>
+       </div>
+       <div class="stat-card glass rounded-xl p-4 text-center animate-slide-up" style="animation-delay:.2s">
+        <div class="text-2xl font-black gold-text">
+         10+
+        </div>
+        <div class="text-xs opacity-50 mt-1">
+         دول نشطة
+        </div>
+       </div>
+       <div class="stat-card glass rounded-xl p-4 text-center animate-slide-up" style="animation-delay:.3s">
+        <div class="text-2xl font-black gold-text">
+         $100K+
+        </div>
+        <div class="text-xs opacity-50 mt-1">
+         مبيعات متوقعة
+        </div>
+       </div>
+       <div class="stat-card glass rounded-xl p-4 text-center animate-slide-up" style="animation-delay:.4s">
+        <div class="text-2xl font-black gold-text">
+         24/7
+        </div>
+        <div class="text-xs opacity-50 mt-1">
+         سوق نشط
+        </div>
+       </div>
+      </div><button onclick="showPopup('signup-popup')" class="btn-gold px-10 py-4 rounded-xl text-lg animate-pulse-gold">🚀 اشترك الآن وانضم لشبكة الذهب العالمية</button> <!-- Info sections -->
+      <div class="mt-16 w-full max-w-4xl">
+       <div class="grid md:grid-cols-3 gap-6 text-right">
+        <div class="glass-gold rounded-xl p-6 animate-slide-up" style="animation-delay:.5s">
+         <div class="text-3xl mb-3">
+          🎮
+         </div>
+         <h3 class="font-bold text-lg gold-text mb-2">منصة تفاعلية</h3>
+         <p class="text-sm opacity-60">عشرات الآلاف يومياً ينفذون المهام والتحديات ويلعبون ويتداولون عبر المنصة</p>
+        </div>
+        <div class="glass-gold rounded-xl p-6 animate-slide-up" style="animation-delay:.6s">
+         <div class="text-3xl mb-3">
+          💰
+         </div>
+         <h3 class="font-bold text-lg gold-text mb-2">ادخار بالذهب</h3>
+         <p class="text-sm opacity-60">شريحة كبيرة من المستخدمين يفضلون الادخار بالذهب — نوفر لهم شراء الذهب من خلال المنصة ووكلائها</p>
+        </div>
+        <div class="glass-gold rounded-xl p-6 animate-slide-up" style="animation-delay:.7s">
+         <div class="text-3xl mb-3">
+          🌍
+         </div>
+         <h3 class="font-bold text-lg gold-text mb-2">شبكة عالمية</h3>
+         <p class="text-sm opacity-60">المنصة تعمل كوسيط بين شركات الذهب والمستثمرين والمدخرين من مشتركي ولاعبي كوماند هاب</p>
+        </div>
+       </div>
+      </div><!-- Contract Mechanism -->
+      <div class="mt-12 w-full max-w-3xl glass rounded-2xl p-8 text-right animate-slide-up" style="animation-delay:.8s">
+       <h2 class="text-2xl font-bold gold-text mb-4">🤝 آلية التعاقد</h2>
+       <p class="text-sm opacity-70 leading-relaxed mb-4">المنصة تعمل كوسيط بينك كشركة ذهب وبين المستثمرين والمدخرين من مشتركي ولاعبي المنصة. يتم تحصيل أجور دعم فني شهرية تُحدد بحسب قيمة الباقة المختارة.</p>
+       <div class="grid md:grid-cols-3 gap-4 mt-6">
+        <div class="pkg-card glass rounded-xl p-5 text-center">
+         <div class="text-sm opacity-50 mb-1">
+          باقة
+         </div>
+         <div class="text-xl font-bold gold-text">
+          التأسيس
+         </div>
+         <div class="text-3xl font-black mt-2" style="color:#d4a530">
+          $400
+         </div>
+         <div class="text-xs opacity-50">
+          /شهرياً
+         </div>
+         <div class="text-xs opacity-40 mt-3">
+          مبيعات متوقعة تصل إلى $4,000
+         </div>
+        </div>
+        <div class="pkg-card glass rounded-xl p-5 text-center" style="border-color:rgba(212,165,48,.3)">
+         <div class="text-sm opacity-50 mb-1">
+          باقة
+         </div>
+         <div class="text-xl font-bold gold-text">
+          المتقدم
+         </div>
+         <div class="text-3xl font-black mt-2" style="color:#d4a530">
+          $600
+         </div>
+         <div class="text-xs opacity-50">
+          /شهرياً
+         </div>
+         <div class="text-xs opacity-40 mt-3">
+          مبيعات متوقعة تصل إلى $50,000
+         </div>
+        </div>
+        <div class="pkg-card glass rounded-xl p-5 text-center">
+         <div class="text-sm opacity-50 mb-1">
+          باقة
+         </div>
+         <div class="text-xl font-bold gold-text">
+          المتصدر
+         </div>
+         <div class="text-3xl font-black mt-2" style="color:#d4a530">
+          $800
+         </div>
+         <div class="text-xs opacity-50">
+          /شهرياً
+         </div>
+         <div class="text-xs opacity-40 mt-3">
+          مبيعات متوقعة تصل إلى $100,000
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- PAGE: DASHBOARD -->
+   <div id="page-dashboard" class="w-full hidden">
+    <nav class="flex items-center justify-between px-6 py-4 glass" style="border-bottom:1px solid rgba(212,165,48,.1)">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center">
+       <span style="font-size:20px;color:#0a0a0f;font-weight:900">G</span>
+      </div>
+      <div>
+       <div class="font-bold gold-text" style="font-family:'Outfit',sans-serif">
+        GOLD CONNECT
+       </div>
+       <div class="text-xs opacity-50">
+        لوحة التحكم
+       </div>
+      </div>
+     </div>
+     <div class="flex items-center gap-3"><button onclick="showPopup('notify-popup')" class="btn-outline px-4 py-2 rounded-lg text-sm">📩 إبلاغ الإدارة</button> <button onclick="closeDashboard()" class="btn-outline px-4 py-2 rounded-lg text-sm">✕ إغلاق</button>
+     </div>
+    </nav>
+    <div class="p-4 md:p-8 max-w-7xl mx-auto"><!-- User Info Card -->
+     <div id="user-info-card" class="glass rounded-2xl p-6 mb-6"></div><!-- Market Stats -->
+     <div class="mb-6">
+      <h2 class="text-xl font-bold gold-text mb-4">📊 السوق النشط</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="market-stats"></div>
+     </div><!-- Two columns -->
+     <div class="grid lg:grid-cols-2 gap-6"><!-- Live Operations -->
+      <div class="glass rounded-2xl p-5">
+       <h3 class="font-bold gold-text mb-3 text-lg">⚡ سجل العمليات النشطة للجولد كونيكت</h3>
+       <div id="live-feed" class="h-64 overflow-y-auto space-y-1" style="scroll-behavior:smooth"></div>
+      </div><!-- Sales Panel -->
+      <div class="glass rounded-2xl p-5">
+       <h3 class="font-bold gold-text mb-3 text-lg">🛒 لوحة مبيعاتي</h3><!-- Request Operations Button --> <button id="btn-request-ops" onclick="requestOperations()" class="btn-gold w-full py-3 rounded-xl mb-4 text-base">طلب عمليات</button>
+       <div id="request-progress" class="hidden">
+        <div class="text-center text-sm opacity-60 mb-1">
+         يرجى الانتظار...
+        </div>
+        <div class="progress-line">
+         <div class="progress-fill"></div>
+        </div>
+       </div><!-- Free Market / Order Panel -->
+       <div id="order-panel" class="hidden">
+        <div class="glass-gold rounded-xl p-4 mb-3">
+         <h4 class="font-bold mb-3 text-sm gold-text">📋 طلب قيد الانتظار</h4>
+         <div id="order-details"></div>
+         <div class="flex gap-2 mt-4"><button onclick="approveOrder()" class="btn-gold flex-1 py-2 rounded-lg text-sm">✅ موافقة</button> <button onclick="skipOrder()" class="btn-outline flex-1 py-2 rounded-lg text-sm">⏭ تخطي</button> <button onclick="cancelOrder()" class="btn-outline flex-1 py-2 rounded-lg text-sm" style="border-color:rgba(239,68,68,.4);color:#ef4444">✕ إلغاء</button>
+         </div>
+        </div>
+       </div>
+       <div id="order-empty" class="text-center text-sm opacity-40 py-6">
+        اطلب عمليات لتلقي طلبات الشراء
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- POPUP: SIGNUP -->
+   <div id="signup-popup" class="popup-overlay">
+    <div class="popup-content glass rounded-2xl p-6">
+     <div class="flex justify-between items-center mb-5">
+      <h2 class="text-xl font-bold gold-text">📝 نموذج الاشتراك</h2><button onclick="hidePopup('signup-popup')" class="opacity-50 hover:opacity-100 text-2xl">✕</button>
+     </div>
+     <form id="signup-form" onsubmit="return false" class="space-y-3">
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">اسم الشخص</label><input id="f-name" required placeholder="اسمك الكامل">
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">اسم الشركة</label><input id="f-company" required placeholder="اسم شركتك">
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">الموقع الإلكتروني أو رابط سوشال ميديا</label><input id="f-website" placeholder="https://...">
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">أين تقع الشركة؟</label><input id="f-location" required placeholder="المدينة، البلد">
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">حجم المبيعات الشهري من الذهب</label> <select id="f-sales"><option value="">اختر...</option><option>أقل من $5,000</option><option>$5,000 - $20,000</option><option>$20,000 - $50,000</option><option>$50,000 - $100,000</option><option>أكثر من $100,000</option></select>
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">هل ترغب في زيادة عملائك؟</label> <select id="f-more-clients"><option value="نعم">نعم</option><option value="لا">لا</option></select>
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">هل ترغب بالانضمام لمجتمع كوماند هاب وتوفر طلبات الشراء للادخار؟</label> <select id="f-join"><option value="نعم">نعم</option><option value="لا">لا</option></select>
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">رقم الاتصال</label><input id="f-phone" required placeholder="+966...">
+      </div><!-- Package Selection -->
+      <div>
+       <label class="text-xs opacity-60 mb-2 block">اختر الباقة</label>
+       <div class="grid grid-cols-3 gap-2" id="pkg-select">
+        <div class="pkg-card glass rounded-lg p-3 text-center text-xs" data-pkg="التأسيس - $400" onclick="selectPkg(this)">
+         <div class="font-bold gold-text">
+          التأسيس
+         </div>
+         <div class="font-black mt-1" style="color:#d4a530">
+          $400
+         </div>
+        </div>
+        <div class="pkg-card glass rounded-lg p-3 text-center text-xs" data-pkg="المتقدم - $600" onclick="selectPkg(this)">
+         <div class="font-bold gold-text">
+          المتقدم
+         </div>
+         <div class="font-black mt-1" style="color:#d4a530">
+          $600
+         </div>
+        </div>
+        <div class="pkg-card glass rounded-lg p-3 text-center text-xs" data-pkg="المتصدر - $800" onclick="selectPkg(this)">
+         <div class="font-bold gold-text">
+          المتصدر
+         </div>
+         <div class="font-black mt-1" style="color:#d4a530">
+          $800
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="glass-gold rounded-lg p-3 text-xs opacity-70 leading-relaxed"><strong class="gold-text">آلية التعاقد:</strong> المنصة تعمل كوسيط بينك كشركة ذهب وبين المستثمرين والمدخرين. يتم تحصيل أجور دعم فني شهرية حسب الباقة المختارة. حجم المبيعات المتوقع شهرياً من $4,000 إلى $100,000.
+      </div><label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" id="f-agree" class="accent-yellow-500"> أوافق على شروط المنصة</label> <button type="button" onclick="submitSignup()" id="btn-submit-signup" class="btn-gold w-full py-3 rounded-xl text-base">أوافق وأرسل طلبك إلى الإدارة</button>
+      <div id="signup-loading" class="hidden text-center text-sm opacity-60 py-2">
+       <span class="inline-block animate-spin mr-2">⏳</span> جاري الإرسال...
+      </div>
+      <div id="signup-error" class="hidden text-center text-sm py-2" style="color:#ef4444"></div>
+     </form>
+    </div>
+   </div><!-- POPUP: ORDER APPROVAL -->
+   <div id="approve-popup" class="popup-overlay">
+    <div class="popup-content glass rounded-2xl p-6 max-w-md">
+     <h3 class="text-lg font-bold gold-text mb-3">✅ تأكيد الموافقة على الطلب</h3>
+     <div id="approve-details" class="text-sm opacity-70 leading-relaxed mb-4"></div>
+     <div class="flex gap-3"><button onclick="confirmApproval()" class="btn-gold flex-1 py-3 rounded-xl text-sm">إرسل تأكيداً إلى الإدارة</button> <a id="approve-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn-outline flex-1 py-3 rounded-xl text-sm text-center">💬 واتساب</a>
+     </div><button onclick="hidePopup('approve-popup')" class="btn-outline w-full py-2 rounded-xl text-sm mt-3">إغلاق</button>
+    </div>
+   </div><!-- POPUP: REQUEST DONE -->
+   <div id="request-done-popup" class="popup-overlay">
+    <div class="popup-content glass rounded-2xl p-6 max-w-md text-center">
+     <div class="text-5xl mb-4">
+      ✅
+     </div>
+     <h3 class="text-lg font-bold gold-text mb-2">تم تسجيل طلبك وإرساله إلى النظام</h3>
+     <p class="text-sm opacity-60 mb-4">ستاتيك الطلبات الخاصة بك قريباً</p><a id="request-whatsapp" href="https://wa.me/966500000000?text=تأكيد طلب عمليات - Gold Connect" target="_blank" rel="noopener noreferrer" class="btn-gold block w-full py-3 rounded-xl text-sm mb-3">💬 إرسل تأكيد طلبك للإدارة واتساب</a> <button onclick="hidePopup('request-done-popup')" class="btn-outline w-full py-2 rounded-xl text-sm">إغلاق</button>
+    </div>
+   </div><!-- POPUP: NOTIFY ADMIN -->
+   <div id="notify-popup" class="popup-overlay">
+    <div class="popup-content glass rounded-2xl p-6 max-w-md">
+     <h3 class="text-lg font-bold gold-text mb-3">📩 إبلاغ الإدارة</h3>
+     <div class="space-y-3">
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">الوقت المفضل للتواصل</label><input id="notify-time" placeholder="مثال: 2:00 PM بتوقيت الرياض">
+      </div>
+      <div>
+       <label class="text-xs opacity-60 mb-1 block">ملاحظات</label><textarea id="notify-msg" rows="3" placeholder="أي ملاحظات إضافية..."></textarea>
+      </div>
+     </div><a id="notify-wa-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="sendNotify()" class="btn-gold block w-full py-3 rounded-xl text-sm mt-4 text-center">📩 إرسال عبر واتساب</a> <button onclick="hidePopup('notify-popup')" class="btn-outline w-full py-2 rounded-xl text-sm mt-2">إغلاق</button>
+    </div>
+   </div><!-- TOAST -->
+   <div id="toast" class="toast hidden glass" style="border:1px solid rgba(212,165,48,.3)"></div>
+  </div>
+  <script>
+// ===== STATE =====
+let currentUser = null;
+let allRecords = [];
+let selectedPkg = '';
+let currentOrder = null;
+let goldPrice = 2340 + Math.random()*20;
+
+// ===== DEFAULT CONFIG =====
+const defaultConfig = {
+  hero_title: 'GOLD CONNECT',
+  hero_subtitle: 'وسّع دائرة عملائك عالمياً',
+  subscriber_count: '47,500+',
+  background_color: '#0a0a0f',
+  surface_color: '#14141f',
+  text_color: '#e8e4dc',
+  primary_color: '#d4a530',
+  secondary_color: '#1a1a2e',
+  font_family: 'Tajawal',
+  font_size: 16
+};
+
+// ===== ELEMENT SDK =====
+
+
+// ===== DATA SDK =====
+
+
+// ===== POPUPS =====
+function showPopup(id){ document.getElementById(id).classList.add('active'); }
+function hidePopup(id){ document.getElementById(id).classList.remove('active'); }
+
+// ===== TOAST =====
+function showToast(msg, dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.remove('hidden');
+  setTimeout(()=>t.classList.add('hidden'), dur);
+}
+
+// ===== PACKAGE SELECT =====
+function selectPkg(el){
+  document.querySelectorAll('.pkg-card').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPkg = el.dataset.pkg;
+}
+
+// ===== SIGNUP =====
+async function submitSignup(){
+  const name=document.getElementById('f-name').value.trim();
+  const company=document.getElementById('f-company').value.trim();
+  const location=document.getElementById('f-location').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const agree=document.getElementById('f-agree').checked;
+
+  if(!name||!company||!location||!phone){
+    alert("Tüm alanları doldur");
+    return;
+  }
+
+  if(!selectedPkg){
+    alert("Paket seç");
+    return;
+  }
+
+  if(!agree){
+    alert("Şartları kabul et");
+    return;
+  }
+
+  // 🔥 FAKE USER (dashboard için)
+  currentUser = {
+    person_name: name,
+    company_name: company,
+    location: location,
+    phone: phone,
+    selected_package: selectedPkg,
+    monthly_sales: document.getElementById('f-sales').value,
+    website: document.getElementById('f-website').value,
+    status: 'pending'
+  };
+
+  hidePopup('signup-popup');
+
+  // 🔥 BURASI EN ÖNEMLİ
+  showDashboard();
+}
+
+// ===== DASHBOARD =====
+function showDashboard(){
+  document.getElementById('page-landing').classList.add('hidden');
+  document.getElementById('page-dashboard').classList.remove('hidden');
+  renderUserInfo();
+  renderMarketStats();
+  startLiveFeed();
+}
+
+function closeDashboard(){
+  document.getElementById('page-landing').classList.remove('hidden');
+  document.getElementById('page-dashboard').classList.add('hidden');
+  if(window.liveFeedInterval) clearInterval(window.liveFeedInterval);
+  if(window.statsUpdateInterval) clearInterval(window.statsUpdateInterval);
+}
+
+function renderUserInfo(){
+  if(!currentUser) return;
+  const c=currentUser;
+  document.getElementById('user-info-card').innerHTML=`
+    <div class="flex flex-wrap items-center gap-4 mb-4">
+      <div class="w-14 h-14 rounded-xl gold-gradient flex items-center justify-center text-2xl font-black" style="color:#0a0a0f">${(c.person_name||'?')[0]}</div>
+      <div>
+        <div class="font-bold text-lg">${c.person_name}</div>
+        <div class="text-sm opacity-50">${c.company_name} — ${c.location}</div>
+      </div>
+      <div class="mr-auto text-xs glass-gold rounded-lg px-3 py-1">${c.selected_package}</div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+      <div class="glass rounded-lg p-3"><div class="opacity-40 text-xs">الهاتف</div><div class="mt-1">${c.phone}</div></div>
+      <div class="glass rounded-lg p-3"><div class="opacity-40 text-xs">الموقع</div><div class="mt-1 truncate">${c.website||'—'}</div></div>
+      <div class="glass rounded-lg p-3"><div class="opacity-40 text-xs">المبيعات الشهرية</div><div class="mt-1">${c.monthly_sales||'—'}</div></div>
+      <div class="glass rounded-lg p-3"><div class="opacity-40 text-xs">الحالة</div><div class="mt-1 gold-text font-bold">${c.status==='pending'?'قيد المراجعة':'نشط'}</div></div>
+    </div>`;
+}
+
+
+function renderMarketStats(){
+  const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+  const stats=[
+    {label:'طلبات قيد الانتظار',val:rnd(700,1200),icon:'⏳',key:'pending'},
+    {label:'عمليات منجزة',val:rnd(250,900),icon:'✅',key:'completed'},
+    {label:'عمليات موقفة',val:rnd(20,33),icon:'⏸',key:'stopped'},
+    {label:'عدد المهتمين',val:rnd(7000,9000),icon:'👥',key:'interested'},
+    {label:'نمو السوق',val:rnd(13,29),icon:'📈',key:'growth'}
+  ];
+  
+  // Store initial values
+  window.marketStats = {
+    pending: stats[0].val,
+    completed: stats[1].val,
+    stopped: stats[2].val,
+    interested: stats[3].val,
+    growth: stats[4].val
+  };
+  
+  renderStatsDisplay();
+  
+  // Update stats every 5-10 seconds
+  if(window.statsUpdateInterval) clearInterval(window.statsUpdateInterval);
+  window.statsUpdateInterval = setInterval(()=>{
+    const s = window.marketStats;
+    // Pending: random change
+    s.pending = Math.max(700, Math.min(1200, s.pending + rnd(-50, 50)));
+    // Completed: usually increases
+    s.completed = Math.min(900, s.completed + rnd(5, 25));
+    // Stopped: random change
+    s.stopped = Math.max(20, Math.min(33, s.stopped + rnd(-5, 5)));
+    // Interested: random change
+    s.interested = Math.max(7000, Math.min(9000, s.interested + rnd(-200, 200)));
+    // Growth: random change (logical)
+    s.growth = Math.max(13, Math.min(29, s.growth + rnd(-2, 2)));
+    renderStatsDisplay();
+  }, 5000 + Math.random() * 5000);
+}
+
+function renderStatsDisplay(){
+  const s = window.marketStats;
+  const statElements = [
+    {val: s.pending, icon:'⏳', label:'طلبات قيد الانتظار'},
+    {val: s.completed, icon:'✅', label:'عمليات منجزة'},
+    {val: s.stopped, icon:'⏸', label:'عمليات موقفة'},
+    {val: s.interested, icon:'👥', label:'عدد المهتمين'},
+    {val: s.growth + '%', icon:'📈', label:'نمو السوق'}
+  ];
+  
+  document.getElementById('market-stats').innerHTML = statElements.map(st=>`
+    <div class="stat-card glass rounded-xl p-4 text-center">
+      <div class="text-2xl mb-1">${st.icon}</div>
+      <div class="text-xl font-black gold-text">${typeof st.val === 'number' && st.val > 1000 ? st.val.toLocaleString() : st.val}</div>
+      <div class="text-xs opacity-40 mt-1">${st.label}</div>
+    </div>`).join('');
+}
+
+// ===== LIVE FEED =====
+function startLiveFeed(){
+  const feed=document.getElementById('live-feed');
+  feed.innerHTML='';
+  
+  if(window.liveFeedInterval) clearInterval(window.liveFeedInterval);
+  
+  // Generate new row every 3-4 seconds
+  window.liveFeedInterval=setInterval(()=>{
+    const types=[
+      {text:'تم البيع',cls:'sell',clr:'#22c55e'},
+      {text:'تم الشراء',cls:'buy',clr:'#d4a530'},
+      {text:'تم التثبيت',cls:'fix',clr:'#f59e0b'}
+    ];
+    const t=types[Math.floor(Math.random()*types.length)];
+    const grams=[1,1,1,2,2,2,3,3,5,10,11,13,15][Math.floor(Math.random()*13)];
+    const code='GC-'+Math.random().toString(36).substring(2,8).toUpperCase();
+    const now=new Date();
+    const time=now.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+    const row=document.createElement('div');
+    row.className=`live-row ${t.cls} animate-live`;
+    row.innerHTML=`<span style="color:${t.clr};font-weight:700">${t.text}</span> · <span class="opacity-70">${grams} جرام</span> · <span class="opacity-50">${code}</span> · <span class="opacity-40">${time}</span>`;
+    feed.prepend(row);
+
+    if(feed.children.length>80) feed.removeChild(feed.lastChild);
+  }, 3000 + Math.random() * 1000);
+}
+
+// ===== ORDERS =====
+function generateOrder(){
+  const grams_pool=[1,1,1,1,1,2,2,2,2,3,3,3,5,5,7,10,11,13,15];
+  const grams=grams_pool[Math.floor(Math.random()*grams_pool.length)];
+  const types=['ذهب عيار 24','ذهب عيار 22','ذهب عيار 21','ذهب عيار 18'];
+  const type=types[Math.floor(Math.random()*types.length)];
+  const deliveryDate=new Date(Date.now()+Math.random()*7*86400000);
+  return {grams, type, deliveryDate:deliveryDate.toLocaleDateString('ar-EG'), code:'ORD-'+Math.random().toString(36).substring(2,7).toUpperCase()};
+}
+
+function requestOperations(){
+  const btn=document.getElementById('btn-request-ops');
+  const prog=document.getElementById('request-progress');
+  btn.classList.add('hidden'); prog.classList.remove('hidden');
+  setTimeout(()=>{
+    prog.classList.add('hidden'); btn.classList.remove('hidden');
+    showPopup('request-done-popup');
+    // Show order after closing
+    setTimeout(()=>showNewOrder(),500);
+  },10000);
+}
+
+function showNewOrder(){
+  currentOrder=generateOrder();
+  const o=currentOrder;
+  document.getElementById('order-empty').classList.add('hidden');
+  document.getElementById('order-panel').classList.remove('hidden');
+  document.getElementById('order-details').innerHTML=`
+    <div class="grid grid-cols-2 gap-2 text-sm">
+      <div class="glass rounded-lg p-2"><span class="opacity-40 text-xs">الكود</span><div class="font-bold gold-text">${o.code}</div></div>
+      <div class="glass rounded-lg p-2"><span class="opacity-40 text-xs">الكمية</span><div class="font-bold">${o.grams} جرام</div></div>
+      <div class="glass rounded-lg p-2 col-span-2"><span class="opacity-40 text-xs">النوع/العيار</span><div class="font-bold">${o.type}</div></div>
+      <div class="glass rounded-lg p-2 col-span-2"><span class="opacity-40 text-xs">تاريخ الاستلام</span><div class="font-bold">${o.deliveryDate}</div></div>
+    </div>`;
+}
+
+function approveOrder(){
+  if(!currentOrder) return;
+  const o=currentOrder;
+  const msg=`أنت الآن تؤكد على قدرتك على بيع ${o.grams} جرام ${o.type}. الكود: ${o.code}. تاريخ الاستلام: ${o.deliveryDate}`;
+  document.getElementById('approve-details').textContent=msg;
+  const waMsg=encodeURIComponent(`تأكيد طلب Gold Connect\n${msg}`);
+  document.getElementById('approve-whatsapp').href=`https://wa.me/966500000000?text=${waMsg}`;
+  showPopup('approve-popup');
+}
+
+function confirmApproval(){
+  hidePopup('approve-popup');
+  showToast('✅ تم إرسال التأكيد إلى الإدارة');
+  document.getElementById('order-panel').classList.add('hidden');
+  document.getElementById('order-empty').classList.remove('hidden');
+  document.getElementById('order-empty').textContent='تم إرسال التأكيد — بانتظار طلبات جديدة';
+}
+
+function skipOrder(){
+  showToast('⏭ تم تخطي الطلب');
+  showNewOrder();
+}
+
+function cancelOrder(){
+  showToast('✕ تم إلغاء الطلب');
+  const rnd=Math.random();
+  if(rnd>0.3) showNewOrder();
+  else {
+    document.getElementById('order-panel').classList.add('hidden');
+    document.getElementById('order-empty').classList.remove('hidden');
+    document.getElementById('order-empty').textContent='لا توجد طلبات حالياً — جرب طلب عمليات';
+  }
+}
+
+function sendNotify(){
+  const time=document.getElementById('notify-time').value;
+  const msg=document.getElementById('notify-msg').value;
+  const waMsg=encodeURIComponent(`إبلاغ إدارة Gold Connect\nالوقت المفضل: ${time}\nملاحظات: ${msg}`);
+  document.getElementById('notify-wa-btn').href=`https://wa.me/966500000000?text=${waMsg}`;
+  hidePopup('notify-popup');
+  showToast('📩 جاري فتح واتساب...');
+}
+
+// Init icons
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e1efb397632694e',t:'MTc3NDQ1Mjg4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
