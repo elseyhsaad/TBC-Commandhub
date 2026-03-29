@@ -94,6 +94,7 @@ a,button{font:inherit}
   box-shadow: var(--shadow);
   padding:8px;
   display:none;
+    z-index: 9999;
 }
 .menu.open{display:block}
 .menu-item{
@@ -116,13 +117,20 @@ a,button{font:inherit}
   margin-top:14px;
   padding:26px 22px;
   border-radius:22px;
-  background: linear-gradient(110deg, rgba(181,109,255,.35), rgba(255,112,67,.32));
-  border:1px solid rgba(255,255,255,.10);
+
+  background:
+    radial-gradient(600px 300px at 20% 20%, rgba(214,181,107,.25), transparent 60%),
+    linear-gradient(160deg, rgba(214,181,107,.18), rgba(0,0,0,.95));
+
+  border:1px solid rgba(214,181,107,.35);
+
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  box-shadow: var(--shadow);
+
+  box-shadow:
+    0 20px 50px rgba(214,181,107,.25);
 }
 .badge{
   color:var(--gold);
@@ -133,13 +141,20 @@ a,button{font:inherit}
 .muted{color:var(--muted)}
 .strong{font-weight:700}
 
+
 .cta{
   border:none;
   cursor:pointer;
   padding:12px 18px;
   border-radius:999px;
-  background: var(--pink);
-  color:#fff;
+   background: linear-gradient(135deg, #ffd36a, #d4a017);
+  color: #2b1a00;
+
+  box-shadow:
+    0 15px 35px rgba(214,181,107,.4);
+
+  font-weight: 900;
+
   font-weight:800;
   letter-spacing:.5px;
   box-shadow: 0 14px 30px rgba(255,61,129,.18);
