@@ -290,10 +290,18 @@
   <span id="btnText">ادخل البنك</span> 
   <i data-lucide="arrow-left" style="width:18px;height:18px;"></i> 
 </button>
+<div style="margin-top:16px;">
+  <span id="footerYearBank"
+        style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:1px;">
+  </span>
+</div>
     </div>
+    
    </div>
   </div>
   <script>
+    document.getElementById("footerYearBank").innerText =
+  "© " + new Date().getFullYear() + " COMMAND HUB BANK";
     lucide.createIcons();
 
     // Animated counters
