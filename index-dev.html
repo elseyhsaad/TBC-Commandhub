@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TBC Command Hub</title>
-  <link rel="stylesheet" href="style-dev.css" />
+  <link rel="stylesheet" href="style-dev-copy.css" />
 </head>
 <style>.mini-apps {
   display: flex;
@@ -64,7 +64,60 @@
   inset: 0;
   cursor: pointer;
   z-index: 10;
-}</style>
+}
+.mini-apps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .mini-apps {
+    grid-template-columns: 1fr;
+  }
+}
+.modal-backdrop {
+  z-index: 9999;
+}
+.nexa-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  color: #000;
+  text-decoration: none;
+
+  background: linear-gradient(135deg, #d4af37, #ffd700);
+  box-shadow: 0 0 10px rgba(212,175,55,0.4);
+
+  transition: all 0.25s ease;
+}
+
+.nexa-btn i {
+  width: 14px;
+  height: 14px;
+}
+
+.nexa-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(212,175,55,0.7);
+}
+.nexa-btn {
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%,100% { box-shadow: 0 0 10px rgba(212,175,55,0.4); }
+  50% { box-shadow: 0 0 25px rgba(212,175,55,0.8); }
+}
+</style>
 <body>
 
   <header class="topbar">
@@ -80,9 +133,9 @@
 </div>
 
      <div class="tier">
-  <span class="pill pink">VIP Lounge Access</span>
+  <span class="pill pink">28000 Points</span>
 
-  <span class="pill point-pill">
+  <span class="pill point-pill" id="pointBtn">
     <span class="point-value">1</span>
     <img src="point.png" class="point-icon">
   </span>
@@ -93,11 +146,15 @@
     </div>
 
     <div class="top-actions">
-       <button class="icon-btn" id="changeLogoBtn" title="Change Logo">🟢</button>
+    <button class="icon-btn" id="changeLogoBtn" title="Change Logo">🟢</button>
+<a href="command-nexa.html" class="nexa-btn">
+  <span class="robot">🤖</span>
+  <span>Nexa</span>
+</a>
 
       <div class="dropdown">
         <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
-          ⚙️ Company Menu
+          ⚙️ Settings
           <span class="chev">▾</span>
         </button>
 
@@ -118,38 +175,22 @@
   <main class="container">
 
     
-    <section class="hero">
-      <div>
-        <div class="badge">TBC COMMAND HUB</div>
-      <h1>اهلا بك في لوحة التحكم الخاصة بك</h1>
-        <p class="muted">إدارة الالعاب,الصفقات، الفعاليات، التقارير، والتواصل مع إدارة نادي TBC.</p>
-      </div>
-      <a
-  class="cta"
-  href="https://tbusinessclub.com/members/"
-  target="_blank"
-  rel="noopener"
->
-  JOIN THE CLUB
-</a>
-
-    </section>
-    <section class="card span-3 finance-v2">
+   
+<section class="card span-3 finance-v2">
 
   <div class="finance-top">
     <div>
       <div class="badge">ACCOUNT STATUS</div>
       <h2>لوحة الحساب المالية</h2>
     </div>
-
-    <div class="balance-box">
-      <span>الرصيد الفعلي</span>
-      <strong>$9,600</strong>
-      <div class="growth">+12.4%</div>
-    </div>
   </div>
+  
 
   <div class="finance-cards">
+     <div class="f-card">
+      <span>الرصيد الفعلي</span>
+      <strong>$9,600</strong>
+    </div>
 
     <div class="f-card highlight">
       <span>الأرباح</span>
@@ -157,13 +198,8 @@
     </div>
 
     <div class="f-card">
-      <span>راس المال</span>
-      <strong>$12,000</strong>
-    </div>
-
-    <div class="f-card">
-      <span>الرصيد المجمد</span>
-      <strong>$2,400</strong>
+      <span>الكروت</span>
+      <strong>28</strong> <!-- 8 + 15 + 5 -->
     </div>
 
     <div class="f-card">
@@ -171,385 +207,127 @@
       <strong>$1,500</strong>
     </div>
 
-    <div class="f-card">
-      <span>المسموح للتحويل</span>
-      <strong>$2,000</strong>
-    </div>
-
-    <div class="f-card">
-      <span>المسموح للتبرع</span>
-      <strong>$500</strong>
-    </div>
-
-    <div class="f-card">
-      <span>النقاط</span>
-      <strong>320</strong>
-    </div>
-
-    <div class="f-card">
-      <span>المستوى</span>
-      <strong>Lv. 3</strong>
-    </div>
-
-    <div class="f-card">
-      <span>الجوائز</span>
-      <strong>12</strong>
-    </div>
-
-    <div class="f-card">
-      <span>كروت التحدي</span>
-      <strong>8</strong>
-    </div>
-
-    <div class="f-card">
-      <span>كروت الدعم</span>
-      <strong>15</strong>
-    </div>
-
-    <div class="f-card">
-      <span>كروت الحظ</span>
-      <strong>5</strong>
-    </div>
+   
 
   </div>
 
 </section>
 <section class="mini-apps">
 
-<div class="mini-card" style="position:relative;">
-  
-  <iframe src="command-hub-bank.html"></iframe>
 
-  <!-- Tıklama katmanı -->
-  <div class="card-click"></div>
-
-</div>
-
-<div class="mini-card" style="position:relative;">
-    <iframe src="command-hub-store.html"></iframe>
-  <div class="card-click1"></div>
-
+  <div class="mini-card">
+    <iframe src="command-hub-bank.html"></iframe>
+    <div class="card-click" data-url="command-hub-bank1.html"></div>
   </div>
 
-<div class="mini-card" style="position:relative;">
+
+  <div class="mini-card">
+    <iframe src="command-hub-store.html"></iframe>
+    <div class="card-click" data-url="command-hub.market.html"></div>
+  </div>
+
+  <div class="mini-card">
     <iframe src="command-hub-trade.html"></iframe>
-      <div class="card-click2"></div>
+    <div class="card-click" data-url="command-hub-socket.html"></div>
+  </div>
+
+ 
+  <div class="mini-card">
+    <iframe src="donate-gate.html"></iframe>
+    <div class="card-click" data-url="donate-menu.html"></div>
+  </div>
+
+ 
+  <div class="mini-card">
+    <iframe src="games-gate.html"></iframe>
+    <div class="card-click" data-url="gmaes-menu.html"></div>
+  </div>
+
+
+  <div class="mini-card">
+    <iframe src="kampanya-gate.html"></iframe>
+    <div class="card-click" data-url="kampanya-menu.html"></div>
   </div>
 
 </section>
+ <section class="hero">
+      <div>
+        <div class="badge">TBC COMMAND HUB GOLD CONNECT</div>
+      <h1>احصل على عروض الربح من الذهب</h1>
+        <p class="muted">اول منصة عربية تدعم تجارة الذهب بشكل شفاف و موثوق</p>
+      </div>
+      <a
+  class="cta"
+  href="command-hub-goldconnect.html"
+  target="_blank"
+  rel="noopener"
+>
+  JOIN GOLD CONNECT
+</a>
 
- 
-    <section class="grid">
-
-     <article class="card span-2 collapsed">
-       <div class="card-head collapsible">
-  <h2>Sales & Distribution</h2>
-  <span class="chip">Live</span>
-  <span class="toggle-icon">＋</span>
-</div>
-  <div class="card-body">
-        <div class="stats">
-          <div class="stat">
-            <div class="k">Current Sales Points</div>
-            <div class="v" id="salesPoints">2000</div>
-            <div class="s muted">عدد نقاط البيع الحالية</div>
-          </div>
-
-          <div class="stat">
-            <div class="k">Network – Agents</div>
-            <div class="v" id="agentsCount">1800</div>
-            <div class="s muted">الوكلاء</div>
-          </div>
-
-          <div class="stat">
-            <div class="k">Network – Developers</div>
-            <div class="v" id="devsCount">1540</div>
-            <div class="s muted">المطورون</div>
-          </div>
-
-          <div class="stat">
-            <div class="k">Network – Influencers</div>
-            <div class="v" id="influencersCount">500</div>
-            <div class="s muted">المؤثرون</div>
-          </div>
-        </div>
-        <div class="stats">
-
-  <div class="stat">
-    <div class="k">Real Sales</div>
-    <div class="v" id="monthlySales">2M$</div>
-    <div class="s muted">المبيعات الفعلية</div>
-  </div>
-
-  <div class="stat">
-    <div class="k">Current deals</div>
-    <div class="v" id="activeCampaigns">3000</div>
-    <div class="s muted">الصفقات الحالية </div>
-  </div>
-
-  <div class="stat">
-    <div class="k">New supporters</div>
-    <div class="v" id="newPartners">900</div>
-    <div class="s muted"> الداعمين الجدد</div>
-  </div>
-
-  <div class="stat">
-    <div class="k">Platforms Sales Rate</div>
-    <div class="v" id="conversionRate">33%</div>
-    <div class="s muted">نسبة المبيعات</div>
-  </div>
-  <div class="stat">
-  <div class="k"> Fund Ammount</div>
-  <div class="v" id="totalRevenue">300,000$</div>
-  <div class="s muted">   مبلغ الدعم</div>
-</div>
-
-
-
-<div class="stat">
-  <div class="k">Active Platforms</div>
-  <div class="v" id="avgDeal">400</div>
-  <div class="s muted">عدد المنصات  </div>
-</div>
-<div class="stat">
-  <div class="k">Active Clients</div>
-  <div class="v" id="activeClients">5000</div>
-  <div class="s muted">العملاء النشطون</div>
-</div>
-
-<div class="stat">
-  <div class="k">Growth Rate</div>
-  <div class="v" id="growthRate">72%</div>
-  <div class="s muted">معدل النمو</div>
-</div>
-
-
-</div>
-
-
-
-        <div class="subgrid">
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Active Challenge Campaigns</h3>
-      
-            </div>
-
-            <ul class="list" id="campaignList">
-         
-            </ul>
-          </div>
-
-          <div class="panel" id="openProjection">
-            <div class="panel-head">
-              <h3>Company capital</h3>
-              <span class="pill gold" id="annualTargetText">$ 100,000</span>
-            </div>
-
-            <div class="progress-wrap">
-              <div class="progress-meta">
-                <span class="muted">Achieved</span>
-                <span class="strong" id="annualAchievedText">€ 640,000</span>
-              </div>
-
-              <div class="progress">
-                <div class="bar" id="annualBar" style="width: 0%"></div>
-              </div>
-
-              <div class="progress-meta">
-                <span class="muted">Progress</span>
-                <span class="strong" id="annualPercent">0%</span>
-              </div>
-            </div>
-            
-
-         
-              <div class="mini-chart">
-  <div class="chart-title muted">Monthly Sales Progress</div>
-  <div class="bars" id="annualBars">
-  <div class="bar-item" data-height="60"><span>Mark</span></div>
-  <div class="bar-item" data-height="75"><span>PR</span></div>
-  <div class="bar-item" data-height="45"><span>Dev</span></div>
-  <div class="bar-item" data-height="65"><span>PRF</span></div>
-  <div class="bar-item" data-height="40"><span>İNC</span></div>
-  <div class="bar-item" data-height="100"><span>CAP</span></div>
-</div>
-</div>
-
-</div>
-
-       
-           
-          </div>
-        </div>
-        </div>
-      </article>
-
-     
-     <article class="card collapsed">
-          <div class="card-head collapsible">
-          <h2> Dev Community Forum</h2>
-          <span class="chip violet">Calendar</span>
-              <span class="toggle-icon">＋</span>
-        </div>
-          <div class="card-body">
-
-        <div class="event-block">
-          <h3>Challenges</h3>
-          <ul class="list" id="privateEvents"></ul>
-        </div>
-
-        <div class="event-block">
-          <h3>Play and Earn</h3>
-          <ul class="list" id="publicEvents"></ul>
-        </div>
-
-       <div style="width:100%;height:600px;border-radius:20px;overflow:hidden;">
-  <iframe 
-    src="test.html" 
-    style="width:100%;height:100%;border:0;">
-  </iframe>
-</div>
-</div>
-      </article>
-
-    <article class="card collapsed">
-        <div class="card-head collapsible">
-          <h2>Overall Progress Level</h2>
-          <span class="chip gold">Score</span>
-              <span class="toggle-icon">＋</span>
-        </div>
-        <div class="card-body">
-
-        <div class="big">
-          <div class="big-num" id="overallPercent">0%</div>
-          <div class="muted">مرتبط بتحقيق الأهداف (الصفقات – نشاط – التزام)</div>
-        </div>
-
-        <div class="progress">
-          <div class="bar glow" id="overallBar" style="width:0%"></div>
-        </div>
-
-        <div class="split">
-          <div class="mini">
-            <div class="k muted">Sales</div>
-            <div class="v" id="scoreSales">0%</div>
-          </div>
-          <div class="mini">
-            <div class="k muted">Activity</div>
-            <div class="v" id="scoreActivity">0%</div>
-          </div>
-          <div class="mini">
-            <div class="k muted">Commitment</div>
-            <div class="v" id="scoreCommitment">0%</div>
-          </div>
-        </div>
-
-        </div>
-      </article>
-
-   
-      <article class="card span-2 collapsed">
-      <div class="card-head collapsible">
-          <h2>Reports Dashboard</h2>
-          <span class="chip pink">Export</span>
-          <span class="toggle-icon">＋</span>
-        </div>
-        <div class="card-body">
-        <div class="reports">
-          <div class="report">
-            <div class="r-title">Performance Report</div>
-            <div class="muted">تقارير الأداء</div>
-            <div class="r-actions">
-              <button class="mini-btn" data-report="performance" data-format="pdf">View PDF</button>
-              <button class="mini-btn" data-report="performance" data-format="xlsx">Download Excel</button>
-            </div>
-          </div>
-
-          <div class="report">
-            <div class="r-title">Sales Report</div>
-            <div class="muted">تقارير المبيعات</div>
-            <div class="r-actions">
-              <button class="mini-btn" data-report="sales" data-format="pdf">View PDF</button>
-              <button class="mini-btn" data-report="sales" data-format="xlsx">Download Excel</button>
-            </div>
-          </div>
-
-          <div class="report">
-            <div class="r-title">Campaigns Report</div>
-            <div class="muted">تقارير الحملات</div>
-            <div class="r-actions">
-              <button class="mini-btn" data-report="campaigns" data-format="pdf">View PDF</button>
-              <button class="mini-btn" data-report="campaigns" data-format="xlsx">Download Excel</button>
-            </div>
-          </div>
-
-          <div class="report">
-            <div class="r-title">General Activity Report</div>
-            <div class="muted">تقارير النشاط العام</div>
-            <div class="r-actions">
-              <button class="mini-btn" data-report="activity" data-format="pdf">View PDF</button>
-              <button class="mini-btn" data-report="activity" data-format="xlsx">Download Excel</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="note muted" id="reportNote">اختر View/Download وسيظهر إشعار بسيط (محاكاة).</div>
-        </div>
-      </article>
-
-     
-     <article class="card span-3 collapsed">
-         <div class="card-head collapsible">
-          <h2>Admin Communication</h2>
-          <span class="chip">Read / Comment / Acknowledge</span>
-           <span class="toggle-icon">＋</span>
-        </div>
-        <div class="card-body">
-
-        <div class="admin-grid">
-          <section class="posts">
-            <div class="panel-head">
-              <h3>Admin Posts</h3>
-              <span class="pill">الإدارة فقط تنشر</span>
-            </div>
-            <ul class="post-list" id="postList"></ul>
-          </section>
-
-          <section class="interaction">
-            <div class="panel-head">
-              <h3>Comments System</h3>
-              <span class="pill pink">الشركة تستطيع التعليق</span>
-            </div>
-
-            <div class="selected" id="selectedPostBox">
-              <div class="muted">اختر منشور من اليسار لعرض التفاصيل والتعليق.</div>
-            </div>
-
-            <form class="comment-form" id="commentForm">
-              <textarea id="commentInput" placeholder="اكتب تعليقك هنا..." rows="3" required></textarea>
-              <div class="row">
-                <button class="cta small" type="submit" id="sendWhatsappBtn">Send Comment</button>
-                <button class="ghost small" type="button" id="ackBtn" disabled>✅ Acknowledge</button>
-              </div>
-              <div class="muted tiny">Permissions: posting للإدارة فقط، التعليق للشركات.</div>
-            </form>
-
-            <div class="comments">
-              <div class="panel-head">
-                <h3>Comments</h3>
-                <span class="pill gold" id="commentCount">0</span>
-              </div>
-              <ul class="comment-list" id="commentList"></ul>
-            </div>
-          </section>
-        </div>
-        </div>
-      </article>
     </section>
+ 
+    
 
   </main>
 
+<div class="modal-backdrop hidden" id="pointModal">
+
+  <div class="modal">
+
+    <div class="modal-head">
+      <h3>Overall Progress</h3>
+      <button class="icon-btn" id="closePointModal">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <article class="card">
+
+        <div class="card-head">
+          <h2>Overall Progress Level</h2>
+          <span class="chip gold">Score</span>
+        </div>
+
+        <div class="card-body">
+
+          <div class="big">
+            <div class="big-num" id="overallPercent">40%</div>
+            <div class="muted">
+              مرتبط بتحقيق الأهداف (الصفقات – نشاط – التزام)
+            </div>
+          </div>
+
+          <div class="progress">
+            <div class="bar glow" id="overallBar" style="width:0%"></div>
+          </div>
+
+          <div class="split">
+            <div class="mini">
+              <div class="k muted">Sales</div>
+              <div class="v" id="scoreSales">10%</div>
+            </div>
+
+            <div class="mini">
+              <div class="k muted">Activity</div>
+              <div class="v" id="scoreActivity">20%</div>
+            </div>
+
+            <div class="mini">
+              <div class="k muted">Commitment</div>
+              <div class="v" id="scoreCommitment">40%</div>
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</div> 
 
   <div class="modal-backdrop hidden" id="modalBackdrop" role="dialog" aria-modal="true">
     <div class="modal">
@@ -631,7 +409,38 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("pointBtn");
+  const modal = document.getElementById("pointModal");
+  const close = document.getElementById("closePointModal");
+
+  if (!btn || !modal || !close) return;
+
+  // AÇ
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.remove("hidden");
+  });
+
+  // KAPAT (X)
+  close.addEventListener("click", (e) => {
+    e.stopPropagation();
+    modal.classList.add("hidden");
+  });
+
+  // DIŞA TIKLAYINCA KAPAT
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.classList.add("hidden");
+    }
+  });
+
+});
 </script>
+
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("welcomeModal");
@@ -651,6 +460,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+setTimeout(() => {
+  document.getElementById("overallBar").style.width = "75%";
+  document.getElementById("overallPercent").innerText = "75%";
+}, 300);
 </script>
 
 <script>const stat = document.getElementById("completedOrdersStat");
@@ -689,7 +502,7 @@ if (stat && modal && closeBtn) {
 
       <img src="logo.png" alt="TBC Logo" class="welcome-logo">
 
-       <p class="welcome-ar">
+      <p class="welcome-ar">
       <br>
  العب • اربح النقاط • تداول • و حقق حلمك في الوصول لمرحلة الدعم و امتلاك مشروعك الخاص !
       </p>
@@ -874,654 +687,12 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
-<div class="modal-backdrop hidden" id="completedOrdersModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>الطلبات المكتملة</h3>
-      <button class="icon-btn" id="closeCompletedOrders">✕</button>
-    </div>
 
-    <div class="modal-body">
-      <!-- HEADER -->
-      <div class="order-row header">
-        <span>العميل</span>
-        <span>الكمية</span>
-        <span>نوع العملية</span>
-        <span>حالة العملية</span>
-      </div>
-
-      <!-- ROWS -->
-      <div class="order-row">
-        <span>24RUX2340</span>
-        <span>12</span>
-        <span>شراء</span>
-        <span class="status done">مكتملة</span>
-      </div>
-
-      <div class="order-row">
-        <span>22TRX1299</span>
-        <span>5</span>
-        <span>بيع</span>
-        <span class="status pending">قيد الانتظار</span>
-      </div>
-
-      <div class="order-row">
-        <span>21TRX1288</span>
-        <span>20</span>
-        <span>شراء</span>
-        <span class="status done">مكتملة</span>
-      </div>
-
-      <div class="order-row">
-        <span>21TRX1277</span>
-        <span>8</span>
-        <span>بيع</span>
-        <span class="status pending">قيد التنفيذ</span>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal-backdrop hidden" id="pendingOrdersModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>طلبات قيد الانتظار</h3>
-      <button class="icon-btn" id="closePendingOrders">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- HEADER -->
-     <div class="order-row header">
-  <span class="status">الحالة</span>
-  <span class="client-name">اسم العميل</span>
-  <span class="branch">الفرع</span>
-  <span class="qty">الكمية</span>
-  <span class="type">نوع العملية</span>
-</div>
-
-
-      <!-- ROW 1 -->
-     <div class="order-row">
-  <span class="client-name">24TRX2002</span>
-  <span>  TPAŞXTR</span>
-  <span>10</span>
-  <span>شراء</span>
-  <span class="status pending">قيد الانتظار</span>
-</div>
-
-
-      <!-- ROW 2 -->
-      <div class="order-row">
-  <span class="client-name">21TRX2098</span>
-  <span>  TPAŞXTR</span>
-  <span>10</span>
-  <span>شراء</span>
-  <span class="status pending">قيد الانتظار</span>
-</div>
-
-
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="yourGoldOrdersModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>طلبات فرعك (ذهب)</h3>
-      <button class="icon-btn" id="closeYourGoldOrders">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- HEADER -->
-      <div class="order-row header">
-        <span>العميل</span>
-        <span>نوع العملية</span>
-        <span>الكمية</span>
-        <span>التاريخ</span>
-      </div>
-
-      <!-- ROW -->
-      <div class="order-row">
-        <span class="client-name">24TRX12000</span>
-        <span>شراء</span>
-        <span>1G</span>
-        <span>2026-01-10</span>
-      </div>
-
-    </div>
-  </div>
-</div>
-<div class="modal-backdrop hidden" id="yourSilverOrdersModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>طلبات فرعك (فضة)</h3>
-      <button class="icon-btn" id="closeYourSilverOrders">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- HEADER -->
-      <div class="order-row header">
-        <span>العميل</span>
-        <span>نوع العملية</span>
-        <span>الكمية</span>
-        <span>التاريخ</span>
-      </div>
-
-      <!-- ROW -->
-      <div class="order-row">
-        <span class="client-name">999TRX1245</span>
-        <span>بيع</span>
-        <span>3G</span>
-        <span>2026-01-02</span>
-      </div>
-
-    </div>
-  </div>
-</div>
-<div class="modal-backdrop hidden" id="branchGoldClientsModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>عملاء فرعك (ذهب)</h3>
-      <button class="icon-btn" id="closeBranchGoldClients">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- HEADER -->
-      <div class="order-row header">
-        <span>العميل</span>
-        <span>نوع العملية</span>
-        <span>الكمية</span>
-        <span>التاريخ</span>
-        <span>الحالة</span>
-        <span>الفاتورة</span>
-      </div>
-
-      <!-- ROW -->
-      <div class="order-row">
-        <span class="client-name">22TRX1293</span>
-        <span>شراء</span>
-        <span>5G</span>
-        <span>2026-01-01</span>
-        <span class="status done">مكتملة</span>
-
-        <!-- INVOICE -->
-        <span>
-          <a
-             href="invoice_2003.pdf"
-            download
-            class="invoice-btn"
-          >
-            تحميل
-          </a>
-        </span>
-      </div>
-     
-
-<div class="order-row">
-  <span class="client-name">24TRX-1293</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-02</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1293.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1294</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-02</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1294.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1295</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-03</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1295.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1296</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-04</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1296.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1297</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-06</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1297.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1298</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-06</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1298.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1299</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-07</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1299.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1300</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-08</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1300.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1301</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-08</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22TRX1301.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1302</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-09</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="22trx1302.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1303</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-09</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1303.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1304</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-10</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1304.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1305</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-10</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1305.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1306</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-11</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1306.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1307</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-12</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1307.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1308</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-12</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1308.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1309</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-12</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1309.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1310</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-13</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1310.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1311</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-13</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1311.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1312</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-13</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1312.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1313</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-14</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1313.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1314</span>
-  <span>شراء</span>
-  <span>5G</span>
-  <span>2026-01-14</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1314.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1315</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-15</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1315.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1316</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-15</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1316.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1317</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-16</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1317.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1318</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-16</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1318.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1319</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-17</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1319.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1320</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-17</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1320.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1321</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-18</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1321.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1322</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-19</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1322.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1323</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-20</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1323.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1324</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-20</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1324.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1325</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-21</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1325.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1326</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-21</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1326.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1327</span>
-  <span>شراء</span>
-  <span>5G</span>
-  <span>2026-01-22</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1327.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1328</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-23</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1328.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1329</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-24</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1329.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1330</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-25</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1330.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1331</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-26</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1331.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1332</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-27</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1332.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1333</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-27</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1333.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1334</span>
-  <span>شراء</span>
-  <span>5G</span>
-  <span>2026-01-28</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1334.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1335</span>
-  <span>شراء</span>
-  <span>15G</span>
-  <span>2026-01-29</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1335.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1336</span>
-  <span>شراء</span>
-  <span>5G</span>
-  <span>2026-01-30</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1336.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-<div class="order-row">
-  <span class="client-name">24TRX-1337</span>
-  <span>شراء</span>
-  <span>10G</span>
-  <span>2026-01-31</span>
-  <span class="status done">مكتملة</span>
-  <span><a href="invoice_1337.pdf" download class="invoice-btn">تحميل</a></span>
-</div>
-
-
-    </div>
-  </div>
-</div>
-<div class="modal-backdrop hidden" id="branchSilverClientsModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>عملاء فرعك (فضة)</h3>
-      <button class="icon-btn" id="closeBranchSilverClients">✕</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- HEADER -->
-      <div class="order-row header">
-        <span>العميل</span>
-        <span>نوع العملية</span>
-        <span>الكمية</span>
-        <span>التاريخ</span>
-        <span>الحالة</span>
-        <span>الفاتورة</span>
-      </div>
-
-      <!-- ROW -->
-      <div class="order-row">
-        <span class="client-name">999TRX4309</span>
-        <span>بيع</span>
-        <span>3G</span>
-        <span>2026-01-04</span>
-        <span class="status pending">قيد الانتظار</span>
-
-        <!-- INVOICE -->
-        <span>
-          <a
-            href="/invoice_2003.pdf"
-            download
-            class="invoice-btn silver"
-          >
-            تحميل
-          </a>
-        </span>
-      </div>
-
-    </div>
-  </div>
-</div>
 <script>
-document.querySelector(".card-click").addEventListener("click", function() {
-  window.location.href = "command-hub-bank1.html";
-});
-
-document.querySelector(".card-click1").addEventListener("click", function() {
-  window.location.href = "command-hub.market.html";
-});
-
-document.querySelector(".card-click2").addEventListener("click", function() {
-  window.location.href = "command-hub-socket.html"; // DOĞRU
+document.querySelectorAll(".card-click").forEach(el => {
+  el.addEventListener("click", () => {
+    window.location.href = el.dataset.url;
+  });
 });
 </script>
 
